@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট ১০ম গ্রেড বাস্তবায়ন পরিষদ</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        
+        /* Custom Animations */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-red-600 text-white p-2 rounded-lg">
+                    <i data-lucide="megaphone" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold text-slate-900 leading-tight">
+                        মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট
+                    </h1>
+                    <p class="text-xs md:text-sm text-red-600 font-semibold">
+                        ১০ম গ্রেড বাস্তবায়ন পরিষদ
+                    </p>
+                </div>
+            </div>
+            <div class="hidden md:block text-right">
+                <p class="text-sm text-slate-500">আজকের তারিখ</p>
+                <p class="font-bold text-slate-700" id="header-date">...</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-12 px-4 relative overflow-hidden">
+        <!-- Background Blobs -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div class="absolute -bottom-8 -left-8 w-64 h-64 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        
+        <div class="container mx-auto text-center relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-red-500/20 border border-red-500 text-red-300 text-sm font-medium mb-4 animate-pulse">
+                জরুরি ঘোষণা
+            </span>
+            <h2 class="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+                ১০ম গ্রেড আমাদের <span class="text-red-500">অধিকার</span>
+            </h2>
+            <p class="text-slate-300 max-w-2xl mx-auto mb-10 text-lg">
+                দীর্ঘ ৩ দশকের বৈষম্য আর নয়। মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের ১০ম গ্রেড বাস্তবায়নে ঐক্যবদ্ধ হোন।
+            </p>
+
+            <!-- Countdown Card -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 max-w-3xl mx-auto border border-white/10">
+                <h3 class="text-lg md:text-xl font-medium mb-4 flex items-center justify-center gap-2">
+                    <i data-lucide="clock" class="text-red-400 w-5 h-5"></i>
+                    <span id="countdown-title">সময় বাকি</span>
+                </h3>
+                
+                <div class="grid grid-cols-4 gap-2 md:gap-4">
+                    <div class="bg-slate-900/50 rounded-lg p-3 md:p-4 border border-slate-700">
+                        <div id="cd-days" class="text-2xl md:text-4xl font-bold text-white font-mono">--</div>
+                        <div class="text-xs text-slate-400 mt-1">দিন</div>
+                    </div>
+                    <div class="bg-slate-900/50 rounded-lg p-3 md:p-4 border border-slate-700">
+                        <div id="cd-hours" class="text-2xl md:text-4xl font-bold text-white font-mono">--</div>
+                        <div class="text-xs text-slate-400 mt-1">ঘন্টা</div>
+                    </div>
+                    <div class="bg-slate-900/50 rounded-lg p-3 md:p-4 border border-slate-700">
+                        <div id="cd-minutes" class="text-2xl md:text-4xl font-bold text-white font-mono">--</div>
+                        <div class="text-xs text-slate-400 mt-1">মিনিট</div>
+                    </div>
+                    <div class="bg-slate-900/50 rounded-lg p-3 md:p-4 border border-slate-700">
+                        <div id="cd-seconds" class="text-2xl md:text-4xl font-bold text-white font-mono">--</div>
+                        <div class="text-xs text-slate-400 mt-1">সেকেন্ড</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        
+        <!-- Tabs Navigation -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-white p-1 rounded-xl shadow-sm border inline-flex overflow-x-auto max-w-full">
+                <button onclick="switchTab('program')" id="tab-program" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap bg-red-600 text-white shadow-md">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> কর্মসূচি
+                </button>
+                <button onclick="switchTab('details')" id="tab-details" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap text-slate-600 hover:bg-slate-50">
+                    <i data-lucide="info" class="w-4 h-4"></i> দাবিসমূহ
+                </button>
+                <button onclick="switchTab('news')" id="tab-news" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap text-slate-600 hover:bg-slate-50">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i> নিউজ
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Container -->
+        <div id="content-area" class="max-w-4xl mx-auto min-h-[300px]">
+            <!-- Content will be injected here by JavaScript -->
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 mt-12 border-t border-slate-800">
+        <div class="container mx-auto px-4 text-center">
+            
+            <!-- Organization Info -->
+            <h2 class="text-white font-bold text-xl mb-2 tracking-wide">১০ম গ্রেড বাস্তবায়ন পরিষদ</h2>
+            <p class="text-sm text-slate-500 mb-8">অস্থায়ী কার্যালয়: মহাখালী, ঢাকা-১২১২</p>
+
+            <!-- Email Section -->
+            <div class="flex justify-center mb-8">
+                <a href="mailto:medicaltechnologistpharmacist@gmail.com" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-5 py-2.5 rounded-full transition-all border border-slate-700 group hover:border-slate-600 shadow-lg">
+                    <i data-lucide="mail" class="w-4 h-4 text-blue-500 group-hover:text-blue-400"></i>
+                    <span class="text-sm">medicaltechnologistpharmacist@gmail.com</span>
+                </a>
+            </div>
+            
+            <!-- Phone Numbers Section -->
+            <div class="max-w-5xl mx-auto">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-600 mb-5 flex items-center justify-center gap-2">
+                    <span class="w-8 h-[1px] bg-slate-700"></span>
+                    জরুরি যোগাযোগ নম্বরসমূহ
+                    <span class="w-8 h-[1px] bg-slate-700"></span>
+                </h3>
+                
+                <div class="flex flex-wrap justify-center gap-3">
+                    <!-- Phone Number Items -->
+                    <a href="tel:01712008081" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৭১২-০০৮০৮১</span>
+                    </a>
+                    
+                    <a href="tel:01711902507" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৭১১-৯০২৫০৭</span>
+                    </a>
+
+                    <a href="tel:01714889221" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৭১৪-৮৮৯২২১</span>
+                    </a>
+
+                    <a href="tel:01719594841" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৭১৯-৫৯৪৮৪১</span>
+                    </a>
+
+                    <a href="tel:01717606612" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৭১৭-৬০৬৬১২</span>
+                    </a>
+
+                    <a href="tel:01715986116" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৭১৫-৯৮৬১১৬</span>
+                    </a>
+
+                    <a href="tel:01639467773" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-all border border-slate-700 hover:border-green-500/50 group hover:shadow-green-900/20 hover:shadow-lg">
+                        <i data-lucide="phone" class="w-3 h-3 text-green-600 group-hover:text-green-400"></i>
+                        <span class="text-sm font-mono tracking-wide">০১৬৩৯-৪৬৭৭৭৩</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800/50 mt-10 pt-6 text-xs text-slate-600">
+                <p>© ২০২৫ সর্বস্বত্ব সংরক্ষিত | ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Data & Helpers ---
+        
+        const toBanglaDigits = (str) => {
+            if (!str) return '';
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            
+            const months = {
+                'January': 'জানুয়ারি', 'February': 'ফেব্রুয়ারি', 'March': 'মার্চ', 'April': 'এপ্রিল',
+                'May': 'মে', 'June': 'জুন', 'July': 'জুলাই', 'August': 'আগস্ট',
+                'September': 'সেপ্টেম্বর', 'October': 'অক্টোবর', 'November': 'নভেম্বর', 'December': 'ডিসেম্বর'
+            };
+
+            let converted = str.toString().replace(/[0-9]/g, (w) => banglaDigits[englishDigits.indexOf(w)]);
+            
+            Object.keys(months).forEach(eng => {
+                converted = converted.replace(eng, months[eng]);
+            });
+            
+            return converted;
+        };
+
+        const eventsData = [
+            { id: 1, title: "৯৬ ঘন্টার আল্টিমেটাম ও গণসংযোগ", dateDisplay: "২৬ - ২৯ নভেম্বর, ২০২৫", details: "হাসপাতালে গণসংযোগ, লিফলেট বিতরণ এবং স্মারকলিপি প্রদান (৯৬ ঘন্টার আল্টিমেটাম)।", startDate: "2025-11-26T00:00:00", endDate: "2025-11-29T14:00:00", type: "campaign" },
+            { id: 2, title: "২ ঘন্টার কর্মবিরতি", dateDisplay: "৩০ নভেম্বর, ২০২৫ (রবিবার)", details: "সকাল ৯:০০ টা থেকে ১১:০০ টা পর্যন্ত (২ ঘন্টা) সারাদেশের সকল সরকারি-বেসরকারি হাসপাতালে কর্মবিরতি পালন।", startDate: "2025-11-30T09:00:00", endDate: "2025-11-30T11:00:00", type: "strike" },
+            { id: 3, title: "৪৮ ঘন্টার আল্টিমেটাম", dateDisplay: "০১ - ০২ ডিসেম্বর, ২০২৫", details: "১০ম গ্রেড বাস্তবায়নের দাবিতে সরকারকে পুনরায় ৪৮ ঘন্টার আল্টিমেটাম প্রদান।", startDate: "2025-12-01T00:00:00", endDate: "2025-12-02T23:59:59", type: "warning" },
+            { id: 4, title: "অর্ধদিবস কর্মবিরতি", dateDisplay: "০৩ ডিসেম্বর, ২০২৫ (বুধবার)", details: "সকাল ৮:০০ টা থেকে দুপুর ১২:০০ টা পর্যন্ত সারাদেশের সকল স্বাস্থ্য প্রতিষ্ঠানে অর্ধদিবস কর্মবিরতি পালন।", startDate: "2025-12-03T08:00:00", endDate: "2025-12-03T12:00:00", type: "strike" },
+            { id: 5, title: "পূর্ণদিবস কমপ্লিট শাটডাউন", dateDisplay: "০৪ ডিসেম্বর, ২০২৫ (বৃহস্পতিবার)", details: "সারাদেশের সকল সরকারি, বেসরকারি ও স্বায়ত্তশাসিত হাসপাতালে পূর্ণদিবস কমপ্লিট শাটডাউন।", startDate: "2025-12-04T00:00:00", endDate: "2025-12-04T23:59:59", type: "shutdown" },
+            { id: 6, title: "লাগাতার কমপ্লিট শাটডাউন", dateDisplay: "০৫ ডিসেম্বর, ২০২৫ থেকে চলমান", details: "দাবি আদায় না হওয়া পর্যন্ত সারাদেশের সকল স্বাস্থ্য প্রতিষ্ঠানে লাগাতার শাটডাউন পালিত হবে।", startDate: "2025-12-05T00:00:00", endDate: "2026-01-01T00:00:00", type: "shutdown" }
+        ];
+
+        let currentTab = 'program';
+        let newsLoaded = false;
+        // ক্যাশিংয়ের জন্য গ্লোবাল ভেরিয়েবল
+        window.cachedNews = []; 
+
+        // --- Core Functions ---
+
+        function init() {
+            lucide.createIcons();
+            updateTime();
+            setInterval(updateTime, 1000);
+            renderProgram(); // Initial render
+        }
+
+        function updateTime() {
+            const now = new Date();
+            // Header Date
+            document.getElementById('header-date').innerText = toBanglaDigits(now.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }));
+            
+            // Countdown Logic
+            const upcomingEvent = eventsData.find(event => new Date(event.endDate) > now);
+            const titleEl = document.getElementById('countdown-title');
+            
+            if (upcomingEvent) {
+                const isStarted = new Date(upcomingEvent.startDate) <= now;
+                titleEl.innerHTML = isStarted 
+                    ? `বর্তমান কর্মসূচি: ${upcomingEvent.title} <span class="text-red-300 block text-sm mt-1">শেষ হতে বাকি</span>`
+                    : `পরবর্তী কর্মসূচি: ${upcomingEvent.title} <span class="text-blue-300 block text-sm mt-1">শুরু হতে বাকি</span>`;
+
+                const targetDate = isStarted ? new Date(upcomingEvent.endDate) : new Date(upcomingEvent.startDate);
+                const diff = targetDate - now;
+
+                if (diff > 0) {
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const m = Math.floor((diff / 1000 / 60) % 60);
+                    const s = Math.floor((diff / 1000) % 60);
+
+                    document.getElementById('cd-days').innerText = toBanglaDigits(d);
+                    document.getElementById('cd-hours').innerText = toBanglaDigits(h);
+                    document.getElementById('cd-minutes').innerText = toBanglaDigits(m);
+                    document.getElementById('cd-seconds').innerText = toBanglaDigits(s);
+                }
+            } else {
+                titleEl.innerText = "সকল কর্মসূচি সমাপ্ত";
+                ['cd-days', 'cd-hours', 'cd-minutes', 'cd-seconds'].forEach(id => document.getElementById(id).innerText = '০০');
+            }
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update Buttons
+            ['program', 'details', 'news'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    btn.className = "flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap bg-red-600 text-white shadow-md";
+                    // Change text color to white for active tab icon
+                    const icon = btn.querySelector('svg'); 
+                    if(icon) icon.classList.remove('text-slate-600');
+                } else {
+                    btn.className = "flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap text-slate-600 hover:bg-slate-50";
+                }
+            });
+
+            // Render Content
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = ''; // Clear previous content
+            
+            if (tabName === 'program') renderProgram();
+            else if (tabName === 'details') renderDetails();
+            else if (tabName === 'news') {
+                renderNewsSkeleton();
+                if (!newsLoaded) fetchNews(); // Fetch if not loaded
+                else renderNews(window.cachedNews); // Use cached if available
+            }
+        }
+
+        // --- Renderers ---
+
+        function renderProgram() {
+            const container = document.getElementById('content-area');
+            const now = new Date();
+            
+            let html = `
+                <div class="space-y-6 fade-in">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <i data-lucide="calendar" class="text-red-600 w-5 h-5"></i>
+                            কর্মসূচি টাইমলাইন
+                        </h3>
+                    </div>
+            `;
+
+            eventsData.forEach(event => {
+                const start = new Date(event.startDate);
+                const end = new Date(event.endDate);
+                let status = 'upcoming';
+                let statusHtml = '<span class="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">সামনে আসছে</span>';
+                let borderClass = 'bg-white border-blue-200 border-l-4 border-l-blue-500';
+
+                if (now > end) {
+                    status = 'completed';
+                    statusHtml = '<span class="flex items-center gap-1 bg-gray-200 text-gray-600 px-2 py-1 rounded text-xs font-bold">সম্পন্ন</span>';
+                    borderClass = 'bg-gray-100 border-gray-300 text-gray-500 opacity-70';
+                } else if (now >= start && now <= end) {
+                    status = 'active';
+                    statusHtml = '<span class="flex items-center gap-1 bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold animate-pulse"><span class="w-2 h-2 bg-red-600 rounded-full"></span> চলমান</span>';
+                    borderClass = 'bg-red-50 border-red-500 shadow-lg ring-2 ring-red-200 transform scale-[1.02]';
+                } else if (event.type === 'shutdown') {
+                     borderClass = 'bg-white border-red-300 border-l-4 border-l-red-600';
+                }
+
+                html += `
+                    <div class="relative rounded-xl p-5 border transition-all duration-300 ${borderClass}">
+                        <div class="absolute top-4 right-4">${statusHtml}</div>
+                        <div class="flex flex-col md:flex-row md:items-start gap-4">
+                            <div class="md:w-32 flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-lg ${status === 'active' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}">
+                                <span class="text-xs opacity-80 font-medium">তারিখ</span>
+                                <span class="text-center font-bold text-sm">${toBanglaDigits(event.dateDisplay)}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-lg font-bold mb-2 ${status === 'completed' ? 'text-slate-500' : 'text-slate-800'}">${event.title}</h4>
+                                <p class="text-sm leading-relaxed ${status === 'completed' ? 'text-slate-400' : 'text-slate-600'}">${event.details}</p>
+                                ${event.type === 'shutdown' && status !== 'completed' ? '<div class="mt-3 flex items-center gap-2 text-red-600 text-xs font-bold bg-red-50 p-2 rounded"><i data-lucide="alert-triangle" class="w-4 h-4"></i> জরুরি স্বাস্থ্যসেবা ছাড়া সব বন্ধ থাকবে</div>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function renderDetails() {
+            const container = document.getElementById('content-area');
+            container.innerHTML = `
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 fade-in">
+                    <h3 class="text-2xl font-bold mb-6 text-slate-800 border-b pb-4">কেন এই আন্দোলন?</h3>
+                    <div class="space-y-6 text-slate-700 leading-relaxed">
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <h4 class="font-bold text-blue-800 mb-2">মূল দাবি</h4>
+                            <p>মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের দীর্ঘদিনের ন্যায্য অধিকার <strong>১০ম গ্রেড</strong> বাস্তবায়ন এবং সরকারি আদেশের মাধ্যমে বৈষম্যের অবসান।</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i data-lucide="info" class="w-4 h-4 text-slate-500"></i> প্রেক্ষাপট</h4>
+                            <ul class="list-disc list-outside ml-5 space-y-2 text-sm md:text-base">
+                                <li>১৯৯৪ সালে ডিপ্লোমা ইঞ্জিনিয়ারদের ২য় শ্রেণীর পদমর্যাদাসহ ১০ম গ্রেডে উন্নীত করা হয়েছে।</li>
+                                <li>২০১৭ সালে নার্সিং ডিপ্লোমাধারীদের ২য় শ্রেণীর পদমর্যাদাসহ ১০ম গ্রেড প্রদান করা হয়েছে।</li>
+                                <li>২০১৮ সালে কৃষি ডিপ্লোমাধারীদের ১০ম গ্রেডে উন্নীত করা হয়েছে।</li>
+                                <li>অথচ, সমযোগ্যতা সম্পন্ন আমরা দীর্ঘ ৩১ বছর ধরে বঞ্চিত।</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function renderNewsSkeleton() {
+            document.getElementById('content-area').innerHTML = `
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in">
+                    <div class="p-4 border-b bg-slate-50 flex justify-between items-center">
+                         <h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="newspaper" class="text-green-600"></i> আপডেট</h3>
+                         <button disabled class="opacity-50 flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm">রিফ্রেশ করুন</button>
+                    </div>
+                    <div class="p-12 text-center text-slate-500">
+                        <div class="animate-spin w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p>বিস্তৃত তথ্য খোঁজা হচ্ছে (একাধিক সোর্স)...</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function renderNews(articles) {
+            const container = document.getElementById('content-area');
+            
+            if (!articles || articles.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl p-8 text-center shadow">
+                        <p class="text-slate-500">কোনো নিউজ পাওয়া যায়নি।</p>
+                        <button onclick="fetchNews()" class="mt-4 text-blue-600 hover:underline">আবার চেষ্টা করুন</button>
+                    </div>`;
+                return;
+            }
+
+            let rows = '';
+            articles.forEach(news => {
+                const date = new Date(news.pubDate);
+                const dateStr = isNaN(date) ? "তারিখ নেই" : toBanglaDigits(date.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }));
+
+                rows += `
+                    <tr class="hover:bg-green-50/50 transition-colors border-b border-slate-100 last:border-0">
+                        <td class="p-4 whitespace-nowrap text-slate-500 text-xs md:text-sm">${dateStr}</td>
+                        <td class="p-4 font-semibold text-slate-800 text-sm md:text-base">${news.title}</td>
+                        <td class="p-4 text-center">
+                            <a href="${news.link}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition">
+                                <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in">
+                    <div class="p-4 border-b bg-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg flex items-center gap-2">
+                                <i data-lucide="newspaper" class="text-green-600 w-5 h-5"></i> ১০ম গ্রেড ও নিয়োগ সংক্রান্ত খবর
+                            </h3>
+                            <p class="text-xs text-slate-500 text-center">বিভিন্ন অনলাইন নিউজ পোর্টালের নিউজ লিংক</p>
+                        </div>
+                        <button onclick="fetchNews()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> রিফ্রেশ করুন
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b">
+                                <tr>
+                                    <th class="p-4 font-bold">তারিখ</th>
+                                    <th class="p-4 font-bold">খবরের শিরোনাম</th>
+                                    <th class="p-4 font-bold text-center">লিংক</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t">
+                        মোট নিউজ পাওয়া গেছে: ${toBanglaDigits(articles.length)} টি
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        async function fetchNews() {
+            renderNewsSkeleton();
+            
+            // Expanded Queries to fetch MORE news
+            const queries = [
+                "মেডিকেল টেকনোলজিস্ট ১০ম গ্রেড",
+                "ফার্মাসিস্ট ১০ম গ্রেড",
+                "স্বাস্থ্য বিভাগ আন্দোলন",
+                "ডিপ্লোমা মেডিকেল টেকনোলজিস্ট",
+                "Diploma Medical Technologist Protest",
+                "Medical Technologist 10th Grade BD",
+                "স্বাস্থ্য অধিদপ্তর ১০ম গ্রেড",
+                "বৈষম্যবিরোধী মেডিকেল টেকনোলজিস্ট",
+                "Diploma Pharmacist BD"
+            ];
+
+            let allArticles = [];
+            let seenLinks = new Set();
+
+            try {
+                // Fetch all queries in parallel
+                const promises = queries.map(q => {
+                    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=bn&gl=BD&ceid=BD:bn`;
+                    return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`)
+                        .then(res => res.json())
+                        .then(data => data.items || [])
+                        .catch(err => []); // Fail silently for individual queries
+                });
+
+                const results = await Promise.all(promises);
+
+                // Flatten and Dedup
+                results.flat().forEach(item => {
+                    // Normalize link (remove query params for better deduping if needed)
+                    // Just basic link check for now
+                    if (!seenLinks.has(item.link) && item.title) {
+                        seenLinks.add(item.link);
+                        allArticles.push(item);
+                    }
+                });
+
+                // Sort by Date (Newest first)
+                allArticles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                
+                // Cache logic
+                window.cachedNews = allArticles;
+                newsLoaded = true;
+                
+                renderNews(allArticles);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('content-area').innerHTML = `
+                    <div class="p-8 text-center text-red-500 bg-red-50 m-4 rounded-lg border border-red-100">
+                        <p>নেটওয়ার্ক সমস্যা অথবা ডাটা লোড করা যায়নি।</p>
+                        <button onclick="fetchNews()" class="mt-2 text-sm underline hover:text-red-700">আবার চেষ্টা করুন</button>
+                    </div>`;
+            }
+        }
+
+        // Initialize App
+        window.onload = init;
+
+    </script>
+</body>
+</html>
