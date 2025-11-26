@@ -14,11 +14,30 @@
     
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
         .animate-blob { animation: blob 7s infinite; }
         .animation-delay-2000 { animation-delay: 2s; }
+        
+        /* Scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Footer & Gallery Styles */
+        .footer-phone-btn {
+            display: flex; align-items: center; gap: 0.5rem;
+            background-color: #1e293b; color: #cbd5e1;
+            padding: 0.5rem 1rem; border-radius: 0.5rem;
+            border: 1px solid #334155; transition: all 0.2s;
+            font-size: 0.875rem; font-family: monospace;
+        }
+        .footer-phone-btn:hover {
+            background-color: #334155; color: white;
+            border-color: #22c55e;
+        }
+        .gallery-img { transition: transform 0.3s ease; }
+        .gallery-item:hover .gallery-img { transform: scale(1.05); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
@@ -59,7 +78,7 @@
                 ১০ম গ্রেড আমাদের <span class="text-red-500">অধিকার</span>
             </h2>
             
-            <!-- Countdown Card -->
+            <!-- Countdown -->
             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 max-w-3xl mx-auto border border-white/10 mt-8">
                 <h3 class="text-lg md:text-xl font-medium mb-4 flex items-center justify-center gap-2">
                     <i data-lucide="clock" class="text-red-400 w-5 h-5"></i>
@@ -90,14 +109,17 @@
     <!-- Main Content Area -->
     <div class="container mx-auto px-4 py-8 flex-grow">
         
-        <!-- Tabs Navigation -->
+        <!-- Tabs -->
         <div class="flex justify-center mb-8">
-            <div class="bg-white p-1 rounded-xl shadow-sm border inline-flex overflow-x-auto max-w-full">
+            <div class="bg-white p-1 rounded-xl shadow-sm border inline-flex overflow-x-auto max-w-full no-scrollbar">
                 <button onclick="switchTab('program')" id="tab-program" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap bg-red-600 text-white shadow-md">
                     <i data-lucide="calendar" class="w-4 h-4"></i> কর্মসূচি
                 </button>
                 <button onclick="switchTab('details')" id="tab-details" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap text-slate-600 hover:bg-slate-50">
-                    <i data-lucide="info" class="w-4 h-4"></i> দাবিসমূহ
+                    <i data-lucide="file-text" class="w-4 h-4"></i> দাবিসমূহ
+                </button>
+                <button onclick="switchTab('gallery')" id="tab-gallery" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap text-slate-600 hover:bg-slate-50">
+                    <i data-lucide="image" class="w-4 h-4"></i> গ্যালারি
                 </button>
                 <button onclick="switchTab('news')" id="tab-news" class="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap text-slate-600 hover:bg-slate-50">
                     <i data-lucide="newspaper" class="w-4 h-4"></i> নিউজ
@@ -108,10 +130,8 @@
             </div>
         </div>
 
-        <!-- Content Container -->
-        <div id="content-area" class="max-w-4xl mx-auto min-h-[300px]">
-            <!-- Content will be injected here by JavaScript -->
-        </div>
+        <!-- Dynamic Content -->
+        <div id="content-area" class="max-w-4xl mx-auto min-h-[300px]"></div>
 
     </div>
 
@@ -148,24 +168,14 @@
         </div>
     </footer>
 
-    <!-- CSS for Footer Buttons -->
-    <style>
-        .footer-phone-btn {
-            display: flex; align-items: center; gap: 0.5rem;
-            background-color: #1e293b; color: #cbd5e1;
-            padding: 0.5rem 1rem; border-radius: 0.5rem;
-            border: 1px solid #334155; transition: all 0.2s;
-            font-size: 0.875rem; font-family: monospace;
-        }
-        .footer-phone-btn:hover {
-            background-color: #334155; color: white;
-            border-color: #22c55e;
-        }
-    </style>
-
-    <!-- JavaScript Logic -->
+    <!-- Logic -->
     <script>
-        // --- Data & Helpers ---
+        // --- Config ---
+        const DOCS_FOLDER_ID = '1KIl8P8MI0W5ivz320a-1IvphXbTCHE4H'; // Document Folder
+        const GALLERY_FOLDER_ID = '1iOLo7X21ClBbU6NSh1xfFTMbnZxSst_M'; // Gallery Folder
+        const DRIVE_API_KEY = 'AIzaSyBtzPsyjBlLM2vlCqCByhD03SgWmshQcV4';
+
+        // --- Helpers ---
         const toBanglaDigits = (str) => {
             if (!str) return '';
             const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -176,22 +186,21 @@
             return converted;
         };
 
+        // --- Events Data ---
         const eventsData = [
-            { id: 1, title: "৯৬ ঘন্টার আল্টিমেটাম ও গণসংযোগ", dateDisplay: "২৬ - ২৯ নভেম্বর, ২০২৫", details: "হাসপাতালে গণসংযোগ, লিফলেট বিতরণ এবং স্মারকলিপি প্রদান (৯৬ ঘন্টার আল্টিমেটাম)।", startDate: "2025-11-26T00:00:00", endDate: "2025-11-29T14:00:00", type: "campaign" },
-            { id: 2, title: "২ ঘন্টার কর্মবিরতি", dateDisplay: "৩০ নভেম্বর, ২০২৫ (রবিবার)", details: "সকাল ৯:০০ টা থেকে ১১:০০ টা পর্যন্ত (২ ঘন্টা) সারাদেশের সকল সরকারি-বেসরকারি হাসপাতালে কর্মবিরতি পালন।", startDate: "2025-11-30T09:00:00", endDate: "2025-11-30T11:00:00", type: "strike" },
-            { id: 3, title: "৪৮ ঘন্টার আল্টিমেটাম", dateDisplay: "০১ - ০২ ডিসেম্বর, ২০২৫", details: "১০ম গ্রেড বাস্তবায়নের দাবিতে সরকারকে পুনরায় ৪৮ ঘন্টার আল্টিমেটাম প্রদান।", startDate: "2025-12-01T00:00:00", endDate: "2025-12-02T23:59:59", type: "warning" },
-            { id: 4, title: "অর্ধদিবস কর্মবিরতি", dateDisplay: "০৩ ডিসেম্বর, ২০২৫ (বুধবার)", details: "সকাল ৮:০০ টা থেকে দুপুর ১২:০০ টা পর্যন্ত সারাদেশের সকল স্বাস্থ্য প্রতিষ্ঠানে অর্ধদিবস কর্মবিরতি পালন।", startDate: "2025-12-03T08:00:00", endDate: "2025-12-03T12:00:00", type: "strike" },
-            { id: 5, title: "পূর্ণদিবস কমপ্লিট শাটডাউন", dateDisplay: "০৪ ডিসেম্বর, ২০২৫ (বৃহস্পতিবার)", details: "সারাদেশের সকল সরকারি, বেসরকারি ও স্বায়ত্তশাসিত হাসপাতালে পূর্ণদিবস কমপ্লিট শাটডাউন।", startDate: "2025-12-04T00:00:00", endDate: "2025-12-04T23:59:59", type: "shutdown" },
-            { id: 6, title: "লাগাতার কমপ্লিট শাটডাউন", dateDisplay: "০৫ ডিসেম্বর, ২০২৫ থেকে চলমান", details: "দাবি আদায় না হওয়া পর্যন্ত সারাদেশের সকল স্বাস্থ্য প্রতিষ্ঠানে লাগাতার শাটডাউন পালিত হবে।", startDate: "2025-12-05T00:00:00", endDate: "2026-01-01T00:00:00", type: "shutdown" }
+            { id: 1, title: "৯৬ ঘন্টার আল্টিমেটাম ও গণসংযোগ", dateDisplay: "২৬ - ২৯ নভেম্বর, ২০২৫", details: "হাসপাতালে গণসংযোগ, লিফলেট বিতরণ এবং স্মারকলিপি প্রদান।", startDate: "2025-11-26T00:00:00", endDate: "2025-11-29T23:59:59", type: "campaign" },
+            { id: 2, title: "২ ঘন্টার কর্মবিরতি", dateDisplay: "৩০ নভেম্বর, ২০২৫ (রবিবার)", details: "সকাল ৯:০০ টা থেকে ১১:০০ টা পর্যন্ত সারাদেশের সকল হাসপাতালে কর্মবিরতি পালন।", startDate: "2025-11-30T09:00:00", endDate: "2025-11-30T11:00:00", type: "strike" },
+            { id: 3, title: "৪৮ ঘন্টার আল্টিমেটাম", dateDisplay: "০১ - ০২ ডিসেম্বর, ২০২৫", details: "১০ম গ্রেড বাস্তবায়নের দাবিতে সরকারকে পুনরায় ৪৮ ঘন্টার আল্টিমেটাম।", startDate: "2025-12-01T00:00:00", endDate: "2025-12-02T23:59:59", type: "warning" },
+            { id: 4, title: "অর্ধদিবস কর্মবিরতি", dateDisplay: "০৩ ডিসেম্বর, ২০২৫ (বুধবার)", details: "সকাল ৮:০০ টা থেকে দুপুর ১২:০০ টা পর্যন্ত অর্ধদিবস কর্মবিরতি।", startDate: "2025-12-03T08:00:00", endDate: "2025-12-03T12:00:00", type: "strike" },
+            { id: 5, title: "পূর্ণদিবস কমপ্লিট শাটডাউন", dateDisplay: "০৪ ডিসেম্বর, ২০২৫ (Thursday)", details: "সারাদেশের সকল হাসপাতালে পূর্ণদিবস কমপ্লিট শাটডাউন।", startDate: "2025-12-04T00:00:00", endDate: "2025-12-04T23:59:59", type: "shutdown" },
+            { id: 6, title: "লাগাতার কমপ্লিট শাটডাউন", dateDisplay: "০৫ ডিসেম্বর, ২০২৫ থেকে চলমান", details: "দাবি আদায় না হওয়া পর্যন্ত লাগাতার শাটডাউন পালিত হবে।", startDate: "2025-12-05T00:00:00", endDate: "2026-01-01T00:00:00", type: "shutdown" }
         ];
 
         let currentTab = 'program';
-        let newsLoaded = false;
-        window.cachedNews = [];
-        let docsLoaded = false;
-        window.cachedDocs = [];
+        let newsLoaded = false; window.cachedNews = [];
+        let docsLoaded = false; window.cachedDocs = [];
+        let galleryLoaded = false; window.cachedPhotos = [];
 
-        // --- Core Functions ---
         function init() {
             lucide.createIcons();
             updateTime();
@@ -232,7 +241,7 @@
 
         function switchTab(tabName) {
             currentTab = tabName;
-            ['program', 'details', 'news', 'documents'].forEach(t => {
+            ['program', 'details', 'gallery', 'news', 'documents'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tabName) {
                     btn.className = "flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg font-medium transition-all whitespace-nowrap bg-red-600 text-white shadow-md";
@@ -246,14 +255,9 @@
             
             if (tabName === 'program') renderProgram();
             else if (tabName === 'details') renderDetails();
-            else if (tabName === 'news') {
-                renderNewsSkeleton();
-                if (!newsLoaded) fetchNews(); else renderNews(window.cachedNews); 
-            }
-            else if (tabName === 'documents') {
-                renderDocsSkeleton();
-                if (!docsLoaded) fetchDocuments(); else renderDocuments(window.cachedDocs);
-            }
+            else if (tabName === 'news') { renderNewsSkeleton(); if (!newsLoaded) fetchNews(); else renderNews(window.cachedNews); }
+            else if (tabName === 'documents') { renderDocsSkeleton(); if (!docsLoaded) fetchDocuments(); else renderDocuments(window.cachedDocs); }
+            else if (tabName === 'gallery') { renderGallerySkeleton(); if (!galleryLoaded) fetchGallery(); else renderGallery(window.cachedPhotos); }
         }
 
         function renderProgram() {
@@ -276,154 +280,85 @@
             lucide.createIcons();
         }
 
-        // --- COMPREHENSIVE DETAILS RENDERER ---
         function renderDetails() {
             const container = document.getElementById('content-area');
             container.innerHTML = `
                 <div class="space-y-8 fade-in">
-                    
-                    <!-- 1. ALERT BANNER -->
                     <div class="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-xl shadow-sm">
-                        <h2 class="text-xl md:text-2xl font-bold text-red-700 mb-2 flex items-start gap-2">
-                            <i data-lucide="siren" class="w-6 h-6 shrink-0 mt-1"></i>
-                            মহাসংকটের মুখে দেশের স্বাস্থ্যখাত!
-                        </h2>
+                        <h2 class="text-xl md:text-2xl font-bold text-red-700 mb-2 flex items-start gap-2"><i data-lucide="siren" class="w-6 h-6 shrink-0 mt-1"></i> মহাসংকটের মুখে দেশের স্বাস্থ্যখাত!</h2>
                         <p class="font-semibold text-red-800">কর্মবিরতির আগেই মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের ১০ম গ্রেড নিশ্চিত করুন!</p>
                     </div>
-
-                    <!-- 2. ROLES & IMPORTANCE -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">স্বাস্থ্যসেবার 'অদৃশ্য ভিত্তি'</h3>
-                        <p class="text-slate-700 leading-relaxed mb-4">
-                            স্বাস্থ্যসেবা একটি "টিম ওয়ার্ক"। চিকিৎসক ও নার্সদের পাশাপাশি মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টরা অত্যন্ত গুরুত্বপূর্ণ ভূমিকা পালন করেন।
-                        </p>
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <h4 class="font-bold text-blue-800 mb-2"><i data-lucide="microscope" class="inline w-4 h-4"></i> মেডিকেল টেকনোলজিস্ট</h4>
-                                <ul class="text-sm text-slate-700 space-y-1 list-disc ml-4">
-                                    <li>রোগ নির্ণয়ে এক্স-রে, সিটি স্ক্যান, এমআরআই, রক্ত পরীক্ষা।</li>
-                                    <li>ক্যান্সার প্রতিরোধে রেডিওথেরাপি ও ফিজিওথেরাপি।</li>
-                                    <li>ডেন্টাল সেবায় সর্বাত্মক ভূমিকা।</li>
-                                </ul>
-                            </div>
-                            <div class="bg-green-50 p-4 rounded-lg">
-                                <h4 class="font-bold text-green-800 mb-2"><i data-lucide="pill" class="inline w-4 h-4"></i> ফার্মাসিস্ট</h4>
-                                <ul class="text-sm text-slate-700 space-y-1 list-disc ml-4">
-                                    <li>মেডিসিন স্টোরের দায়িত্ব ও ওষুধের চাহিদা প্রস্তুতকরণ।</li>
-                                    <li>মান নিয়ন্ত্রণ, সংরক্ষণ ও বিতরণ।</li>
-                                    <li>রোগীর সঠিক ডোজ ম্যানেজমেন্ট নিশ্চিত করা।</li>
-                                </ul>
-                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg"><h4 class="font-bold text-blue-800 mb-2">মেডিকেল টেকনোলজিস্ট</h4><ul class="text-sm text-slate-700 space-y-1 list-disc ml-4"><li>রোগ নির্ণয়ে এক্স-রে, সিটি স্ক্যান, রক্ত পরীক্ষা।</li><li>ক্যান্সার প্রতিরোধে রেডিওথেরাপি।</li></ul></div>
+                            <div class="bg-green-50 p-4 rounded-lg"><h4 class="font-bold text-green-800 mb-2">ফার্মাসিস্ট</h4><ul class="text-sm text-slate-700 space-y-1 list-disc ml-4"><li>ওষুধের মান নিয়ন্ত্রণ ও বিতরণ।</li><li>রোগীর সঠিক ডোজ নিশ্চিত করা।</li></ul></div>
                         </div>
                     </div>
-
-                    <!-- 3. DISCRIMINATION TABLE (The Missing Info) -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                            <i data-lucide="scale" class="text-purple-600"></i> বৈষম্যের চিত্র: অন্যরা পেল, আমরা কেন নই?
-                        </h3>
-                        <p class="text-sm text-slate-600 mb-4">সমযোগ্যতা সম্পন্ন অন্যান্য ডিপ্লোমাধারীদের ১০ম গ্রেড দেওয়া হলেও আমরা ৩১ বছর ধরে বঞ্চিত।</p>
-                        
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="scale" class="text-purple-600"></i> বৈষম্যের চিত্র</h3>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-slate-100 text-slate-700 uppercase font-bold">
-                                    <tr>
-                                        <th class="p-3">বছর</th>
-                                        <th class="p-3">পদবী</th>
-                                        <th class="p-3">স্ট্যাটাস</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    <tr>
-                                        <td class="p-3 font-mono">১৯৯৪</td>
-                                        <td class="p-3">ডিপ্লোমা ইঞ্জিনিয়ার (উপ-সহকারী প্রকৌশলী)</td>
-                                        <td class="p-3 text-green-600 font-bold"><i data-lucide="check" class="inline w-3 h-3"></i> ১০ম গ্রেড (২য় শ্রেণী) প্রাপ্ত</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-3 font-mono">২০১৭</td>
-                                        <td class="p-3">নার্সিং ডিপ্লোমাধারী</td>
-                                        <td class="p-3 text-green-600 font-bold"><i data-lucide="check" class="inline w-3 h-3"></i> ১০ম গ্রেড (২য় শ্রেণী) প্রাপ্ত</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="p-3 font-mono">২০১৮</td>
-                                        <td class="p-3">কৃষি ডিপ্লোমাধারী</td>
-                                        <td class="p-3 text-green-600 font-bold"><i data-lucide="check" class="inline w-3 h-3"></i> ১০ম গ্রেড প্রাপ্ত</td>
-                                    </tr>
-                                    <tr class="bg-red-50">
-                                        <td class="p-3 font-mono text-red-600 font-bold">২০২৪</td>
-                                        <td class="p-3 font-bold">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট</td>
-                                        <td class="p-3 text-red-600 font-bold"><i data-lucide="x" class="inline w-3 h-3"></i> আজও বঞ্চিত (১১তম গ্রেড)</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <table class="w-full text-sm text-left"><thead class="bg-slate-100 text-slate-700 uppercase font-bold"><tr><th class="p-3">বছর</th><th class="p-3">পদবী</th><th class="p-3">স্ট্যাটাস</th></tr></thead><tbody class="divide-y divide-slate-100"><tr><td class="p-3 font-mono">১৯৯৪</td><td class="p-3">ডিপ্লোমা ইঞ্জিনিয়ার</td><td class="p-3 text-green-600 font-bold">১০ম গ্রেড প্রাপ্ত</td></tr><tr><td class="p-3 font-mono">২০১৭</td><td class="p-3">নার্সিং ডিপ্লোমাধারী</td><td class="p-3 text-green-600 font-bold">১০ম গ্রেড প্রাপ্ত</td></tr><tr><td class="p-3 font-mono">২০১৮</td><td class="p-3">কৃষি ডিপ্লোমাধারী</td><td class="p-3 text-green-600 font-bold">১০ম গ্রেড প্রাপ্ত</td></tr><tr class="bg-red-50"><td class="p-3 font-mono text-red-600 font-bold">২০২৪</td><td class="p-3 font-bold">মেডিকেল টেকনোলজিস্ট</td><td class="p-3 text-red-600 font-bold">আজও বঞ্চিত</td></tr></tbody></table>
                         </div>
                     </div>
-
-                    <!-- 4. HISTORY -->
                     <div class="bg-slate-100 p-6 rounded-xl border border-slate-200">
-                        <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                            <i data-lucide="history" class="text-slate-600"></i> ৩১ বছরের বঞ্চনার ইতিহাস
-                        </h3>
-                        <p class="text-slate-700 text-sm leading-relaxed">
-                            স্বাধীনতা পরবর্তী সময়ে এ পেশার পথচলা শুরু হলেও ১৯৮৯ পরবর্তী সময়ে ১০ম গ্রেড পদমর্যাদা বাস্তবায়িত হয়নি। ১৪/১২/২০০৩ তারিখে প্রশাসনিক উন্নয়ন সংক্রান্ত সচিব কমিটিতে ১০ম গ্রেডে উন্নীতকরণের সুপারিশ উপস্থাপন হলেও আমলাতান্ত্রিক জটিলতায় তা আজও বাস্তবায়িত হয়নি।
-                        </p>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2"><i data-lucide="history" class="text-slate-600"></i> ৩১ বছরের বঞ্চনার ইতিহাস</h3>
+                        <p class="text-slate-700 text-sm leading-relaxed">স্বাধীনতা পরবর্তী সময়ে এ পেশার পথচলা শুরু হলেও ১৯৮৯ পরবর্তী সময়ে ১০ম গ্রেড পদমর্যাদা বাস্তবায়িত হয়নি। ১৪/১২/২০০৩ তারিখে প্রশাসনিক উন্নয়ন সংক্রান্ত সচিব কমিটিতে সুপারিশ উপস্থাপন হলেও আমলাতান্ত্রিক জটিলতায় তা আজও বাস্তবায়িত হয়নি।</p>
                     </div>
-
-                    <!-- 5. CONSEQUENCES (User's Text) -->
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i data-lucide="alert-triangle" class="text-orange-500"></i>
-                            কর্মবিরতি হলে যা যা ঘটবে:
-                        </h3>
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="alert-triangle" class="text-orange-500"></i> কর্মবিরতির ফলাফল:</h3>
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div class="bg-white p-5 rounded-xl border border-red-100 shadow-sm">
-                                <h4 class="font-bold text-red-700 mb-2 flex items-center gap-2">১. ব্লাড ব্যাংকে বিপর্যয়</h4>
-                                <p class="text-sm text-slate-600">রক্তের গ্রুপিং ও ক্রস-ম্যাচিং বন্ধ হলে সড়ক দুর্ঘটনা ও থ্যালাসেমিয়া রোগীদের জীবন বিপন্ন হবে।</p>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border border-orange-100 shadow-sm">
-                                <h4 class="font-bold text-orange-700 mb-2 flex items-center gap-2">২. রোগ নির্ণয়ে অন্ধকার</h4>
-                                <p class="text-sm text-slate-600">ল্যাব বন্ধ থাকলে চিকিৎসকরা রোগ নির্ণয়ে অক্ষম হবেন। ভুল চিকিৎসায় রোগীর অবনতি হতে পারে।</p>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
-                                <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">৩. ওষুধ সরবরাহে সমস্যা</h4>
-                                <p class="text-sm text-slate-600">ফার্মাসিস্ট ছাড়া ইনপেশেন্টদের ডোজ ম্যানেজমেন্ট ও মান নিয়ন্ত্রণ ভেঙে পড়বে।</p>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border border-purple-100 shadow-sm">
-                                <h4 class="font-bold text-purple-700 mb-2 flex items-center gap-2">৪. ইমেজিং সেবা বন্ধ</h4>
-                                <p class="text-sm text-slate-600">এক্স-রে, সিটি স্ক্যান, এমআরআই বন্ধ থাকলে স্ট্রোক রোগীদের বাঁচানো কঠিন হবে।</p>
-                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-red-100 shadow-sm"><h4 class="font-bold text-red-700 mb-2">১. ব্লাড ব্যাংকে বিপর্যয়</h4><p class="text-sm text-slate-600">রক্তের গ্রুপিং বন্ধ হলে থ্যালাসেমিয়া রোগীদের জীবন বিপন্ন হবে।</p></div>
+                            <div class="bg-white p-5 rounded-xl border border-orange-100 shadow-sm"><h4 class="font-bold text-orange-700 mb-2">২. রোগ নির্ণয়ে অন্ধকার</h4><p class="text-sm text-slate-600">ল্যাব বন্ধ থাকলে চিকিৎসকরা রোগ নির্ণয়ে অক্ষম হবেন।</p></div>
+                            <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm"><h4 class="font-bold text-blue-700 mb-2">৩. ওষুধ সরবরাহে সমস্যা</h4><p class="text-sm text-slate-600">ইনপেশেন্টদের ডোজ ম্যানেজমেন্ট ভেঙে পড়বে।</p></div>
+                            <div class="bg-white p-5 rounded-xl border border-purple-100 shadow-sm"><h4 class="font-bold text-purple-700 mb-2">৪. ইমেজিং সেবা বন্ধ</h4><p class="text-sm text-slate-600">সিটি স্ক্যান, এমআরআই বন্ধ থাকলে স্ট্রোক রোগীদের বাঁচানো কঠিন হবে।</p></div>
                         </div>
                     </div>
-
-                    <!-- 6. FINAL DEMAND -->
                     <div class="bg-slate-800 text-white p-6 rounded-xl shadow-lg">
-                        <div class="bg-white/10 p-4 rounded-lg border-l-4 border-yellow-400">
-                            <p class="font-bold text-yellow-100 mb-1 text-lg">আমাদের দাবি:</p>
-                            <p class="opacity-90 leading-relaxed">
-                                জনগণের ভোগান্তি ও প্রাণহানি এড়াতে, কালক্ষেপণ না করে অবিলম্বে মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের <span class="text-yellow-400 font-bold">১০ম গ্রেড</span> বাস্তবায়ন করুন। স্বাস্থ্যখাত সচল রাখতে আমাদের দাবি মানার বিকল্প নেই।
-                            </p>
-                        </div>
+                        <div class="bg-white/10 p-4 rounded-lg border-l-4 border-yellow-400"><p class="font-bold text-yellow-100 mb-1 text-lg">দাবি:</p><p class="opacity-90 leading-relaxed">জনগণের ভোগান্তি এড়াতে অবিলম্বে মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের <span class="text-yellow-400 font-bold">১০ম গ্রেড</span> বাস্তবায়ন করুন।</p></div>
                     </div>
                 </div>
             `;
             lucide.createIcons();
         }
 
-        // --- NEWS FUNCTIONS ---
-        function renderNewsSkeleton() {
-            document.getElementById('content-area').innerHTML = `<div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in"><div class="p-4 border-b bg-slate-50 flex justify-between items-center"><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="newspaper" class="text-green-600"></i> আপডেট</h3><button disabled class="opacity-50 bg-green-600 text-white px-4 py-2 rounded-lg text-sm">রিফ্রেশ</button></div><div class="p-12 text-center text-slate-500"><div class="animate-spin w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div><p>তথ্য খোঁজা হচ্ছে...</p></div></div>`;
+        // --- GALLERY ---
+        function renderGallerySkeleton() { document.getElementById('content-area').innerHTML = `<div class="bg-white rounded-xl shadow-md p-12 text-center"><div class="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full mx-auto mb-2"></div><p class="text-slate-500">ছবি লোড হচ্ছে...</p></div>`; lucide.createIcons(); }
+        function renderGallery(photos) {
+            const container = document.getElementById('content-area');
+            if (!photos.length) { container.innerHTML = `<div class="bg-white rounded-xl p-8 text-center shadow"><p class="text-slate-500">কোনো ছবি পাওয়া যায়নি।</p><button onclick="fetchGallery()" class="mt-4 text-purple-600 underline">আবার চেষ্টা করুন</button></div>`; return; }
+            let galleryHtml = '';
+            photos.forEach(photo => {
+                let imgUrl = photo.thumbnailLink ? photo.thumbnailLink.replace(/=s\d+/, '=s600-c') : ''; 
+                galleryHtml += `<div class="gallery-item relative group aspect-square overflow-hidden rounded-lg bg-gray-100 cursor-pointer shadow-sm hover:shadow-lg" onclick="window.open('${photo.webViewLink}', '_blank')"><img src="${imgUrl}" alt="${photo.name}" class="gallery-img object-cover w-full h-full" loading="lazy"><div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4"><p class="text-white text-xs flex items-center gap-2"><i data-lucide="maximize-2" class="w-3 h-3"></i> বড় করে দেখুন</p></div></div>`;
+            });
+            container.innerHTML = `<div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in"><div class="p-4 border-b bg-slate-50 flex justify-between items-center"><div><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="image" class="text-purple-600"></i> আন্দোলনের চিত্র</h3><p class="text-xs text-slate-500">ফটো অ্যালবাম</p></div><button onclick="fetchGallery()" class="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm">রিফ্রেশ</button></div><div class="p-4"><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">${galleryHtml}</div></div><div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t">মোট ছবি: ${toBanglaDigits(photos.length)} টি</div></div>`;
             lucide.createIcons();
         }
+        async function fetchGallery() {
+            renderGallerySkeleton();
+            const url = `https://www.googleapis.com/drive/v3/files?q='${GALLERY_FOLDER_ID}'+in+parents+and+trashed=false+and+mimeType+contains+'image/'&key=${DRIVE_API_KEY}&fields=files(id,name,thumbnailLink,webViewLink)&orderBy=createdTime desc`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                window.cachedPhotos = data.files || [];
+                galleryLoaded = true; renderGallery(window.cachedPhotos);
+            } catch (err) { console.error(err); document.getElementById('content-area').innerHTML = `<div class="p-8 text-center text-red-500">ছবি লোড করা যায়নি।</div>`; }
+        }
+
+        // --- NEWS ---
+        function renderNewsSkeleton() { document.getElementById('content-area').innerHTML = `<div class="bg-white rounded-xl shadow-md p-12 text-center"><div class="animate-spin w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div><p class="text-slate-500">তথ্য খোঁজা হচ্ছে...</p></div>`; lucide.createIcons(); }
         function renderNews(articles) {
             const container = document.getElementById('content-area');
-            if (!articles.length) { container.innerHTML = `<div class="bg-white rounded-xl p-8 text-center shadow"><p class="text-slate-500">কোনো নিউজ পাওয়া যায়নি।</p><button onclick="fetchNews()" class="mt-4 text-blue-600 hover:underline">আবার চেষ্টা করুন</button></div>`; return; }
+            if (!articles.length) { container.innerHTML = `<div class="bg-white rounded-xl p-8 text-center shadow"><p class="text-slate-500">কোনো নিউজ পাওয়া যায়নি।</p><button onclick="fetchNews()" class="mt-4 text-blue-600 underline">আবার চেষ্টা করুন</button></div>`; return; }
             let rows = '';
             articles.forEach(news => {
                 const date = new Date(news.pubDate);
                 const dateStr = isNaN(date) ? "তারিখ নেই" : toBanglaDigits(date.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }));
                 rows += `<tr class="hover:bg-green-50/50 transition-colors border-b border-slate-100 last:border-0"><td class="p-4 whitespace-nowrap text-slate-500 text-xs md:text-sm">${dateStr}</td><td class="p-4 font-semibold text-slate-800 text-sm md:text-base">${news.title}</td><td class="p-4 text-center"><a href="${news.link}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition"><i data-lucide="external-link" class="w-3 h-3"></i></a></td></tr>`;
             });
-            container.innerHTML = `<div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in"><div class="p-4 border-b bg-slate-50 flex justify-between items-center gap-4"><div><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="newspaper" class="text-green-600 w-5 h-5"></i> নিউজ আপডেট</h3><p class="text-xs text-slate-500">বিভিন্ন অনলাইন নিউজ পোর্টাল থেকে সংগৃহীত</p></div><button onclick="fetchNews()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> রিফ্রেশ করুন</button></div><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b"><tr><th class="p-4 font-bold">তারিখ</th><th class="p-4 font-bold">খবরের শিরোনাম</th><th class="p-4 font-bold text-center">লিংক</th></tr></thead><tbody>${rows}</tbody></table></div><div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t">মোট নিউজ: ${toBanglaDigits(articles.length)} টি</div></div>`;
+            container.innerHTML = `<div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in"><div class="p-4 border-b bg-slate-50 flex justify-between items-center"><div><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="newspaper" class="text-green-600"></i> নিউজ আপডেট</h3><p class="text-xs text-slate-500">সংগৃহীত খবর</p></div><button onclick="fetchNews()" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm">রিফ্রেশ</button></div><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b"><tr><th class="p-4 font-bold">তারিখ</th><th class="p-4 font-bold">শিরোনাম</th><th class="p-4 font-bold text-center">লিংক</th></tr></thead><tbody>${rows}</tbody></table></div><div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t">মোট নিউজ: ${toBanglaDigits(articles.length)} টি</div></div>`;
             lucide.createIcons();
         }
         async function fetchNews() {
@@ -431,137 +366,45 @@
             const queries = ["মেডিকেল টেকনোলজিস্ট ১০ম গ্রেড", "ফার্মাসিস্ট ১০ম গ্রেড", "স্বাস্থ্য বিভাগ আন্দোলন", "Diploma Medical Technologist", "Medical Technologist 10th Grade BD"];
             let allArticles = []; let seenLinks = new Set();
             try {
-                const promises = queries.map(q => {
-                    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=bn&gl=BD&ceid=BD:bn`;
-                    return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`).then(res => res.json()).then(data => data.items || []).catch(err => []);
-                });
+                const promises = queries.map(q => fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=bn&gl=BD&ceid=BD:bn`)}`).then(r=>r.json()).then(d=>d.items||[]).catch(e=>[]));
                 const results = await Promise.all(promises);
                 results.flat().forEach(item => { if (!seenLinks.has(item.link) && item.title) { seenLinks.add(item.link); allArticles.push(item); } });
                 allArticles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
                 window.cachedNews = allArticles; newsLoaded = true; renderNews(allArticles);
-            } catch (err) { console.error(err); document.getElementById('content-area').innerHTML = `<div class="p-8 text-center text-red-500">ডাটা লোড করা যায়নি।</div>`; }
+            } catch (err) { document.getElementById('content-area').innerHTML = `<div class="p-8 text-center text-red-500">ডাটা লোড করা যায়নি।</div>`; }
         }
 
-        // --- GOOGLE DRIVE DOCUMENTS FUNCTIONS ---
-        function renderDocsSkeleton() {
-            document.getElementById('content-area').innerHTML = `
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in">
-                    <div class="p-4 border-b bg-slate-50 flex justify-between items-center">
-                         <h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="folder-open" class="text-blue-600"></i> ডকুমেন্টস</h3>
-                         <button disabled class="opacity-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">রিফ্রেশ</button>
-                    </div>
-                    <div class="p-12 text-center text-slate-500">
-                        <div class="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div>
-                        <p>ফাইল লোড হচ্ছে...</p>
-                    </div>
-                </div>
-            `;
-            lucide.createIcons();
-        }
-
+        // --- DOCUMENTS ---
+        function renderDocsSkeleton() { document.getElementById('content-area').innerHTML = `<div class="bg-white rounded-xl shadow-md p-12 text-center"><div class="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div><p class="text-slate-500">ফাইল লোড হচ্ছে...</p></div>`; lucide.createIcons(); }
         function renderDocuments(files) {
             const container = document.getElementById('content-area');
-            if (!files || files.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-xl p-8 text-center shadow">
-                        <i data-lucide="folder-x" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
-                        <p class="text-slate-500">কোনো ফাইল পাওয়া যায়নি।</p>
-                        <button onclick="fetchDocuments()" class="mt-4 text-blue-600 hover:underline">আবার চেষ্টা করুন</button>
-                    </div>`;
-                lucide.createIcons();
-                return;
-            }
-
+            if (!files.length) { container.innerHTML = `<div class="bg-white rounded-xl p-8 text-center shadow"><p class="text-slate-500">কোনো ফাইল পাওয়া যায়নি।</p><button onclick="fetchDocuments()" class="mt-4 text-blue-600 underline">আবার চেষ্টা করুন</button></div>`; return; }
             let rows = '';
             files.forEach(file => {
                 const date = new Date(file.createdTime);
                 const dateStr = isNaN(date) ? "তারিখ নেই" : toBanglaDigits(date.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }));
                 
-                // Determine icon based on mimeType
-                let icon = 'file';
-                let iconColor = 'text-slate-500';
+                let icon = 'file'; let iconColor = 'text-slate-500';
                 if (file.mimeType.includes('pdf')) { icon = 'file-text'; iconColor = 'text-red-500'; }
-                else if (file.mimeType.includes('image')) { icon = 'image'; iconColor = 'text-purple-500'; }
-                else if (file.mimeType.includes('spreadsheet') || file.mimeType.includes('excel')) { icon = 'table'; iconColor = 'text-green-500'; }
-                else if (file.mimeType.includes('document') || file.mimeType.includes('word')) { icon = 'file-type-2'; iconColor = 'text-blue-500'; }
+                else if (file.mimeType.includes('image')) { icon = 'image'; iconColor = 'text-purple-600'; }
+                else if (file.mimeType.includes('spreadsheet') || file.mimeType.includes('excel')) { icon = 'table'; iconColor = 'text-green-600'; }
+                else if (file.mimeType.includes('word') || file.mimeType.includes('document')) { icon = 'file-type-2'; iconColor = 'text-blue-600'; }
+                else if (file.mimeType.includes('presentation') || file.mimeType.includes('powerpoint')) { icon = 'presentation'; iconColor = 'text-orange-500'; }
 
-                rows += `
-                    <tr class="hover:bg-blue-50/50 transition-colors border-b border-slate-100 last:border-0">
-                        <td class="p-4 whitespace-nowrap text-slate-500 text-xs md:text-sm">${dateStr}</td>
-                        <td class="p-4 font-semibold text-slate-800 text-sm md:text-base flex items-center gap-3">
-                            <i data-lucide="${icon}" class="w-5 h-5 ${iconColor} shrink-0"></i>
-                            ${file.name}
-                        </td>
-                        <td class="p-4 text-center">
-                            <a href="${file.webViewLink}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition" title="ডাউনলোড/দেখুন">
-                                <i data-lucide="download-cloud" class="w-4 h-4"></i>
-                            </a>
-                        </td>
-                    </tr>
-                `;
+                rows += `<tr class="hover:bg-blue-50/50 transition-colors border-b border-slate-100 last:border-0"><td class="p-4 whitespace-nowrap text-slate-500 text-xs md:text-sm">${dateStr}</td><td class="p-4 font-semibold text-slate-800 text-sm md:text-base flex items-center gap-3"><i data-lucide="${icon}" class="w-5 h-5 ${iconColor} shrink-0"></i>${file.name}</td><td class="p-4 text-center"><a href="${file.webViewLink}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition"><i data-lucide="download-cloud" class="w-4 h-4"></i></a></td></tr>`;
             });
-
-            container.innerHTML = `
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in">
-                    <div class="p-4 border-b bg-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <h3 class="font-bold text-lg flex items-center gap-2">
-                                <i data-lucide="folder-open" class="text-blue-600 w-5 h-5"></i> প্রয়োজনীয় ডকুমেন্টস
-                            </h3>
-                            <p class="text-xs text-slate-500">গুগল ড্রাইভ থেকে সংগৃহীত</p>
-                        </div>
-                        <button onclick="fetchDocuments()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> রিফ্রেশ করুন
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b">
-                                <tr>
-                                    <th class="p-4 font-bold">তারিখ</th>
-                                    <th class="p-4 font-bold">ফাইলের নাম</th>
-                                    <th class="p-4 font-bold text-center">ডাউনলোড</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                    <div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t">
-                        মোট ফাইল: ${toBanglaDigits(files.length)} টি
-                    </div>
-                </div>
-            `;
+            container.innerHTML = `<div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 fade-in"><div class="p-4 border-b bg-slate-50 flex justify-between items-center gap-4"><div><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="folder-open" class="text-blue-600 w-5 h-5"></i> প্রয়োজনীয় ডকুমেন্টস</h3><p class="text-xs text-slate-500">গুগল ড্রাইভ থেকে সংগৃহীত</p></div><button onclick="fetchDocuments()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4"></i> রিফ্রেশ করুন</button></div><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-600 text-xs uppercase border-b"><tr><th class="p-4 font-bold">তারিখ</th><th class="p-4 font-bold">ফাইলের নাম</th><th class="p-4 font-bold text-center">ডাউনলোড</th></tr></thead><tbody>${rows}</tbody></table></div><div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t">মোট ফাইল: ${toBanglaDigits(files.length)} টি</div></div>`;
             lucide.createIcons();
         }
-
         async function fetchDocuments() {
             renderDocsSkeleton();
-            const folderId = '1iOLo7X21ClBbU6NSh1xfFTMbnZxSst_M';
-            const apiKey = 'AIzaSyBtzPsyjBlLM2vlCqCByhD03SgWmshQcV4';
-            const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&key=${apiKey}&fields=files(id,name,createdTime,webViewLink,mimeType,size)&orderBy=createdTime desc`;
-
+            const url = `https://www.googleapis.com/drive/v3/files?q='${DOCS_FOLDER_ID}'+in+parents+and+trashed=false&key=${DRIVE_API_KEY}&fields=files(id,name,createdTime,webViewLink,mimeType,size)&orderBy=createdTime desc`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-
-                const files = data.files || [];
-                window.cachedDocs = files;
-                docsLoaded = true;
-                renderDocuments(files);
-
-            } catch (err) {
-                console.error("Drive API Error:", err);
-                document.getElementById('content-area').innerHTML = `
-                    <div class="p-8 text-center text-red-500 bg-red-50 m-4 rounded-lg border border-red-100">
-                        <p>ফাইল লোড করতে সমস্যা হয়েছে।</p>
-                        <p class="text-xs mt-1 text-red-400">Error: ${err.message}</p>
-                        <button onclick="fetchDocuments()" class="mt-2 text-sm underline hover:text-red-700">আবার চেষ্টা করুন</button>
-                    </div>`;
-            }
+                if (data.error) throw new Error(data.error.message);
+                window.cachedDocs = data.files || []; docsLoaded = true; renderDocuments(window.cachedDocs);
+            } catch (err) { document.getElementById('content-area').innerHTML = `<div class="p-8 text-center text-red-500">ফাইল লোড করা যায়নি।</div>`; }
         }
 
         window.onload = init;
