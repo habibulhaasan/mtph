@@ -16,15 +16,10 @@
         body { font-family: 'Hind Siliguri', sans-serif; }
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
-        .animate-blob { animation: blob 7s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
         
-        /* Scrollbar hiding */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Footer & Gallery Styles */
         .footer-phone-btn {
             display: flex; align-items: center; gap: 0.5rem;
             background-color: #1e293b; color: #cbd5e1;
@@ -32,18 +27,112 @@
             border: 1px solid #334155; transition: all 0.2s;
             font-size: 0.875rem; font-family: monospace;
         }
-        .footer-phone-btn:hover {
-            background-color: #334155; color: white;
-            border-color: #22c55e;
-        }
+        .footer-phone-btn:hover { background-color: #334155; color: white; border-color: #22c55e; }
+        
         .gallery-img { transition: transform 0.3s ease; }
         .gallery-item:hover .gallery-img { transform: scale(1.05); }
+
+        /* --- WAVY ANIMATION FOR FAB --- */
+        .fab-pulse-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fab-pulse-wrapper::before,
+        .fab-pulse-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(220, 38, 38, 0.6); /* Red Color */
+            z-index: -1;
+            animation: wave 2.5s infinite linear;
+        }
+        
+        .fab-pulse-wrapper::after {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes wave {
+            0% { width: 100%; height: 100%; opacity: 1; border-width: 2px; }
+            100% { width: 220%; height: 220%; opacity: 0; border-width: 0px; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative">
+
+    <!-- SUPER SMART FAB MENU -->
+    <div class="fixed bottom-8 right-6 z-50 flex flex-col items-end gap-3">
+        
+        <!-- Hidden Menu Items Container -->
+        <div id="fab-menu" class="flex flex-col items-end gap-3 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none pb-2">
+            
+            <!-- 1. Upload (Red) -->
+            <a href="https://mtph-protest.netlify.app/upload.html" class="flex items-center gap-3 group cursor-pointer">
+                <span class="bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg group-hover:scale-105 transition-transform">ছবি আপলোড</span>
+                <div class="bg-red-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-red-700 transition-colors border border-white">
+                    <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                </div>
+            </a>
+
+            <!-- 2. News (Green) -->
+            <button onclick="handleFabClick('news')" class="flex items-center gap-3 group">
+                <span class="bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg group-hover:scale-105 transition-transform">নিউজ আপডেট</span>
+                <div class="bg-green-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-colors border border-white">
+                    <i data-lucide="newspaper" class="w-5 h-5"></i>
+                </div>
+            </button>
+
+            <!-- 3. Documents (Blue) -->
+            <button onclick="handleFabClick('documents')" class="flex items-center gap-3 group">
+                <span class="bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg group-hover:scale-105 transition-transform">ডকুমেন্টস</span>
+                <div class="bg-blue-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors border border-white">
+                    <i data-lucide="folder-open" class="w-5 h-5"></i>
+                </div>
+            </button>
+
+            <!-- 4. Gallery (Purple) -->
+            <button onclick="handleFabClick('gallery')" class="flex items-center gap-3 group">
+                <span class="bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg group-hover:scale-105 transition-transform">ফটোগ্যালারি</span>
+                <div class="bg-purple-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-purple-700 transition-colors border border-white">
+                    <i data-lucide="image" class="w-5 h-5"></i>
+                </div>
+            </button>
+
+            <!-- 5. Details (Teal) -->
+            <button onclick="handleFabClick('details')" class="flex items-center gap-3 group">
+                <span class="bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg group-hover:scale-105 transition-transform">দাবিসমূহ</span>
+                <div class="bg-teal-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-teal-700 transition-colors border border-white">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                </div>
+            </button>
+
+            <!-- 6. Program (Indigo) -->
+            <button onclick="handleFabClick('program')" class="flex items-center gap-3 group">
+                <span class="bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-lg group-hover:scale-105 transition-transform">কর্মসূচি</span>
+                <div class="bg-indigo-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-colors border border-white">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </div>
+            </button>
+
+        </div>
+
+        <!-- Main Trigger Button with Wavy Animation -->
+        <div class="fab-pulse-wrapper">
+            <button id="fab-main-btn" onclick="toggleFab()" class="bg-slate-900 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-slate-800 transition-all relative z-50 border-2 border-slate-700 active:scale-95">
+                <i data-lucide="plus" class="w-8 h-8 transition-transform duration-300" id="fab-icon"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
+    <header class="bg-white shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="bg-red-600 text-white p-2 rounded-lg">
@@ -171,8 +260,8 @@
     <!-- Logic -->
     <script>
         // --- Config ---
-        const DOCS_FOLDER_ID = '1KIl8P8MI0W5ivz320a-1IvphXbTCHE4H'; // Document Folder
-        const GALLERY_FOLDER_ID = '1iOLo7X21ClBbU6NSh1xfFTMbnZxSst_M'; // Gallery Folder
+        const DOCS_FOLDER_ID = '1KIl8P8MI0W5ivz320a-1IvphXbTCHE4H';
+        const GALLERY_FOLDER_ID = '1iOLo7X21ClBbU6NSh1xfFTMbnZxSst_M';
         const DRIVE_API_KEY = 'AIzaSyBtzPsyjBlLM2vlCqCByhD03SgWmshQcV4';
 
         // --- Helpers ---
@@ -200,6 +289,7 @@
         let newsLoaded = false; window.cachedNews = [];
         let docsLoaded = false; window.cachedDocs = [];
         let galleryLoaded = false; window.cachedPhotos = [];
+        let fabOpen = false;
 
         function init() {
             lucide.createIcons();
@@ -237,6 +327,26 @@
                 titleEl.innerText = "সকল কর্মসূচি সমাপ্ত";
                 ['cd-days', 'cd-hours', 'cd-minutes', 'cd-seconds'].forEach(id => document.getElementById(id).innerText = '০০');
             }
+        }
+
+        // --- FAB Logic ---
+        function toggleFab() {
+            fabOpen = !fabOpen;
+            const menu = document.getElementById('fab-menu');
+            const icon = document.getElementById('fab-icon');
+            
+            if(fabOpen) {
+                menu.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+                icon.classList.add('rotate-45');
+            } else {
+                menu.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+                icon.classList.remove('rotate-45');
+            }
+        }
+
+        function handleFabClick(tab) {
+            toggleFab(); // close menu
+            switchTab(tab); // navigate
         }
 
         function switchTab(tabName) {
@@ -290,6 +400,7 @@
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">স্বাস্থ্যসেবার 'অদৃশ্য ভিত্তি'</h3>
+                        <p class="text-slate-700 mb-4">মেডিকেল টেকনোলজিস্ট (এমটি) এবং ফার্মাসিস্টরা স্বাস্থ্যখাতের 'অদৃশ্য ভিত্তি'। এক অকুতোভয় সৈনিক।</p>
                         <div class="grid md:grid-cols-2 gap-4">
                             <div class="bg-blue-50 p-4 rounded-lg"><h4 class="font-bold text-blue-800 mb-2">মেডিকেল টেকনোলজিস্ট</h4><ul class="text-sm text-slate-700 space-y-1 list-disc ml-4"><li>রোগ নির্ণয়ে এক্স-রে, সিটি স্ক্যান, রক্ত পরীক্ষা।</li><li>ক্যান্সার প্রতিরোধে রেডিওথেরাপি।</li></ul></div>
                             <div class="bg-green-50 p-4 rounded-lg"><h4 class="font-bold text-green-800 mb-2">ফার্মাসিস্ট</h4><ul class="text-sm text-slate-700 space-y-1 list-disc ml-4"><li>ওষুধের মান নিয়ন্ত্রণ ও বিতরণ।</li><li>রোগীর সঠিক ডোজ নিশ্চিত করা।</li></ul></div>
@@ -374,7 +485,7 @@
             } catch (err) { document.getElementById('content-area').innerHTML = `<div class="p-8 text-center text-red-500">ডাটা লোড করা যায়নি।</div>`; }
         }
 
-        // --- DOCUMENTS ---
+        // --- DOCUMENTS (UPDATED TO INCLUDE IMAGES) ---
         function renderDocsSkeleton() { document.getElementById('content-area').innerHTML = `<div class="bg-white rounded-xl shadow-md p-12 text-center"><div class="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div><p class="text-slate-500">ফাইল লোড হচ্ছে...</p></div>`; lucide.createIcons(); }
         function renderDocuments(files) {
             const container = document.getElementById('content-area');
@@ -386,8 +497,8 @@
                 
                 let icon = 'file'; let iconColor = 'text-slate-500';
                 if (file.mimeType.includes('pdf')) { icon = 'file-text'; iconColor = 'text-red-500'; }
-                else if (file.mimeType.includes('image')) { icon = 'image'; iconColor = 'text-purple-600'; }
-                else if (file.mimeType.includes('spreadsheet') || file.mimeType.includes('excel')) { icon = 'table'; iconColor = 'text-green-600'; }
+                else if (file.mimeType.includes('image')) { icon = 'image'; iconColor = 'text-purple-500'; }
+                else if (file.mimeType.includes('spreadsheet') || file.mimeType.includes('excel')) { icon = 'table'; iconColor = 'text-green-500'; }
                 else if (file.mimeType.includes('word') || file.mimeType.includes('document')) { icon = 'file-type-2'; iconColor = 'text-blue-600'; }
                 else if (file.mimeType.includes('presentation') || file.mimeType.includes('powerpoint')) { icon = 'presentation'; iconColor = 'text-orange-500'; }
 
@@ -398,6 +509,7 @@
         }
         async function fetchDocuments() {
             renderDocsSkeleton();
+            // Removed MIME type restriction to allow images
             const url = `https://www.googleapis.com/drive/v3/files?q='${DOCS_FOLDER_ID}'+in+parents+and+trashed=false&key=${DRIVE_API_KEY}&fields=files(id,name,createdTime,webViewLink,mimeType,size)&orderBy=createdTime desc`;
             try {
                 const response = await fetch(url);
