@@ -276,9 +276,136 @@
             lucide.createIcons();
         }
 
+        // --- COMPREHENSIVE DETAILS RENDERER ---
         function renderDetails() {
             const container = document.getElementById('content-area');
-            container.innerHTML = `<div class="space-y-6 fade-in"><div class="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-xl shadow-sm"><h2 class="text-xl md:text-2xl font-bold text-red-700 mb-2 flex items-start gap-2"><i data-lucide="siren" class="w-6 h-6 shrink-0 mt-1"></i> মহাসংকটের মুখে দেশের স্বাস্থ্যখাত!</h2><p class="font-semibold text-red-800">কর্মবিরতির আগেই ১০ম গ্রেড নিশ্চিত করুন!</p></div><div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"><p class="text-slate-700 leading-relaxed text-lg">মেডিকেল টেকনোলজিস্ট (এমটি) এবং ফার্মাসিস্টরা স্বাস্থ্যখাতের <span class="font-bold text-slate-900">'অদৃশ্য ভিত্তি'</span>।...</p></div></div>`;
+            container.innerHTML = `
+                <div class="space-y-8 fade-in">
+                    
+                    <!-- 1. ALERT BANNER -->
+                    <div class="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-xl shadow-sm">
+                        <h2 class="text-xl md:text-2xl font-bold text-red-700 mb-2 flex items-start gap-2">
+                            <i data-lucide="siren" class="w-6 h-6 shrink-0 mt-1"></i>
+                            মহাসংকটের মুখে দেশের স্বাস্থ্যখাত!
+                        </h2>
+                        <p class="font-semibold text-red-800">কর্মবিরতির আগেই মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের ১০ম গ্রেড নিশ্চিত করুন!</p>
+                    </div>
+
+                    <!-- 2. ROLES & IMPORTANCE -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">স্বাস্থ্যসেবার 'অদৃশ্য ভিত্তি'</h3>
+                        <p class="text-slate-700 leading-relaxed mb-4">
+                            স্বাস্থ্যসেবা একটি "টিম ওয়ার্ক"। চিকিৎসক ও নার্সদের পাশাপাশি মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টরা অত্যন্ত গুরুত্বপূর্ণ ভূমিকা পালন করেন।
+                        </p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-blue-800 mb-2"><i data-lucide="microscope" class="inline w-4 h-4"></i> মেডিকেল টেকনোলজিস্ট</h4>
+                                <ul class="text-sm text-slate-700 space-y-1 list-disc ml-4">
+                                    <li>রোগ নির্ণয়ে এক্স-রে, সিটি স্ক্যান, এমআরআই, রক্ত পরীক্ষা।</li>
+                                    <li>ক্যান্সার প্রতিরোধে রেডিওথেরাপি ও ফিজিওথেরাপি।</li>
+                                    <li>ডেন্টাল সেবায় সর্বাত্মক ভূমিকা।</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-green-800 mb-2"><i data-lucide="pill" class="inline w-4 h-4"></i> ফার্মাসিস্ট</h4>
+                                <ul class="text-sm text-slate-700 space-y-1 list-disc ml-4">
+                                    <li>মেডিসিন স্টোরের দায়িত্ব ও ওষুধের চাহিদা প্রস্তুতকরণ।</li>
+                                    <li>মান নিয়ন্ত্রণ, সংরক্ষণ ও বিতরণ।</li>
+                                    <li>রোগীর সঠিক ডোজ ম্যানেজমেন্ট নিশ্চিত করা।</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. DISCRIMINATION TABLE (The Missing Info) -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
+                            <i data-lucide="scale" class="text-purple-600"></i> বৈষম্যের চিত্র: অন্যরা পেল, আমরা কেন নই?
+                        </h3>
+                        <p class="text-sm text-slate-600 mb-4">সমযোগ্যতা সম্পন্ন অন্যান্য ডিপ্লোমাধারীদের ১০ম গ্রেড দেওয়া হলেও আমরা ৩১ বছর ধরে বঞ্চিত।</p>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-100 text-slate-700 uppercase font-bold">
+                                    <tr>
+                                        <th class="p-3">বছর</th>
+                                        <th class="p-3">পদবী</th>
+                                        <th class="p-3">স্ট্যাটাস</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="p-3 font-mono">১৯৯৪</td>
+                                        <td class="p-3">ডিপ্লোমা ইঞ্জিনিয়ার (উপ-সহকারী প্রকৌশলী)</td>
+                                        <td class="p-3 text-green-600 font-bold"><i data-lucide="check" class="inline w-3 h-3"></i> ১০ম গ্রেড (২য় শ্রেণী) প্রাপ্ত</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono">২০১৭</td>
+                                        <td class="p-3">নার্সিং ডিপ্লোমাধারী</td>
+                                        <td class="p-3 text-green-600 font-bold"><i data-lucide="check" class="inline w-3 h-3"></i> ১০ম গ্রেড (২য় শ্রেণী) প্রাপ্ত</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono">২০১৮</td>
+                                        <td class="p-3">কৃষি ডিপ্লোমাধারী</td>
+                                        <td class="p-3 text-green-600 font-bold"><i data-lucide="check" class="inline w-3 h-3"></i> ১০ম গ্রেড প্রাপ্ত</td>
+                                    </tr>
+                                    <tr class="bg-red-50">
+                                        <td class="p-3 font-mono text-red-600 font-bold">২০২৪</td>
+                                        <td class="p-3 font-bold">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট</td>
+                                        <td class="p-3 text-red-600 font-bold"><i data-lucide="x" class="inline w-3 h-3"></i> আজও বঞ্চিত (১১তম গ্রেড)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 4. HISTORY -->
+                    <div class="bg-slate-100 p-6 rounded-xl border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                            <i data-lucide="history" class="text-slate-600"></i> ৩১ বছরের বঞ্চনার ইতিহাস
+                        </h3>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            স্বাধীনতা পরবর্তী সময়ে এ পেশার পথচলা শুরু হলেও ১৯৮৯ পরবর্তী সময়ে ১০ম গ্রেড পদমর্যাদা বাস্তবায়িত হয়নি। ১৪/১২/২০০৩ তারিখে প্রশাসনিক উন্নয়ন সংক্রান্ত সচিব কমিটিতে ১০ম গ্রেডে উন্নীতকরণের সুপারিশ উপস্থাপন হলেও আমলাতান্ত্রিক জটিলতায় তা আজও বাস্তবায়িত হয়নি।
+                        </p>
+                    </div>
+
+                    <!-- 5. CONSEQUENCES (User's Text) -->
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="text-orange-500"></i>
+                            কর্মবিরতি হলে যা যা ঘটবে:
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-5 rounded-xl border border-red-100 shadow-sm">
+                                <h4 class="font-bold text-red-700 mb-2 flex items-center gap-2">১. ব্লাড ব্যাংকে বিপর্যয়</h4>
+                                <p class="text-sm text-slate-600">রক্তের গ্রুপিং ও ক্রস-ম্যাচিং বন্ধ হলে সড়ক দুর্ঘটনা ও থ্যালাসেমিয়া রোগীদের জীবন বিপন্ন হবে।</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-orange-100 shadow-sm">
+                                <h4 class="font-bold text-orange-700 mb-2 flex items-center gap-2">২. রোগ নির্ণয়ে অন্ধকার</h4>
+                                <p class="text-sm text-slate-600">ল্যাব বন্ধ থাকলে চিকিৎসকরা রোগ নির্ণয়ে অক্ষম হবেন। ভুল চিকিৎসায় রোগীর অবনতি হতে পারে।</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                                <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">৩. ওষুধ সরবরাহে সমস্যা</h4>
+                                <p class="text-sm text-slate-600">ফার্মাসিস্ট ছাড়া ইনপেশেন্টদের ডোজ ম্যানেজমেন্ট ও মান নিয়ন্ত্রণ ভেঙে পড়বে।</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-xl border border-purple-100 shadow-sm">
+                                <h4 class="font-bold text-purple-700 mb-2 flex items-center gap-2">৪. ইমেজিং সেবা বন্ধ</h4>
+                                <p class="text-sm text-slate-600">এক্স-রে, সিটি স্ক্যান, এমআরআই বন্ধ থাকলে স্ট্রোক রোগীদের বাঁচানো কঠিন হবে।</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. FINAL DEMAND -->
+                    <div class="bg-slate-800 text-white p-6 rounded-xl shadow-lg">
+                        <div class="bg-white/10 p-4 rounded-lg border-l-4 border-yellow-400">
+                            <p class="font-bold text-yellow-100 mb-1 text-lg">আমাদের দাবি:</p>
+                            <p class="opacity-90 leading-relaxed">
+                                জনগণের ভোগান্তি ও প্রাণহানি এড়াতে, কালক্ষেপণ না করে অবিলম্বে মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের <span class="text-yellow-400 font-bold">১০ম গ্রেড</span> বাস্তবায়ন করুন। স্বাস্থ্যখাত সচল রাখতে আমাদের দাবি মানার বিকল্প নেই।
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
             lucide.createIcons();
         }
 
@@ -411,7 +538,6 @@
             renderDocsSkeleton();
             const folderId = '1iOLo7X21ClBbU6NSh1xfFTMbnZxSst_M';
             const apiKey = 'AIzaSyBtzPsyjBlLM2vlCqCByhD03SgWmshQcV4';
-            // Note: In production, do not expose API keys directly in client-side code without referrer restrictions.
             const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&key=${apiKey}&fields=files(id,name,createdTime,webViewLink,mimeType,size)&orderBy=createdTime desc`;
 
             try {
