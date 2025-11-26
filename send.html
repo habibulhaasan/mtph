@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফাইল আপলোড - ১০ম গ্রেড বাস্তবায়ন পরিষদ</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden fade-in border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-slate-900 p-6 text-center">
+            <div class="flex justify-center mb-3">
+                <div class="bg-white/10 p-3 rounded-full">
+                    <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-400"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-white">আন্দোলনের ফাইল পাঠান</h2>
+            <p class="text-slate-400 text-sm mt-1">আন্দোলনের জন্য প্রয়োজনীয় ডকুমেন্টস বা ছবি এখানে আপলোড করুন</p>
+        </div>
+
+        <!-- Form -->
+        <div class="p-6 md:p-8">
+            
+            <form id="sendFileForm" class="space-y-5">
+                
+                <!-- Name -->
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-medium text-slate-700 flex items-center gap-2">
+                        <i data-lucide="user" class="w-4 h-4"></i> নাম
+                    </label>
+                    <input type="text" id="name" name="name" placeholder="আপনার নাম লিখুন" required
+                        class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400">
+                </div>
+
+                <!-- Email -->
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-slate-700 flex items-center gap-2">
+                        <i data-lucide="mail" class="w-4 h-4"></i> ইমেইল
+                    </label>
+                    <input type="email" id="email" name="email" placeholder="আপনার ইমেইল লিখুন" required
+                        class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400">
+                </div>
+
+                <!-- File Section -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-sm font-medium text-slate-700 flex items-center gap-2">
+                            <i data-lucide="paperclip" class="w-4 h-4"></i> ফাইল সমূহ
+                        </label>
+                        <button type="button" id="addFileBtn" class="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-full font-bold transition-colors flex items-center gap-1">
+                            <i data-lucide="plus" class="w-3 h-3"></i> আরো যোগ করুন
+                        </button>
+                    </div>
+
+                    <div id="fileSection" class="space-y-3">
+                        <!-- Initial File Input -->
+                        <div class="file-input-container flex gap-2 items-center group">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="file" class="w-4 h-4 text-slate-400"></i>
+                                </div>
+                                <!-- Filename Input (Matches your script selector) -->
+                                <input type="text" name="attachment_name[]" placeholder="ফাইল সিলেক্ট করুন..." 
+                                    class="file-name-display w-full pl-10 pr-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-600 focus:outline-none focus:border-blue-500 transition-colors">
+                                
+                                <!-- Hidden File Input -->
+                                <input type="file" name="file" accept=".pdf,.doc,.docx,.jpg,.png" required
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-trigger">
+                            </div>
+                            
+                            <button type="button" class="remove-file-btn p-3 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition-colors" onclick="removeFile(this)" title="মুছে ফেলুন">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 ml-1">* সর্বোচ্চ ৫টি ফাইল। ফরম্যাট: pdf, doc, jpg, png</p>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all transform active:scale-[0.98] flex justify-center items-center gap-2">
+                    <span>ফাইল পাঠান</span>
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-sm mx-4">
+            <div class="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mb-4"></div>
+            <h3 class="text-lg font-bold text-slate-800">প্রসেসিং হচ্ছে...</h3>
+            <p class="text-slate-500 text-sm">ফাইলগুলো এনকোড করে পাঠানো হচ্ছে। অনুগ্রহ করে অপেক্ষা করুন।</p>
+        </div>
+    </div>
+
+    <!-- Success/Error Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-sm mx-4 relative">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div id="modalIcon" class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+                <i data-lucide="check" class="w-8 h-8"></i>
+            </div>
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-800 mb-2">সফল!</h3>
+            <p id="modalMessage" class="text-slate-600 text-sm mb-6">ফাইল সাবমিট করা হয়েছে।</p>
+            <button onclick="location.reload()" class="bg-slate-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-slate-800 transition-colors">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // --- UI Logic (Add/Remove Files) ---
+        const fileSection = document.getElementById('fileSection');
+        const addFileBtn = document.getElementById('addFileBtn');
+        let fileCount = 1;
+
+        // Display Filename on Select
+        fileSection.addEventListener('change', function(e) {
+            if (e.target.classList.contains('file-trigger')) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : '';
+                const textInput = e.target.parentElement.querySelector('.file-name-display');
+                // Only auto-fill if user hasn't typed a custom name yet or it's empty
+                if (textInput && !textInput.value) textInput.value = fileName;
+            }
+        });
+
+        // Add New File Input
+        addFileBtn.addEventListener('click', function() {
+            if (fileCount >= 5) { alert("সর্বোচ্চ ৫টি ফাইল যোগ করা যাবে।"); return; }
+            fileCount++;
+            const div = document.createElement('div');
+            div.className = 'file-input-container flex gap-2 items-center group fade-in mt-3';
+            div.innerHTML = `
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="file" class="w-4 h-4 text-slate-400"></i></div>
+                    <input type="text" name="attachment_name[]" placeholder="ফাইল সিলেক্ট করুন..." class="file-name-display w-full pl-10 pr-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-600 focus:outline-none focus:border-blue-500 transition-colors">
+                    <input type="file" name="file" accept=".pdf,.doc,.docx,.jpg,.png" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-trigger">
+                </div>
+                <button type="button" class="remove-file-btn p-3 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition-colors" onclick="removeFile(this)"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+            `;
+            fileSection.appendChild(div);
+            lucide.createIcons();
+        });
+
+        // Remove File Input
+        window.removeFile = function(btn) {
+            if (document.querySelectorAll('.file-input-container').length > 1) {
+                btn.closest('.file-input-container').remove();
+                fileCount--;
+            } else {
+                const container = btn.closest('.file-input-container');
+                container.querySelector('input[type=file]').value = '';
+                container.querySelector('.file-name-display').value = '';
+            }
+        }
+
+        // --- CORE LOGIC: YOUR SENDFILE.JS IMPLEMENTATION ---
+        
+        // Function to convert file to Base64
+        function fileToBase64(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    // Extract base64 data (remove data:image/png;base64, prefix)
+                    resolve(event.target.result.split(',')[1]); 
+                };
+                reader.onerror = function(error) {
+                    reject(error);
+                };
+                reader.readAsDataURL(file); // Read file as DataURL
+            });
+        }
+
+        document.getElementById('sendFileForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default submission
+
+            const form = this;
+            const formData = new FormData();
+            
+            // Extract name and email
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            formData.append('name', name);
+            formData.append('email', email);
+
+            // Gather file inputs
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            const fileNameInputs = form.querySelectorAll('input[name="attachment_name[]"]');
+
+            // Show loading modal immediately
+            const loadingModal = document.getElementById('loadingModal');
+            loadingModal.classList.remove('hidden');
+
+            // Process each file input to convert to Base64
+            const filePromises = Array.from(fileInputs).map((fileInput, index) => {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    return fileToBase64(file).then(base64 => ({
+                        name: fileNameInputs[index].value || file.name, // Use input value or original file name
+                        base64: base64,
+                        type: file.type
+                    }));
+                }
+                return Promise.resolve(null);
+            });
+
+            Promise.all(filePromises).then(function(results) {
+                let hasFiles = false;
+                results.forEach(result => {
+                    if (result) {
+                        formData.append('files', result.base64);
+                        formData.append('fileNames', result.name);
+                        formData.append('fileTypes', result.type); // Optional: sending mime type might be helpful
+                        hasFiles = true;
+                    }
+                });
+
+                if (!hasFiles) {
+                    loadingModal.classList.add('hidden');
+                    alert("অনুগ্রহ করে অন্তত একটি ফাইল সিলেক্ট করুন।");
+                    return;
+                }
+
+                var xhr = new XMLHttpRequest();
+                // YOUR SCRIPT URL
+                xhr.open('POST', 'https://script.google.com/macros/s/AKfycbxRAyZRXZiwIbrZUuTEe3hpj5dV1N41SrknmqY_ypl65eb0H8Gh81rvuF_J-kVvxq0/exec'); 
+                // Note: Google Apps Script usually handles standard form-data better without specific JSON headers for multipart
+                // But we will follow standard xhr behavior.
+
+                xhr.onload = function() {
+                    loadingModal.classList.add('hidden');
+                    const successModal = document.getElementById('successModal');
+                    const modalTitle = document.getElementById('modalTitle');
+                    const modalMessage = document.getElementById('modalMessage');
+                    const modalIcon = document.getElementById('modalIcon');
+                
+                    if (xhr.status === 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.result === 'success' || response.success) {
+                                // Success State
+                                modalTitle.innerText = 'সফল!';
+                                modalMessage.innerText = 'ফাইল সফলভাবে পাঠানো হয়েছে!';
+                                modalIcon.className = "w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4";
+                                modalIcon.innerHTML = '<i data-lucide="check" class="w-8 h-8"></i>';
+                                successModal.classList.remove('hidden');
+                                form.reset();
+                                
+                                // Reset UI inputs
+                                document.querySelectorAll('.file-name-display').forEach(el => el.value = '');
+                                while(document.querySelectorAll('.file-input-container').length > 1) {
+                                    fileSection.lastElementChild.remove();
+                                }
+                                fileCount = 1;
+                            } else {
+                                // Error from script
+                                throw new Error(response.error || 'Unknown error');
+                            }
+                        } catch (e) {
+                            // If JSON parse fails (often happens with redirects), check if status is 200 ok
+                            // Google Script redirects to a success page sometimes.
+                            console.log("Response parsing error or redirect:", e);
+                            // Assume success if 200 OK
+                            modalTitle.innerText = 'সফল!';
+                            modalMessage.innerText = 'ফাইল পাঠানো সম্পন্ন হয়েছে।';
+                            successModal.classList.remove('hidden');
+                            form.reset();
+                        }
+                    } else {
+                        // HTTP Error
+                        modalTitle.innerText = 'ব্যর্থ';
+                        modalMessage.innerText = 'ফাইল পাঠাতে সমস্যা হয়েছে। Status: ' + xhr.status;
+                        modalIcon.className = "w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4";
+                        modalIcon.innerHTML = '<i data-lucide="alert-triangle" class="w-8 h-8"></i>';
+                        successModal.classList.remove('hidden');
+                    }
+                    
+                    lucide.createIcons();
+                };
+
+                xhr.onerror = function() {
+                    loadingModal.classList.add('hidden');
+                    alert('Network Error occurred.');
+                };
+
+                xhr.send(formData); // Send FormData
+                
+            }).catch(function(error) {
+                loadingModal.classList.add('hidden');
+                alert('Failed to process files: ' + error);
+            });
+        });
+
+        // Close modal logic
+        document.getElementById('closeModalBtn').onclick = function() {
+            document.getElementById('successModal').classList.add('hidden');
+        };
+
+        // Disable F12
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        };
+
+    </script>
+</body>
+</html>
+
+
