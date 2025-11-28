@@ -31,8 +31,8 @@
             <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-600 rounded-full shadow-lg mb-4 ring-4 ring-emerald-900/50">
                 <i data-lucide="database" class="text-white w-8 h-8"></i>
             </div>
-            <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">কর্মবিরতির তথ্য ভান্ডার</h1>
-            <p class="text-slate-400 text-sm">১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
+            <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">কর্মবিরতির তথ্য জমাদিন</h1>
+            <p class="text-slate-400 text-sm">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
         </div>
 
         <div class="glass rounded-2xl shadow-2xl overflow-hidden relative">
@@ -46,11 +46,11 @@
                         <i data-lucide="user-circle" class="w-5 h-5 text-emerald-600"></i> প্রাথমিক তথ্য
                     </h3>
                     <div class="grid md:grid-cols-2 gap-5">
-                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার নাম *</label><input type="text" name="name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
-                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">মোবাইল নাম্বার *</label><input type="tel" name="mobile" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার নাম *</label><input type="text" name="name" placeholder="বাংলায় লিখুন" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">মোবাইল নাম্বার *</label><input type="tel" name="mobile" placeholder="017xxxxxxxx" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-5">
-                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ইমেইল (ঐচ্ছিক)</label><input type="email" name="email" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ইমেইল (ঐচ্ছিক)</label><input type="email" name="email" placeholder="abx@xyz.com" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ব্লাড গ্রুপ</label>
                             <select name="bloodGroup" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500">
@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">পদবী / বিভাগ *</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">পদবী *</label>
                         <select name="designation" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500">
                             <option value="" disabled selected>নির্বাচন করুন...</option>
                             <option value="Mt-Laboratory">MT-ল্যাবরেটরি</option>
@@ -91,17 +91,17 @@
                             <select id="district" name="district" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100"><option value="" disabled selected>আগে বিভাগ দিন</option></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">উপজেলা / এলাকা *</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">উপজেলা *</label>
                             <select id="upazila" name="upazila" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100"><option value="" disabled selected>আগে জেলা দিন</option></select>
                         </div>
                     </div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">প্রতিষ্ঠানের নাম *</label><input type="text" name="institute" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">প্রতিষ্ঠানের নাম *</label><input type="text" name="institute" placeholder="Write in English" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
                 </div>
 
                 <!-- File Upload Section -->
                 <div class="space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                        <i data-lucide="paperclip" class="w-5 h-5 text-emerald-600"></i> ফাইল সংযুক্তি *
+                        <i data-lucide="paperclip" class="w-5 h-5 text-emerald-600"></i> ফাইল সংযুক্তি (সর্বোচ্চ ২ টি) *
                     </h3>
                     <p class="text-slate-400 text-sm">কর্মবিরতির ছবি জমা দিন</p>
                     <div id="fileContainer" class="space-y-3">
@@ -110,7 +110,7 @@
                         </div>
                     </div>
                     <button type="button" id="addFileBtn" class="flex items-center gap-2 text-sm text-emerald-600 font-bold hover:text-emerald-800 transition-colors">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> আরও ফাইল যোগ করুন
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> আরও একটি ছবি যোগ করুন
                     </button>
                 </div>
 
@@ -119,10 +119,36 @@
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
                         <i data-lucide="file-edit" class="w-5 h-5 text-emerald-600"></i> মন্তব্য
                     </h3>
+
+                    <!-- Text Comment option Starts -->
+
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">কর্মবিরতি স্ট্যাটাস</label>
-                        <textarea name="comment" rows="2" placeholder="আপনি কি স্মারকলিপি জমা ও কর্মবিরতি দিয়েছেন? Yes/No লিখুন..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></textarea>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার প্রতিষ্ঠানে কর্মবিরতি পালিত হয়েছে?</label>
+                        <textarea name="comment" rows="2" placeholder="Yes/No লিখুন..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></textarea>
                     </div>
+
+                    <!-- Text Comment option Starts -->
+
+                    <!-- Radio option Starts --
+
+                     <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-3">আপনার প্রতিষ্ঠানে কর্মবিরতি পালিত হয়েছে?</label>
+                        
+                        <div class="flex items-center gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer group">
+                                <input type="radio" name="comment" value="Yes" class="w-5 h-5 accent-emerald-600 cursor-pointer" required>
+                                <span class="text-slate-700 font-medium group-hover:text-emerald-700 transition-colors">হ্যাঁ</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 cursor-pointer group">
+                                <input type="radio" name="comment" value="No" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+                                <span class="text-slate-700 font-medium group-hover:text-red-600 transition-colors">না</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Radio option End -->
+
+                    
                 </div>
 
                 <!-- Submit -->
@@ -137,7 +163,7 @@
     </div>
 
     <!-- Modal & Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center"><div class="loader mx-auto mb-4"></div><p class="text-lg font-bold text-slate-700">তথ্য ও ফাইল আপলোড হচ্ছে...</p><p class="text-xs text-slate-400 mt-2">ফাইল বড় হলে কিছুটা সময় লাগতে পারে</p></div></div>
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center"><div class="loader mx-auto mb-4"></div><p class="text-lg font-bold text-slate-700">তথ্য জমা হচ্ছে...</p><p class="text-xs text-slate-400 mt-2">অপেক্ষা করুন</p></div></div>
     <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 animate-fade-in"><div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check-circle" class="w-10 h-10"></i></div><h3 class="text-2xl font-bold text-slate-800 mb-2">সফল!</h3><p class="text-slate-600 mb-6">আপনার তথ্য সফলভাবে জমা হয়েছে।</p><button onclick="window.location.reload()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 w-full">নতুন তথ্য দিন</button></div></div>
 
     <script>
