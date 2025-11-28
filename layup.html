@@ -26,49 +26,80 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-    
-
     <!-- Navbar -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                
                 <div class="bg-emerald-600 text-white p-2 rounded-lg">
                     <i data-lucide="database" class="w-5 h-5"></i>
                 </div>
                 <h1 class="font-bold text-lg text-slate-800">কর্মবিরতির তথ্য</h1>
-                
             </div>
             <div class="text-sm text-slate-500">
-                
                 মোট: <span id="totalCount" class="font-bold text-emerald-600">0</span> প্রতিষ্ঠান
             </div>
-            
         </div>
-
     </nav>
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-6">
         
-        
-        <!-- Search & Filter -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <!-- Search & Filter Controls -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-6 space-y-4">
             
-            <!-- Back Button (To Index) -->
-                <a href="index.html" class="absolute top-12 left-6 flex items-center gap-2 text-red-600 hover:text-slate-900 font-bold bg-white px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all z-9">
-                    <i data-lucide="arrow-left" class="w-5 h-5"></i> হোম পেজ
+            <!-- Top Row: Search and Back Button -->
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                <!-- Back Button -->
+                <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition-all text-sm whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> পিছনে যান
                 </a>
-            
-            <div class="relative w-full md:w-96">
-                <i data-lucide="search" class="absolute left-3 top-3 text-slate-400 w-5 h-5"></i>
-                <input type="text" id="searchInput" placeholder="নাম, মোবাইল বা জেলা দিয়ে খুঁজুন..." 
-                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all">
+                
+                <!-- Search Box -->
+                <div class="relative w-full">
+                    <i data-lucide="search" class="absolute left-3 top-3 text-slate-400 w-5 h-5"></i>
+                    <input type="text" id="searchInput" placeholder="প্রতিষ্ঠান বা এলাকা দিয়ে খুঁজুন..." 
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all">
+                </div>
+                
+                <!-- Refresh Button -->
+                <button onclick="fetchData()" class="flex items-center gap-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> রিফ্রেশ
+                </button>
             </div>
-            
-            <button onclick="fetchData()" class="flex items-center gap-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 px-4 py-2 rounded-lg transition-colors">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i> রিফ্রেশ করুন
-            </button>
+
+            <!-- Filter Row (New) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
+                <!-- Division Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">বিভাগ</label>
+                    <select id="filterDivision" onchange="applyFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500">
+                        <option value="">সকল বিভাগ</option>
+                    </select>
+                </div>
+
+                <!-- District Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">জেলা</label>
+                    <select id="filterDistrict" onchange="applyFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500">
+                        <option value="">সকল জেলা</option>
+                    </select>
+                </div>
+
+                <!-- Upazila Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">উপজেলা</label>
+                    <select id="filterUpazila" onchange="applyFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500">
+                        <option value="">সকল উপজেলা</option>
+                    </select>
+                </div>
+
+                <!-- Reset Button -->
+                <div class="flex items-end">
+                    <button onclick="resetFilters()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> রিসেট ফিল্টার
+                    </button>
+                </div>
+            </div>
             
         </div>
         
@@ -87,11 +118,9 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50 text-slate-600 text-sm uppercase">
                         <tr>
-                            <th class="p-4 font-bold border-b w-[20%]">তথ্য প্রদানকারীর নাম ও পদবী</th>
-                            <th class="p-4 font-bold border-b w-[15%]">যোগাযোগ</th>
-                            <th class="p-4 font-bold border-b w-[25%]">প্রতিষ্ঠানের ঠিকানা</th>
-                            <th class="p-4 font-bold border-b w-[25%]">মন্তব্য</th>
-                            <th class="p-4 font-bold border-b text-center w-[15%]">ছবি</th>
+                            <th class="p-4 font-bold border-b w-[50%]">পূর্ণ ঠিকানা</th>
+                            <th class="p-4 font-bold border-b w-[30%]">মন্তব্য</th>
+                            <th class="p-4 font-bold border-b text-center w-[20%]">ফাইল / ছবি</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="text-sm divide-y divide-slate-100">
@@ -116,11 +145,14 @@
     </div>
 
     <!--Dev info-->
-            <div class="flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
-                <i data-lucide="code-2" class="w-3 h-3"></i>
-                <span>কারিগরি সহযোগিতায়:</span>
-                <a href="https://facebook.com/habibulhaasan" class="font-bold text-slate-500 hover:text-emerald-600 transition-colors">MR. H</a>
-            </div>
+    <div class="text-center pb-8 mt-8">
+        <p class="text-slate-500 text-xs mb-3">© ২০২৫ ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[10px] text-slate-500">
+            <i data-lucide="code-2" class="w-3 h-3 text-emerald-500"></i>
+            <span>Developed by</span>
+            <a href="#" class="font-bold text-emerald-600 hover:text-emerald-700">MR. H</a>
+        </div>
+    </div>
 
     <!-- Image Preview Modal -->
     <div id="imageModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4" onclick="closeModal()">
@@ -141,6 +173,7 @@
         const DATA_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
         let allData = [];
+        let filteredData = [];
 
         // Fetch Data Function
         async function fetchData() {
@@ -158,39 +191,33 @@
                 
                 if (result.values && result.values.length > 0) {
                     const rows = result.values;
-                    // Mapping:
-                    // 0:Date, 1:Name, 2:Mobile, 3:Email, 4:Designation, 5:Blood_Group, 
-                    // 6:Division, 7:District, 8:Upazila, 9:Institute, 10:Comment
-                    // 11 to End: File Links (Separate Columns)
                     
                     allData = rows.slice(1).map(row => {
-                        // Extract all file links from column index 11 to the end
                         const rawLinks = row.slice(11) || [];
                         const validLinks = rawLinks.filter(link => link && link.trim() !== "" && link.startsWith("http"));
 
                         return {
-                            Date: row[0] || "",
-                            Name: row[1] || "",
-                            Mobile: row[2] || "",
-                            Email: row[3] || "",
-                            Designation: row[4] || "",
-                            Blood_Group: row[5] || "",
-                            Division: row[6] || "",
-                            District: row[7] || "",
-                            Upazila: row[8] || "",
                             Institute: row[9] || "",
+                            Upazila: row[8] || "",
+                            District: row[7] || "",
+                            Division: row[6] || "",
                             Comment: row[10] || "",
-                            File_Links: validLinks // Store as Array
+                            File_Links: validLinks 
                         };
                     });
 
-                    allData = allData.filter(item => item.Name && item.Name.trim() !== "").reverse();
+                    // Basic cleaning
+                    allData = allData.filter(item => item.District || item.Institute).reverse();
                 } else {
                     allData = [];
                 }
                 
-                renderData(allData);
-                document.getElementById('totalCount').innerText = toBanglaDigits(allData.length);
+                // Initialize filters based on data
+                populateFilterOptions();
+                
+                // Initial Render
+                filteredData = allData;
+                renderData(filteredData);
                 
                 loading.classList.add('hidden');
                 if(allData.length === 0) empty.classList.remove('hidden');
@@ -202,48 +229,138 @@
             }
         }
 
+        // --- NEW: Populate Filters Dynamically ---
+        function populateFilterOptions() {
+            const divSelect = document.getElementById('filterDivision');
+            const distSelect = document.getElementById('filterDistrict');
+            const upaSelect = document.getElementById('filterUpazila');
+
+            // Get Unique Divisions
+            const divisions = [...new Set(allData.map(item => item.Division).filter(Boolean))].sort();
+            divSelect.innerHTML = '<option value="">সকল বিভাগ</option>';
+            divisions.forEach(d => divSelect.add(new Option(d, d)));
+
+            // Initially populate others with all available options
+            updateCascadingFilters('none');
+        }
+
+        // --- NEW: Cascading Filter Logic ---
+        function updateCascadingFilters(changedLevel) {
+            const divSelect = document.getElementById('filterDivision');
+            const distSelect = document.getElementById('filterDistrict');
+            const upaSelect = document.getElementById('filterUpazila');
+
+            const selectedDiv = divSelect.value;
+            const selectedDist = distSelect.value;
+
+            // 1. Update Districts based on Division
+            if (changedLevel === 'division' || changedLevel === 'none') {
+                const availableDistricts = [...new Set(allData
+                    .filter(item => !selectedDiv || item.Division === selectedDiv)
+                    .map(item => item.District)
+                    .filter(Boolean))].sort();
+                
+                // Save current selection if it still exists
+                const currentDist = distSelect.value;
+                distSelect.innerHTML = '<option value="">সকল জেলা</option>';
+                availableDistricts.forEach(d => distSelect.add(new Option(d, d)));
+                if (availableDistricts.includes(currentDist)) distSelect.value = currentDist;
+            }
+
+            // 2. Update Upazilas based on Division AND District
+            if (changedLevel === 'division' || changedLevel === 'district' || changedLevel === 'none') {
+                const availableUpazilas = [...new Set(allData
+                    .filter(item => (!selectedDiv || item.Division === selectedDiv) && (!selectedDist || item.District === selectedDist))
+                    .map(item => item.Upazila)
+                    .filter(Boolean))].sort();
+                
+                const currentUpa = upaSelect.value;
+                upaSelect.innerHTML = '<option value="">সকল উপজেলা</option>';
+                availableUpazilas.forEach(u => upaSelect.add(new Option(u, u)));
+                if (availableUpazilas.includes(currentUpa)) upaSelect.value = currentUpa;
+            }
+        }
+
+        // --- NEW: Apply Filters (Search + Dropdowns) ---
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const divVal = document.getElementById('filterDivision').value;
+            const distVal = document.getElementById('filterDistrict').value;
+            const upaVal = document.getElementById('filterUpazila').value;
+
+            // Update dropdown options to show only relevant child options
+            // But we check which element triggered it to avoid resetting the active one.
+            // For simplicity in this version, we call it here to ensure consistency.
+            if(event && event.target.id === 'filterDivision') updateCascadingFilters('division');
+            if(event && event.target.id === 'filterDistrict') updateCascadingFilters('district');
+
+            filteredData = allData.filter(item => {
+                const matchesSearch = (
+                    (item.Institute && item.Institute.toLowerCase().includes(searchTerm)) ||
+                    (item.District && item.District.toLowerCase().includes(searchTerm)) ||
+                    (item.Upazila && item.Upazila.toLowerCase().includes(searchTerm))
+                );
+
+                const matchesDiv = !divVal || item.Division === divVal;
+                const matchesDist = !distVal || item.District === distVal;
+                const matchesUpa = !upaVal || item.Upazila === upaVal;
+
+                return matchesSearch && matchesDiv && matchesDist && matchesUpa;
+            });
+
+            renderData(filteredData);
+            
+            // Show/Hide Empty State
+            const container = document.getElementById('dataContainer');
+            const empty = document.getElementById('emptyState');
+            if(filteredData.length === 0) {
+                container.classList.add('hidden');
+                empty.classList.remove('hidden');
+            } else {
+                container.classList.remove('hidden');
+                empty.classList.add('hidden');
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterDivision').value = '';
+            document.getElementById('filterDistrict').value = '';
+            document.getElementById('filterUpazila').value = '';
+            
+            // Reset cascading options
+            updateCascadingFilters('none');
+            
+            applyFilters();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+
         // Render Data Function
         function renderData(data) {
             const tableBody = document.getElementById('tableBody');
             const mobileCards = document.getElementById('mobileCards');
+            const totalCount = document.getElementById('totalCount');
             
             tableBody.innerHTML = '';
             mobileCards.innerHTML = '';
+            
+            // Update Count
+            totalCount.innerText = toBanglaDigits(data.length);
 
             data.forEach(item => {
-                const name = item.Name || 'অজানা';
-                const designation = item.Designation || '';
                 const institute = item.Institute || '';
-                // Clean mobile number (remove single quote if present)
-                const mobile = item.Mobile ? item.Mobile.replace(/^'/, '') : '';
-                const email = item.Email || '';
                 const upazila = item.Upazila || '';
                 const district = item.District || '';
                 const division = item.Division || '';
                 const comment = item.Comment || '';
-                const bloodGroup = item.Blood_Group || '';
                 const fileLinks = item.File_Links || [];
 
-                // Try to find an image link for profile picture (first drive link found)
-                const firstImage = fileLinks.find(l => l.includes('drive.google.com'));
-                
-                let imgHtml = '';
-                if (firstImage) {
-                    const fileIdMatch = firstImage.match(/\/d\/(.+)\//);
-                    if (fileIdMatch) {
-                        const fileId = fileIdMatch[1];
-                        const thumbUrl = `https://lh3.googleusercontent.com/d/${fileId}=s100`; 
-                        const fullUrl = `https://lh3.googleusercontent.com/d/${fileId}=s0`; 
-                        imgHtml = `<img src="${thumbUrl}" onclick="openModal('${fullUrl}')" class="w-10 h-10 rounded-full object-cover border border-slate-200 cursor-zoom-in hover:scale-110 transition-transform bg-white" alt="User" loading="lazy">`;
-                    } else {
-                         imgHtml = `<div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xs"><i data-lucide="file" class="w-4 h-4"></i></div>`;
-                    }
-                } else {
-                    const initial = name.charAt(0).toUpperCase();
-                    imgHtml = `<div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold">${initial}</div>`;
-                }
+                // Address Construction
+                const addressParts = [institute, upazila, district, division].filter(part => part && part.trim() !== "");
+                const fullAddress = addressParts.join(', ');
 
-                // File link buttons logic (Loop through array)
+                // File Buttons
                 let fileButtons = '';
                 if (fileLinks.length > 0) {
                     fileButtons = fileLinks.map((link, index) => 
@@ -255,35 +372,18 @@
                     fileButtons = '<span class="text-slate-300 text-xs">-</span>';
                 }
 
-                // Address Construction (Desktop)
-                const addressParts = [institute, upazila, district, division].filter(part => part && part.trim() !== "");
-                const fullAddress = addressParts.join(', ');
-
-                // --- Desktop Row ---
+                // --- Desktop Row (Cleaned Up) ---
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors group";
                 tr.innerHTML = `
                     <td class="p-4 border-b border-slate-100 align-top">
-                        <div class="flex items-start gap-3">
-                            ${imgHtml}
-                            <div>
-                                <p class="font-bold text-slate-800">${name}</p>
-                                <p class="text-xs text-slate-500 mt-0.5">${designation}</p>
-                                ${bloodGroup ? `<span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 rounded mt-1 inline-block">${bloodGroup}</span>` : ''}
-                            </div>
-                        </div>
+                        <p class="text-sm text-slate-700 font-medium leading-relaxed flex items-start gap-2">
+                            <i data-lucide="hospital" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <span>${fullAddress || 'ঠিকানা পাওয়া যায়নি'}</span>
+                        </p>
                     </td>
                     <td class="p-4 border-b border-slate-100 align-top">
-                        <div class="flex flex-col gap-1.5">
-                            <a href="tel:${mobile}" class="text-xs flex items-center gap-1.5 text-slate-700 hover:text-emerald-600 font-mono font-medium"><i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i> ${mobile}</a>
-                            ${email ? `<a href="mailto:${email}" class="text-xs flex items-center gap-1.5 text-slate-500 hover:text-emerald-600 truncate max-w-[150px]"><i data-lucide="mail" class="w-3.5 h-3.5 text-slate-400"></i> ${email}</a>` : ''}
-                        </div>
-                    </td>
-                    <td class="p-4 border-b border-slate-100 align-top">
-                        <p class="text-sm text-slate-600 leading-relaxed">${fullAddress || '-'}</p>
-                    </td>
-                    <td class="p-4 border-b border-slate-100 align-top">
-                        <p class="text-xs text-slate-600 italic whitespace-pre-wrap">${comment || '-'}</p>
+                        <p class="text-xs text-slate-600 italic whitespace-pre-wrap">${comment ? `"${comment}"` : '-'}</p>
                     </td>
                     <td class="p-4 border-b border-slate-100 align-top text-center">
                         <div class="flex justify-center flex-wrap gap-1">${fileButtons}</div>
@@ -291,74 +391,47 @@
                 `;
                 tableBody.appendChild(tr);
 
-                // --- Mobile Card ---
-                // Name should NOT truncate now.
+                // --- Mobile Card (Cleaned Up) ---
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3 animate-fade-in";
+                
                 card.innerHTML = `
-                    <div class="flex items-start gap-3">
-                        <div class="shrink-0 mt-1">
-                            ${imgHtml}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex justify-between items-start gap-2">
-                                <h3 class="font-bold text-slate-800 leading-tight">${name}</h3> 
-                                ${bloodGroup ? `<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded shrink-0">${bloodGroup}</span>` : ''}
+                    <!-- Full Address Section -->
+                    <div class="">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-emerald-100 p-2 rounded-full shrink-0">
+                                <i data-lucide="hospital" class="w-5 h-5 text-emerald-600"></i>
                             </div>
-                            <p class="text-xs text-slate-500 font-medium mt-1">${designation}</p>
+                            <div class="space-y-1">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase">ঠিকানা</h4>
+                                <p class="text-sm font-semibold text-slate-800 leading-snug">${fullAddress || 'ঠিকানা নেই'}</p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 gap-1.5 text-sm text-slate-600 pl-[52px]">
-                         <div class="flex items-start gap-2 text-xs">
-                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0"></i>
-                            <span>${upazila}, ${district}</span>
-                        </div>
-                        ${institute ? `
-                        <div class="flex items-start gap-2 text-xs">
-                            <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0"></i>
-                            <span>${institute}</span>
-                        </div>` : ''}
                     </div>
 
-                    <div class="flex gap-2 mt-1 pl-[52px]">
-                        <a href="tel:${mobile}" class="flex-1 bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors border border-slate-200">
-                            <i data-lucide="phone" class="w-3.5 h-3.5"></i> কল
-                        </a>
-                        ${fileLinks.length > 0 ? 
-                            `<div class="flex-1 flex gap-1 justify-end items-center">
+                    <div class="pl-[44px] space-y-3">
+                        <!-- Comments -->
+                        ${comment ? `
+                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                             <h4 class="text-[10px] font-bold text-yellow-600 uppercase mb-1">মন্তব্য</h4>
+                             <p class="text-xs text-slate-700 italic">"${comment}"</p>
+                        </div>` : ''}
+
+                        <!-- Attachments Section -->
+                        ${fileLinks.length > 0 ? `
+                        <div>
+                            <h4 class="text-[10px] font-bold text-slate-400 uppercase mb-1.5">আন্দোলনের ছবি (${toBanglaDigits(fileLinks.length)})</h4>
+                            <div class="flex flex-wrap gap-2">
                                 ${fileButtons}
-                            </div>` 
-                        : ''}
+                            </div>
+                        </div>` : ''}
                     </div>
-                    
-                    ${comment ? `
-                    <div class="mt-2 pt-2 border-t border-slate-100 pl-[52px]">
-                        <p class="text-xs text-slate-400 italic">"${comment}"</p>
-                    </div>` : ''}
                 `;
                 mobileCards.appendChild(card);
             });
 
             lucide.createIcons();
         }
-
-        // Search Function
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase();
-            const filtered = allData.filter(item => {
-                const name = item.Name ? item.Name.toString().toLowerCase() : '';
-                // Clean mobile for search as well
-                const mobile = item.Mobile ? item.Mobile.toString().replace(/^'/, '') : '';
-                const district = item.District ? item.District.toString().toLowerCase() : '';
-                const designation = item.Designation ? item.Designation.toString().toLowerCase() : '';
-                
-                return name.includes(term) || mobile.includes(term) || district.includes(term) || designation.includes(term);
-            });
-            
-            renderData(filtered);
-            document.getElementById('totalCount').innerText = toBanglaDigits(filtered.length);
-        });
 
         function toBanglaDigits(str) {
             if (!str) return '0';
@@ -380,8 +453,6 @@
 
         // Initial Load
         fetchData();
-       
-
     </script>
 </body>
 </html>
