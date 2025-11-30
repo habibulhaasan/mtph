@@ -22,10 +22,6 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* Image Loading Skeleton */
-        .img-loading { background-color: #e2e8f0; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -180,6 +176,34 @@
         let allData = [];
         let filteredData = [];
 
+        // Helper: Convert Google Drive Links to Direct Image Links
+        function getDirectImageLink(url) {
+            if (!url) return null;
+            url = url.trim();
+
+            // Handle Google Drive Links
+            if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+                let id = null;
+                // Match /d/ID pattern
+                let parts = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (parts && parts[1]) {
+                    id = parts[1];
+                } else {
+                    // Match id=ID pattern
+                    parts = url.match(/id=([a-zA-Z0-9_-]+)/);
+                    if (parts && parts[1]) {
+                        id = parts[1];
+                    }
+                }
+
+                if (id) {
+                    // lh3.googleusercontent.com is much faster and reliable for images than drive.google.com/uc
+                    return `https://lh3.googleusercontent.com/d/${id}`;
+                }
+            }
+            return url;
+        }
+
         // Fetch Data Function
         async function fetchData() {
             const loading = document.getElementById('loadingState');
@@ -198,8 +222,23 @@
                     const rows = result.values;
 
                     allData = rows.slice(1).map(row => {
-                        const rawLinks = row.slice(11) || [];
-                        const validLinks = rawLinks.filter(link => link && link.trim() !== "" && link.startsWith("http"));
+                        // Extract all potential link cells starting from column 11 (Index L onwards)
+                        // Also split comma-separated links within a single cell
+                        let extractedLinks = [];
+                        const rawCells = row.slice(11) || [];
+                        
+                        rawCells.forEach(cell => {
+                            if (cell && typeof cell === 'string') {
+                                // Split by comma or whitespace in case multiple links are pasted in one cell
+                                const potentials = cell.split(/[\s,]+/).filter(u => u.startsWith('http'));
+                                extractedLinks.push(...potentials);
+                            }
+                        });
+
+                        // Convert to direct links
+                        const validLinks = extractedLinks
+                            .map(link => getDirectImageLink(link))
+                            .filter(link => link !== null);
 
                         return {
                             Institute: row[9] || "",
@@ -344,12 +383,12 @@
                 if (fileLinks.length > 0) {
                     const images = fileLinks.map((link, index) => `
                         <div onclick="openModal('${link}')" 
-                             class="group relative w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-all bg-slate-100">
+                             class="group relative w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-all bg-slate-100 flex items-center justify-center">
                             <img src="${link}" 
                                  alt="ছবি" 
                                  loading="lazy"
                                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-slate-400 bg-slate-50\\'><i data-lucide=\\'image-off\\' class=\\'w-4 h-4\\'></i></div>'; lucide.createIcons();">
+                                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<i data-lucide=\\'image-off\\' class=\\'w-5 h-5 text-slate-400\\'></i>'; lucide.createIcons();">
                             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                         </div>
                     `).join('');
@@ -389,14 +428,14 @@
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4 animate-fade-in";
                 
-                // Slightly larger images for mobile
+                // Images for mobile
                 const mobileImages = fileLinks.length > 0 ? fileLinks.map((link) => `
                         <div onclick="openModal('${link}')" 
                              class="relative w-full pt-[100%] rounded-lg overflow-hidden border border-slate-200 cursor-pointer bg-slate-100">
                             <img src="${link}" 
                                  class="absolute inset-0 w-full h-full object-cover"
                                  loading="lazy"
-                                 onerror="this.parentElement.style.display='none'">
+                                 onerror="this.onerror=null; this.parentElement.style.display='none';">
                         </div>
                     `).join('') : '';
 
