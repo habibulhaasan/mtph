@@ -11,6 +11,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Data Labels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <!-- Html2Canvas (For Image Generation) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Google Fonts -->
@@ -193,7 +195,8 @@
                     <!-- Header -->
                     <div class="bg-blue-600 text-white p-6 text-center relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                        <h2 class="text-xl font-bold mb-1 relative z-10">১০ম গ্রেড বাস্তবায়ন পরিষদ</h2>
+                        <h2 class="text-xl font-bold mb-1 relative z-10">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট</h2>
+                        <h3 class="text-x3 font-bold mb-1 relative z-10">১০ম গ্রেড বাস্তবায়ন পরিষদ</h3>
                         <p class="text-blue-100 text-sm relative z-10 font-medium" id="cardSubtitle">কর্মবিরতি ও আন্দোলনের পরিসংখ্যান</p>
                     </div>
                     
@@ -237,7 +240,9 @@
 
                     <!-- Footer -->
                     <div class="bg-slate-50 p-4 text-center border-t border-slate-100">
-                        <p class="text-[10px] text-slate-400 font-medium">তথ্যসূত্র: গুগল শিট ডাটাবেস • রিপোর্ট: <span id="cardDate"></span></p>
+                        <p class="text-[10px] text-slate-400 font-medium">তথ্যসূত্র: ইন্টারনাল ডাটাবেস • রিপোর্ট: <span id="cardDate"></span></p>
+                        <p class="text-[10px] text-slate-400 font-medium">Analyst: Mr. H</p>
+
                     </div>
                 </div>
             </div>
@@ -269,6 +274,9 @@
         let filteredData = [];
         let divisionChart = null;
         let statusChart = null;
+
+        // Register Chart DataLabels
+        Chart.register(ChartDataLabels);
 
         // --- FETCH DATA ---
         async function initAnalysis() {
@@ -422,12 +430,30 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    layout: {
+                        padding: {
+                            top: 25 // Avoid label cut off
+                        }
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        datalabels: { // Data Labels Configuration
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#64748b',
+                            font: {
+                                weight: 'bold',
+                                family: "'Hind Siliguri', sans-serif"
+                            },
+                            formatter: (value) => toBanglaDigits(value)
+                        }
+                    },
                     scales: {
                         y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
                         x: { grid: { display: false } }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
 
             const statCtx = document.getElementById('statusChart').getContext('2d');
@@ -449,7 +475,8 @@
                     maintainAspectRatio: false,
                     cutout: '65%',
                     plugins: {
-                        legend: { position: 'right', labels: { font: { family: "'Hind Siliguri', sans-serif" }, boxWidth: 12 } }
+                        legend: { position: 'right', labels: { font: { family: "'Hind Siliguri', sans-serif" }, boxWidth: 12 } },
+                        datalabels: { display: false } // Disable labels for doughnut to stay clean
                     }
                 }
             });
@@ -542,10 +569,12 @@
             }).join('');
             document.getElementById('cardProgressBar').innerHTML = barHtml + `<div class="bg-slate-100 flex-grow h-full"></div>`;
 
-            // Date
+            // Date & Time (Updated)
             const today = new Date();
             const dateStr = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('cardDate').innerText = dateStr;
+            const timeStr = today.toLocaleTimeString('bn-BD', { hour: 'numeric', minute: 'numeric', hour12: true });
+
+            document.getElementById('cardDate').innerText = `${dateStr} • ${timeStr}`;
             document.getElementById('cardStatusText').innerText = "আপডেট: " + dateStr;
 
             modal.classList.remove('hidden');
@@ -564,7 +593,7 @@
                 logging: false 
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `Status-Card-${Date.now()}.png`;
+                link.download = `Layup_Status-Card_${Date.now()}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
             });
