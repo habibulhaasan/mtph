@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ডাটা এনালাইসিস - ১০ম গ্রেড বাস্তবায়ন পরিষদ</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                </div>
+                <h1 class="font-bold text-lg text-slate-800">ডাটা এনালাইসিস</h1>
+            </div>
+            <a href="ProtestDataImages.html" class="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                মূল তালিকা <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="fixed inset-0 bg-slate-50 z-50 flex flex-col items-center justify-center">
+        <div class="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+        <p class="text-slate-500 font-medium">এনালাইসিস তৈরি হচ্ছে...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container mx-auto px-4 py-8 hidden animate-fade-in">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <!-- Total Institutes -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-sm text-slate-500 font-medium">মোট প্রতিষ্ঠান</span>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800" id="totalInstitutes">0</h3>
+            </div>
+
+            <!-- Total Divisions -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <i data-lucide="map" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-sm text-slate-500 font-medium">সক্রিয় বিভাগ</span>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800" id="totalDivisions">0</h3>
+            </div>
+
+            <!-- Total Districts -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="p-2 bg-violet-50 text-violet-600 rounded-lg">
+                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-sm text-slate-500 font-medium">সক্রিয় জেলা</span>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800" id="totalDistricts">0</h3>
+            </div>
+
+             <!-- Total Upazilas -->
+             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                        <i data-lucide="navigation" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-sm text-slate-500 font-medium">সক্রিয় উপজেলা</span>
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800" id="totalUpazilas">0</h3>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            <!-- Division Bar Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
+                <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 text-slate-400"></i>
+                    বিভাগ অনুযায়ী অংশগ্রহণ
+                </h3>
+                <div class="relative h-[300px] w-full">
+                    <canvas id="divisionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Doughnut Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
+                    <i data-lucide="pie-chart" class="w-5 h-5 text-slate-400"></i>
+                    স্ট্যাটাস ওভারভিউ
+                </h3>
+                <div class="relative h-[250px] w-full flex justify-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div id="statusLegend" class="mt-6 space-y-2">
+                    <!-- Legend will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Breakdown Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-700 flex items-center gap-2">
+                    <i data-lucide="table" class="w-5 h-5 text-slate-400"></i>
+                    জেলা ও উপজেলা ভিত্তিক বিস্তারিত পরিসংখ্যান
+                </h3>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 text-slate-600 text-xs uppercase font-bold">
+                        <tr>
+                            <th class="p-4 border-b">বিভাগ</th>
+                            <th class="p-4 border-b">জেলা</th>
+                            <th class="p-4 border-b">উপজেলা</th>
+                            <th class="p-4 border-b text-right">প্রতিষ্ঠান সংখ্যা</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analysisTableBody" class="text-sm divide-y divide-slate-100">
+                        <!-- Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center py-8">
+        <p class="text-slate-400 text-xs">© ২০২৫ ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // --- API CONFIGURATION ---
+        const API_KEY = 'AIzaSyDTvwDm19m-xtkMuALsspEJB-NNYV0kdUg'; 
+        const SHEET_ID = '1lAgWuhQpBJE-NyrdnNiRxkbS5NdaB6zwOwb2agJAwRc';
+        const SHEET_NAME = 'File-Received';
+        const DATA_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+
+        // Fetch & Process Data
+        async function initAnalysis() {
+            try {
+                const response = await fetch(DATA_URL);
+                const result = await response.json();
+                
+                if (result.values && result.values.length > 0) {
+                    const rows = result.values.slice(1); // Skip header
+                    processData(rows);
+                }
+                
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('loadingState').innerHTML = `<p class="text-red-500">ডাটা লোড করতে সমস্যা হয়েছে</p>`;
+            }
+        }
+
+        function processData(rows) {
+            let data = rows.map(row => ({
+                division: row[6]?.trim() || "অজানা",
+                district: row[7]?.trim() || "অজানা",
+                upazila: row[8]?.trim() || "অজানা",
+                status: row[10]?.trim() || "No Status"
+            })).filter(item => item.district !== "অজানা");
+
+            // --- 1. Summary Counts ---
+            const totalCount = data.length;
+            const uniqueDivisions = [...new Set(data.map(d => d.division))].filter(d => d !== "অজানা");
+            const uniqueDistricts = [...new Set(data.map(d => d.district))].filter(d => d !== "অজানা");
+            const uniqueUpazilas = [...new Set(data.map(d => d.upazila))].filter(d => d !== "অজানা");
+
+            document.getElementById('totalInstitutes').innerText = toBanglaDigits(totalCount);
+            document.getElementById('totalDivisions').innerText = toBanglaDigits(uniqueDivisions.length);
+            document.getElementById('totalDistricts').innerText = toBanglaDigits(uniqueDistricts.length);
+            document.getElementById('totalUpazilas').innerText = toBanglaDigits(uniqueUpazilas.length);
+
+            // --- 2. Charts Data Preparation ---
+            
+            // Division Wise Count
+            const divisionCounts = {};
+            data.forEach(item => {
+                if(item.division !== "অজানা") {
+                    divisionCounts[item.division] = (divisionCounts[item.division] || 0) + 1;
+                }
+            });
+
+            // Status Wise Count
+            const statusCounts = {};
+            data.forEach(item => {
+                const s = item.status === "No Status" ? "স্ট্যাটাস নেই" : item.status;
+                statusCounts[s] = (statusCounts[s] || 0) + 1;
+            });
+
+            renderCharts(divisionCounts, statusCounts);
+            renderDetailedTable(data);
+        }
+
+        function renderCharts(divCounts, statCounts) {
+            // Setup Division Chart
+            const divCtx = document.getElementById('divisionChart').getContext('2d');
+            new Chart(divCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(divCounts),
+                    datasets: [{
+                        label: 'প্রতিষ্ঠান সংখ্যা',
+                        data: Object.values(divCounts),
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6,
+                        barThickness: 30,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Setup Status Chart
+            const statCtx = document.getElementById('statusChart').getContext('2d');
+            const statColors = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#94a3b8'];
+            
+            new Chart(statCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statCounts),
+                    datasets: [{
+                        data: Object.values(statCounts),
+                        backgroundColor: statColors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { family: "'Hind Siliguri', sans-serif" }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDetailedTable(data) {
+            const tbody = document.getElementById('analysisTableBody');
+            
+            // Group data by Division -> District -> Upazila
+            // But for a simpler table, let's show District wise summary sorted by count
+            
+            // Calculate District counts first to sort
+            const districtMap = {};
+            data.forEach(item => {
+                const key = `${item.division}|${item.district}`;
+                if(!districtMap[key]) districtMap[key] = { count: 0, upazilas: new Set() };
+                districtMap[key].count++;
+                if(item.upazila !== "অজানা") districtMap[key].upazilas.add(item.upazila);
+            });
+
+            // Convert to array and sort by Count (High to Low)
+            const sortedDistricts = Object.entries(districtMap).map(([key, val]) => {
+                const [div, dist] = key.split('|');
+                return { division: div, district: dist, count: val.count, upazilas: Array.from(val.upazilas).join(', ') };
+            }).sort((a, b) => b.count - a.count);
+
+            // Render Rows
+            tbody.innerHTML = sortedDistricts.map(item => `
+                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
+                    <td class="p-4 font-medium text-slate-700">${item.division}</td>
+                    <td class="p-4 font-bold text-slate-800">${item.district}</td>
+                    <td class="p-4 text-slate-500 text-xs">${item.upazilas || '-'}</td>
+                    <td class="p-4 text-right">
+                        <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+                            ${toBanglaDigits(item.count)}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function toBanglaDigits(str) {
+            if (!str) return '0';
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return str.toString().replace(/[0-9]/g, (w) => banglaDigits[englishDigits.indexOf(w)]);
+        }
+
+        initAnalysis();
+    </script>
+</body>
+</html>
