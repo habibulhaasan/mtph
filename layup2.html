@@ -67,7 +67,7 @@
                 </button>
             </div>
 
-            <!-- Filter Row -->
+            <!-- Filter Row (New) -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
                 <!-- Division Filter -->
                 <div>
@@ -100,6 +100,7 @@
                     </button>
                 </div>
             </div>
+
         </div>
 
 
@@ -109,17 +110,17 @@
             <p class="text-slate-500">ডাটা লোড হচ্ছে...</p>
         </div>
 
-        <!-- Data Grid -->
+        <!-- Data Grid (Cards for Mobile, Table for Desktop) -->
         <div id="dataContainer" class="hidden">
 
             <!-- Desktop Table View -->
             <div class="hidden md:block overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200">
-                <table class="w-full text-left border-collapse table-fixed">
+                <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50 text-slate-600 text-sm uppercase">
                         <tr>
-                            <th class="p-4 font-bold border-b w-[40%]">পূর্ণ ঠিকানা</th>
+                            <th class="p-4 font-bold border-b w-[50%]">পূর্ণ ঠিকানা</th>
                             <th class="p-4 font-bold border-b w-[30%]">মন্তব্য</th>
-                            <th class="p-4 font-bold border-b w-[30%]">আন্দোলনের ছবি</th>
+                            <th class="p-4 font-bold border-b text-center w-[20%]">ফাইল / ছবি</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="text-sm divide-y divide-slate-100">
@@ -154,13 +155,11 @@
     </div>
 
     <!-- Image Preview Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black/95 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal()">
-        <button class="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all" onclick="closeModal()">
+    <div id="imageModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4" onclick="closeModal()">
+        <button class="absolute top-4 right-4 text-white hover:text-red-400" onclick="closeModal()">
             <i data-lucide="x" class="w-8 h-8"></i>
         </button>
-        <div class="relative max-w-5xl w-full max-h-screen flex justify-center" onclick="event.stopPropagation()">
-             <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[85vh] rounded-md shadow-2xl object-contain">
-        </div>
+        <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl transform transition-transform scale-95 animate-fade-in">
     </div>
 
     <script>
@@ -175,34 +174,6 @@
 
         let allData = [];
         let filteredData = [];
-
-        // Helper: Convert Google Drive Links to Direct Image Links
-        function getDirectImageLink(url) {
-            if (!url) return null;
-            url = url.trim();
-
-            // Handle Google Drive Links
-            if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
-                let id = null;
-                // Match /d/ID pattern
-                let parts = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (parts && parts[1]) {
-                    id = parts[1];
-                } else {
-                    // Match id=ID pattern
-                    parts = url.match(/id=([a-zA-Z0-9_-]+)/);
-                    if (parts && parts[1]) {
-                        id = parts[1];
-                    }
-                }
-
-                if (id) {
-                    // lh3.googleusercontent.com is much faster and reliable for images than drive.google.com/uc
-                    return `https://lh3.googleusercontent.com/d/${id}`;
-                }
-            }
-            return url;
-        }
 
         // Fetch Data Function
         async function fetchData() {
@@ -222,23 +193,8 @@
                     const rows = result.values;
 
                     allData = rows.slice(1).map(row => {
-                        // Extract all potential link cells starting from column 11 (Index L onwards)
-                        // Also split comma-separated links within a single cell
-                        let extractedLinks = [];
-                        const rawCells = row.slice(11) || [];
-                        
-                        rawCells.forEach(cell => {
-                            if (cell && typeof cell === 'string') {
-                                // Split by comma or whitespace in case multiple links are pasted in one cell
-                                const potentials = cell.split(/[\s,]+/).filter(u => u.startsWith('http'));
-                                extractedLinks.push(...potentials);
-                            }
-                        });
-
-                        // Convert to direct links
-                        const validLinks = extractedLinks
-                            .map(link => getDirectImageLink(link))
-                            .filter(link => link !== null);
+                        const rawLinks = row.slice(11) || [];
+                        const validLinks = rawLinks.filter(link => link && link.trim() !== "" && link.startsWith("http"));
 
                         return {
                             Institute: row[9] || "",
@@ -256,7 +212,10 @@
                     allData = [];
                 }
 
+                // Initialize filters based on data
                 populateFilterOptions();
+
+                // Initial Render
                 filteredData = allData;
                 renderData(filteredData);
 
@@ -266,19 +225,26 @@
 
             } catch (error) {
                 console.error("Error fetching data:", error);
-                loading.innerHTML = `<p class="text-red-500">ডাটা লোড করতে সমস্যা হয়েছে।</p>`;
+                loading.innerHTML = `<p class="text-red-500">ডাটা লোড করতে সমস্যা হয়েছে। (Error: ${error.message})</p>`;
             }
         }
 
-        // --- Filter Logic ---
+        // --- NEW: Populate Filters Dynamically ---
         function populateFilterOptions() {
             const divSelect = document.getElementById('filterDivision');
+            const distSelect = document.getElementById('filterDistrict');
+            const upaSelect = document.getElementById('filterUpazila');
+
+            // Get Unique Divisions
             const divisions = [...new Set(allData.map(item => item.Division).filter(Boolean))].sort();
             divSelect.innerHTML = '<option value="">সকল বিভাগ</option>';
             divisions.forEach(d => divSelect.add(new Option(d, d)));
+
+            // Initially populate others with all available options
             updateCascadingFilters('none');
         }
 
+        // --- NEW: Cascading Filter Logic ---
         function updateCascadingFilters(changedLevel) {
             const divSelect = document.getElementById('filterDivision');
             const distSelect = document.getElementById('filterDistrict');
@@ -287,18 +253,21 @@
             const selectedDiv = divSelect.value;
             const selectedDist = distSelect.value;
 
+            // 1. Update Districts based on Division
             if (changedLevel === 'division' || changedLevel === 'none') {
                 const availableDistricts = [...new Set(allData
                     .filter(item => !selectedDiv || item.Division === selectedDiv)
                     .map(item => item.District)
                     .filter(Boolean))].sort();
 
+                // Save current selection if it still exists
                 const currentDist = distSelect.value;
                 distSelect.innerHTML = '<option value="">সকল জেলা</option>';
                 availableDistricts.forEach(d => distSelect.add(new Option(d, d)));
                 if (availableDistricts.includes(currentDist)) distSelect.value = currentDist;
             }
 
+            // 2. Update Upazilas based on Division AND District
             if (changedLevel === 'division' || changedLevel === 'district' || changedLevel === 'none') {
                 const availableUpazilas = [...new Set(allData
                     .filter(item => (!selectedDiv || item.Division === selectedDiv) && (!selectedDist || item.District === selectedDist))
@@ -312,12 +281,16 @@
             }
         }
 
+        // --- NEW: Apply Filters (Search + Dropdowns) ---
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const divVal = document.getElementById('filterDivision').value;
             const distVal = document.getElementById('filterDistrict').value;
             const upaVal = document.getElementById('filterUpazila').value;
 
+            // Update dropdown options to show only relevant child options
+            // But we check which element triggered it to avoid resetting the active one.
+            // For simplicity in this version, we call it here to ensure consistency.
             if(event && event.target.id === 'filterDivision') updateCascadingFilters('division');
             if(event && event.target.id === 'filterDistrict') updateCascadingFilters('district');
 
@@ -327,14 +300,17 @@
                     (item.District && item.District.toLowerCase().includes(searchTerm)) ||
                     (item.Upazila && item.Upazila.toLowerCase().includes(searchTerm))
                 );
+
                 const matchesDiv = !divVal || item.Division === divVal;
                 const matchesDist = !distVal || item.District === distVal;
                 const matchesUpa = !upaVal || item.Upazila === upaVal;
+
                 return matchesSearch && matchesDiv && matchesDist && matchesUpa;
             });
 
             renderData(filteredData);
-            
+
+            // Show/Hide Empty State
             const container = document.getElementById('dataContainer');
             const empty = document.getElementById('emptyState');
             if(filteredData.length === 0) {
@@ -351,13 +327,16 @@
             document.getElementById('filterDivision').value = '';
             document.getElementById('filterDistrict').value = '';
             document.getElementById('filterUpazila').value = '';
+
+            // Reset cascading options
             updateCascadingFilters('none');
+
             applyFilters();
         }
 
         document.getElementById('searchInput').addEventListener('input', applyFilters);
 
-        // --- Render Data ---
+        // Render Data Function
         function renderData(data) {
             const tableBody = document.getElementById('tableBody');
             const mobileCards = document.getElementById('mobileCards');
@@ -365,6 +344,8 @@
 
             tableBody.innerHTML = '';
             mobileCards.innerHTML = '';
+
+            // Update Count
             totalCount.innerText = toBanglaDigits(data.length);
 
             data.forEach(item => {
@@ -375,95 +356,73 @@
                 const comment = item.Comment || '';
                 const fileLinks = item.File_Links || [];
 
+                // Address Construction
                 const addressParts = [institute, upazila, district, division].filter(part => part && part.trim() !== "");
                 const fullAddress = addressParts.join(', ');
 
-                // --- Generate Image Grid HTML ---
-                let imageGridHTML = '';
+                // File Buttons
+                let fileButtons = '';
                 if (fileLinks.length > 0) {
-                    const images = fileLinks.map((link, index) => `
-                        <div onclick="openModal('${link}')" 
-                             class="group relative w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-all bg-slate-100 flex items-center justify-center">
-                            <img src="${link}" 
-                                 alt="ছবি" 
-                                 loading="lazy"
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                 onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<i data-lucide=\\'image-off\\' class=\\'w-5 h-5 text-slate-400\\'></i>'; lucide.createIcons();">
-                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-                        </div>
-                    `).join('');
-                    
-                    imageGridHTML = `<div class="flex flex-wrap gap-2 items-start">${images}</div>`;
+                    fileButtons = fileLinks.map((link, index) => 
+                        `<a href="${link}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all border border-blue-100" title="ফাইল ${toBanglaDigits(index + 1)}">
+                            <i data-lucide="paperclip" class="w-4 h-4"></i>
+                         </a>`
+                    ).join(' ');
                 } else {
-                    imageGridHTML = `<span class="text-slate-400 text-xs italic">কোনো ছবি নেই</span>`;
+                    fileButtons = '<span class="text-slate-300 text-xs">-</span>';
                 }
 
-                // --- Desktop Row ---
+                // --- Desktop Row (Cleaned Up) ---
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors group border-b border-slate-50";
+                tr.className = "hover:bg-slate-50 transition-colors group";
                 tr.innerHTML = `
-                    <td class="p-4 align-top">
-                        <div class="flex items-start gap-2.5">
-                            <div class="mt-1 bg-emerald-50 p-1.5 rounded text-emerald-600 shrink-0">
-                                <i data-lucide="map-pin" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-semibold text-slate-800 leading-snug mb-1">${institute || 'নাম পাওয়া যায়নি'}</h3>
-                                <p class="text-xs text-slate-500">${[upazila, district, division].filter(Boolean).join(', ')}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="p-4 align-top">
-                        <p class="text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-100 whitespace-pre-wrap leading-relaxed">
-                            ${comment ? comment : '<span class="text-slate-400 italic">কোনো মন্তব্য নেই</span>'}
+                    <td class="p-4 border-b border-slate-100 align-top">
+                        <p class="text-sm text-slate-700 font-medium leading-relaxed flex items-start gap-2">
+                            <i data-lucide="hospital" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <span>${fullAddress || 'ঠিকানা পাওয়া যায়নি'}</span>
                         </p>
                     </td>
-                    <td class="p-4 align-top">
-                        ${imageGridHTML}
+                    <td class="p-4 border-b border-slate-100 align-top">
+                        <p class="text-xs text-slate-600 italic whitespace-pre-wrap">${comment ? `"${comment}"` : '-'}</p>
+                    </td>
+                    <td class="p-4 border-b border-slate-100 align-top text-center">
+                        <div class="flex justify-center flex-wrap gap-1">${fileButtons}</div>
                     </td>
                 `;
                 tableBody.appendChild(tr);
 
-                // --- Mobile Card ---
+                // --- Mobile Card (Cleaned Up) ---
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4 animate-fade-in";
-                
-                // Images for mobile
-                const mobileImages = fileLinks.length > 0 ? fileLinks.map((link) => `
-                        <div onclick="openModal('${link}')" 
-                             class="relative w-full pt-[100%] rounded-lg overflow-hidden border border-slate-200 cursor-pointer bg-slate-100">
-                            <img src="${link}" 
-                                 class="absolute inset-0 w-full h-full object-cover"
-                                 loading="lazy"
-                                 onerror="this.onerror=null; this.parentElement.style.display='none';">
-                        </div>
-                    `).join('') : '';
+                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3 animate-fade-in";
 
                 card.innerHTML = `
-                    <!-- Header with Icon -->
-                    <div class="flex items-start gap-3">
-                        <div class="bg-emerald-100 p-2.5 rounded-lg shrink-0 text-emerald-600">
-                            <i data-lucide="building-2" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-sm leading-snug">${institute || 'প্রতিষ্ঠান'}</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">${[upazila, district].filter(Boolean).join(', ')}</p>
+                    <!-- Full Address Section -->
+                    <div class="">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-emerald-100 p-2 rounded-full shrink-0">
+                                <i data-lucide="hospital" class="w-5 h-5 text-emerald-600"></i>
+                            </div>
+                            <div class="space-y-1">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase">ঠিকানা</h4>
+                                <p class="text-sm font-semibold text-slate-800 leading-snug">${fullAddress || 'ঠিকানা নেই'}</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Content Body -->
-                    <div class="space-y-3 pl-1">
+                    <div class="pl-[44px] space-y-3">
+                        <!-- Comments -->
                         ${comment ? `
-                        <div class="text-xs text-slate-600 bg-yellow-50/50 p-3 rounded-lg border border-yellow-100/50">
-                             <span class="font-semibold text-yellow-700 block mb-1 text-[10px] uppercase">মন্তব্য</span>
-                             ${comment}
+                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                             <h4 class="text-[10px] font-bold text-yellow-600 uppercase mb-1">মন্তব্য</h4>
+                             <p class="text-xs text-slate-700 italic">"${comment}"</p>
                         </div>` : ''}
 
-                        ${mobileImages ? `
+                        <!-- Attachments Section -->
+                        ${fileLinks.length > 0 ? `
                         <div>
-                            <span class="font-bold text-slate-400 text-[10px] uppercase block mb-2">সংযুক্ত ছবি (${toBanglaDigits(fileLinks.length)})</span>
-                            <div class="grid grid-cols-4 gap-2">
-                                ${mobileImages}
+                            <h4 class="text-[10px] font-bold text-slate-400 uppercase mb-1.5">আন্দোলনের ছবি (${toBanglaDigits(fileLinks.length)})</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${fileButtons}
                             </div>
                         </div>` : ''}
                     </div>
@@ -484,32 +443,13 @@
         function openModal(url) {
             const modal = document.getElementById('imageModal');
             const img = document.getElementById('previewImage');
-            
-            // Show loading state implicitly by clearing src first
-            img.src = '';
             img.src = url;
-            
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
         }
 
         function closeModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.add('hidden');
-            document.body.style.overflow = ''; // Restore scrolling
-            
-            // Clear src to stop video/large image loading in background
-            setTimeout(() => {
-                document.getElementById('previewImage').src = '';
-            }, 200);
+            document.getElementById('imageModal').classList.add('hidden');
         }
-
-        // Close modal on Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "Escape") {
-                closeModal();
-            }
-        });
 
         // Initial Load
         fetchData();
