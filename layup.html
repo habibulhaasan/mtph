@@ -67,8 +67,8 @@
                 </button>
             </div>
 
-            <!-- Filter Row -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
+            <!-- Filter Row (Grid Updated for 5 items) -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pt-2 border-t border-slate-100">
                 <!-- Division Filter -->
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">বিভাগ</label>
@@ -93,10 +93,18 @@
                     </select>
                 </div>
 
+                <!-- Status Filter (NEW) -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">স্ট্যাটাস</label>
+                    <select id="filterStatus" onchange="applyFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500">
+                        <option value="">সকল স্ট্যাটাস</option>
+                    </select>
+                </div>
+
                 <!-- Reset Button -->
-                <div class="flex items-end">
+                <div class="flex items-end col-span-2 md:col-span-1 lg:col-span-1">
                     <button onclick="resetFilters()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="x-circle" class="w-4 h-4"></i> রিসেট ফিল্টার
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> রিসেট
                     </button>
                 </div>
             </div>
@@ -118,7 +126,7 @@
                     <thead class="bg-slate-50 text-slate-600 text-sm uppercase">
                         <tr>
                             <th class="p-4 font-bold border-b w-[40%]">পূর্ণ ঠিকানা</th>
-                            <th class="p-4 font-bold border-b w-[30%]">মন্তব্য</th>
+                            <th class="p-4 font-bold border-b w-[30%]">মন্তব্য ও স্ট্যাটাস</th>
                             <th class="p-4 font-bold border-b w-[30%]">আন্দোলনের ছবি</th>
                         </tr>
                     </thead>
@@ -169,7 +177,7 @@
         // --- API CONFIGURATION ---
         const API_KEY = 'AIzaSyDTvwDm19m-xtkMuALsspEJB-NNYV0kdUg'; 
         const SHEET_ID = '1lAgWuhQpBJE-NyrdnNiRxkbS5NdaB6zwOwb2agJAwRc';
-        const SHEET_NAME = 'File-Received';
+        const SHEET_NAME = 'Copy of File-Received';
 
         const DATA_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
@@ -181,23 +189,18 @@
             if (!url) return null;
             url = url.trim();
 
-            // Handle Google Drive Links
             if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
                 let id = null;
-                // Match /d/ID pattern
                 let parts = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (parts && parts[1]) {
                     id = parts[1];
                 } else {
-                    // Match id=ID pattern
                     parts = url.match(/id=([a-zA-Z0-9_-]+)/);
                     if (parts && parts[1]) {
                         id = parts[1];
                     }
                 }
-
                 if (id) {
-                    // lh3.googleusercontent.com is much faster and reliable for images than drive.google.com/uc
                     return `https://lh3.googleusercontent.com/d/${id}`;
                 }
             }
@@ -222,20 +225,16 @@
                     const rows = result.values;
 
                     allData = rows.slice(1).map(row => {
-                        // Extract all potential link cells starting from column 11 (Index L onwards)
-                        // Also split comma-separated links within a single cell
                         let extractedLinks = [];
-                        const rawCells = row.slice(11) || [];
+                        const rawCells = row.slice(12) || []; 
                         
                         rawCells.forEach(cell => {
                             if (cell && typeof cell === 'string') {
-                                // Split by comma or whitespace in case multiple links are pasted in one cell
                                 const potentials = cell.split(/[\s,]+/).filter(u => u.startsWith('http'));
                                 extractedLinks.push(...potentials);
                             }
                         });
 
-                        // Convert to direct links
                         const validLinks = extractedLinks
                             .map(link => getDirectImageLink(link))
                             .filter(link => link !== null);
@@ -245,12 +244,12 @@
                             Upazila: row[8] || "",
                             District: row[7] || "",
                             Division: row[6] || "",
-                            Comment: row[10] || "",
+                            Status: row[10] || "", 
+                            Comment: row[11] || "", 
                             File_Links: validLinks 
                         };
                     });
 
-                    // Basic cleaning
                     allData = allData.filter(item => item.District || item.Institute).reverse();
                 } else {
                     allData = [];
@@ -273,9 +272,18 @@
         // --- Filter Logic ---
         function populateFilterOptions() {
             const divSelect = document.getElementById('filterDivision');
+            const statusSelect = document.getElementById('filterStatus'); // New Status Select
+
+            // Populate Division
             const divisions = [...new Set(allData.map(item => item.Division).filter(Boolean))].sort();
             divSelect.innerHTML = '<option value="">সকল বিভাগ</option>';
             divisions.forEach(d => divSelect.add(new Option(d, d)));
+
+            // Populate Status (NEW)
+            const statuses = [...new Set(allData.map(item => item.Status).filter(Boolean))].sort();
+            statusSelect.innerHTML = '<option value="">সকল স্ট্যাটাস</option>';
+            statuses.forEach(s => statusSelect.add(new Option(s, s)));
+
             updateCascadingFilters('none');
         }
 
@@ -317,6 +325,7 @@
             const divVal = document.getElementById('filterDivision').value;
             const distVal = document.getElementById('filterDistrict').value;
             const upaVal = document.getElementById('filterUpazila').value;
+            const statusVal = document.getElementById('filterStatus').value; // Get Status Value
 
             if(event && event.target.id === 'filterDivision') updateCascadingFilters('division');
             if(event && event.target.id === 'filterDistrict') updateCascadingFilters('district');
@@ -330,7 +339,9 @@
                 const matchesDiv = !divVal || item.Division === divVal;
                 const matchesDist = !distVal || item.District === distVal;
                 const matchesUpa = !upaVal || item.Upazila === upaVal;
-                return matchesSearch && matchesDiv && matchesDist && matchesUpa;
+                const matchesStatus = !statusVal || item.Status === statusVal; // Status check
+
+                return matchesSearch && matchesDiv && matchesDist && matchesUpa && matchesStatus;
             });
 
             renderData(filteredData);
@@ -351,6 +362,7 @@
             document.getElementById('filterDivision').value = '';
             document.getElementById('filterDistrict').value = '';
             document.getElementById('filterUpazila').value = '';
+            document.getElementById('filterStatus').value = ''; // Reset Status
             updateCascadingFilters('none');
             applyFilters();
         }
@@ -372,11 +384,15 @@
                 const upazila = item.Upazila || '';
                 const district = item.District || '';
                 const division = item.Division || '';
+                const status = item.Status || '';
                 const comment = item.Comment || '';
                 const fileLinks = item.File_Links || [];
 
-                const addressParts = [institute, upazila, district, division].filter(part => part && part.trim() !== "");
-                const fullAddress = addressParts.join(', ');
+                // --- Helper: Status Badge HTML ---
+                const statusHTML = status ? 
+                    `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
+                        ${status}
+                    </span>` : '';
 
                 // --- Generate Image Grid HTML ---
                 let imageGridHTML = '';
@@ -414,6 +430,7 @@
                         </div>
                     </td>
                     <td class="p-4 align-top">
+                        <div class="mb-2">${statusHTML}</div>
                         <p class="text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-100 whitespace-pre-wrap leading-relaxed">
                             ${comment ? comment : '<span class="text-slate-400 italic">কোনো মন্তব্য নেই</span>'}
                         </p>
@@ -426,9 +443,8 @@
 
                 // --- Mobile Card ---
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4 animate-fade-in";
+                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4 animate-fade-in relative";
                 
-                // Images for mobile
                 const mobileImages = fileLinks.length > 0 ? fileLinks.map((link) => `
                         <div onclick="openModal('${link}')" 
                              class="relative w-full pt-[100%] rounded-lg overflow-hidden border border-slate-200 cursor-pointer bg-slate-100">
@@ -440,8 +456,15 @@
                     `).join('') : '';
 
                 card.innerHTML = `
+                    <!-- Status Badge Absolute Top-Right -->
+                    ${status ? `<div class="absolute top-4 right-4">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 shadow-sm">
+                            ${status}
+                        </span>
+                    </div>` : ''}
+
                     <!-- Header with Icon -->
-                    <div class="flex items-start gap-3">
+                    <div class="flex items-start gap-3 pr-20"> <!-- Added padding-right to avoid overlap with status -->
                         <div class="bg-emerald-100 p-2.5 rounded-lg shrink-0 text-emerald-600">
                             <i data-lucide="building-2" class="w-5 h-5"></i>
                         </div>
@@ -484,27 +507,21 @@
         function openModal(url) {
             const modal = document.getElementById('imageModal');
             const img = document.getElementById('previewImage');
-            
-            // Show loading state implicitly by clearing src first
             img.src = '';
             img.src = url;
-            
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closeModal() {
             const modal = document.getElementById('imageModal');
             modal.classList.add('hidden');
-            document.body.style.overflow = ''; // Restore scrolling
-            
-            // Clear src to stop video/large image loading in background
+            document.body.style.overflow = '';
             setTimeout(() => {
                 document.getElementById('previewImage').src = '';
             }, 200);
         }
 
-        // Close modal on Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closeModal();
@@ -516,5 +533,3 @@
     </script>
 </body>
 </html>
-
-
