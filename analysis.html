@@ -11,6 +11,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Html2Canvas (For Image Generation) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -18,6 +20,11 @@
         body { font-family: 'Hind Siliguri', sans-serif; }
         .fade-in { animation: fadeIn 0.8s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Summary Card Style for Export */
+        #exportCard {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -29,13 +36,24 @@
                 <div class="bg-blue-600 text-white p-2 rounded-lg">
                     <i data-lucide="pie-chart" class="w-5 h-5"></i>
                 </div>
-                <h1 class="font-bold text-lg text-slate-800">ডাটা এনালাইসিস</h1>
+                <h1 class="font-bold text-lg text-slate-800 hidden md:block">ডাটা এনালাইসিস</h1>
+                <h1 class="font-bold text-lg text-slate-800 md:hidden">এনালাইসিস</h1>
             </div>
-            <a href="ProtestDataImages.html" class="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                মূল তালিকা <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
+            <div class="flex items-center gap-3">
+                <button onclick="openExportModal()" class="hidden md:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                    <i data-lucide="share-2" class="w-4 h-4"></i> শেয়ার কার্ড ডাউনলোড
+                </button>
+                <a href="ProtestDataImages.html" class="text-sm font-medium text-slate-500 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors flex items-center gap-1">
+                    <span class="hidden md:inline">মূল তালিকা</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
         </div>
     </nav>
+
+    <!-- Mobile Floating Action Button for Export -->
+    <button onclick="openExportModal()" class="md:hidden fixed bottom-6 right-6 bg-emerald-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-emerald-700 transition-colors">
+        <i data-lucide="share-2" class="w-6 h-6"></i>
+    </button>
 
     <!-- Loading State -->
     <div id="loadingState" class="fixed inset-0 bg-slate-50 z-50 flex flex-col items-center justify-center">
@@ -44,52 +62,65 @@
     </div>
 
     <!-- Main Content -->
-    <div id="mainContent" class="container mx-auto px-4 py-8 hidden animate-fade-in">
+    <div id="mainContent" class="container mx-auto px-4 py-6 hidden animate-fade-in">
         
+        <!-- Filter Controls -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-slate-400 uppercase flex items-center gap-2">
+                    <i data-lucide="filter" class="w-4 h-4"></i> ফিল্টার অপশন
+                </h3>
+                <button onclick="resetAnalysisFilters()" class="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">রিসেট</button>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div>
+                    <select id="anlDivision" onchange="applyAnalysisFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                        <option value="">সকল বিভাগ</option>
+                    </select>
+                </div>
+                <div>
+                    <select id="anlDistrict" onchange="applyAnalysisFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                        <option value="">সকল জেলা</option>
+                    </select>
+                </div>
+                 <div>
+                    <select id="anlUpazila" onchange="applyAnalysisFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                        <option value="">সকল উপজেলা</option>
+                    </select>
+                </div>
+                <div>
+                    <select id="anlStatus" onchange="applyAnalysisFilters()" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                        <option value="">সকল স্ট্যাটাস</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- Summary Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <!-- Total Institutes -->
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                        <i data-lucide="building-2" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-sm text-slate-500 font-medium">মোট প্রতিষ্ঠান</span>
-                </div>
-                <h3 class="text-3xl font-bold text-slate-800" id="totalInstitutes">0</h3>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
+                <span class="text-xs text-slate-500 font-bold uppercase block mb-1">মোট প্রতিষ্ঠান</span>
+                <h3 class="text-2xl md:text-3xl font-bold text-slate-800" id="totalInstitutes">0</h3>
             </div>
 
-            <!-- Total Divisions -->
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                        <i data-lucide="map" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-sm text-slate-500 font-medium">সক্রিয় বিভাগ</span>
-                </div>
-                <h3 class="text-3xl font-bold text-slate-800" id="totalDivisions">0</h3>
-            </div>
-
-            <!-- Total Districts -->
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-violet-50 text-violet-600 rounded-lg">
-                        <i data-lucide="map-pin" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-sm text-slate-500 font-medium">সক্রিয় জেলা</span>
-                </div>
-                <h3 class="text-3xl font-bold text-slate-800" id="totalDistricts">0</h3>
+            <!-- Total Districts (Contextual based on filter) -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
+                <span class="text-xs text-slate-500 font-bold uppercase block mb-1">অংশগ্রহণকারী জেলা</span>
+                <h3 class="text-2xl md:text-3xl font-bold text-slate-800" id="totalDistricts">0</h3>
             </div>
 
              <!-- Total Upazilas -->
-             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-orange-50 text-orange-600 rounded-lg">
-                        <i data-lucide="navigation" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-sm text-slate-500 font-medium">সক্রিয় উপজেলা</span>
-                </div>
-                <h3 class="text-3xl font-bold text-slate-800" id="totalUpazilas">0</h3>
+             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-orange-500">
+                <span class="text-xs text-slate-500 font-bold uppercase block mb-1">অংশগ্রহণকারী উপজেলা</span>
+                <h3 class="text-2xl md:text-3xl font-bold text-slate-800" id="totalUpazilas">0</h3>
+            </div>
+            
+            <!-- Filtered Status Count (Dynamic) -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-violet-500">
+                 <span class="text-xs text-slate-500 font-bold uppercase block mb-1">বর্তমানে প্রদর্শিত</span>
+                 <h3 class="text-2xl md:text-3xl font-bold text-slate-800" id="currentViewCount">0</h3>
             </div>
         </div>
 
@@ -100,7 +131,7 @@
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
                 <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2">
                     <i data-lucide="bar-chart-3" class="w-5 h-5 text-slate-400"></i>
-                    বিভাগ অনুযায়ী অংশগ্রহণ
+                    অংশগ্রহণ (বিভাগ/জেলা অনুযায়ী)
                 </h3>
                 <div class="relative h-[300px] w-full">
                     <canvas id="divisionChart"></canvas>
@@ -116,38 +147,108 @@
                 <div class="relative h-[250px] w-full flex justify-center">
                     <canvas id="statusChart"></canvas>
                 </div>
-                <div id="statusLegend" class="mt-6 space-y-2">
-                    <!-- Legend will be inserted here -->
-                </div>
             </div>
         </div>
 
         <!-- Detailed Breakdown Table -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="font-bold text-slate-700 flex items-center gap-2">
-                    <i data-lucide="table" class="w-5 h-5 text-slate-400"></i>
-                    জেলা ও উপজেলা ভিত্তিক বিস্তারিত পরিসংখ্যান
+            <div class="p-4 md:p-6 border-b border-slate-100 bg-slate-50/50">
+                <h3 class="font-bold text-slate-700 flex items-center gap-2 text-sm md:text-base">
+                    <i data-lucide="list-filter" class="w-4 h-4 md:w-5 md:h-5 text-slate-400"></i>
+                    বিস্তারিত পরিসংখ্যান (সর্বোচ্চ অংশগ্রহণকারী জেলা)
                 </h3>
             </div>
             
-            <div class="overflow-x-auto">
+            <div class="max-h-[500px] overflow-y-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50 text-slate-600 text-xs uppercase font-bold">
+                    <thead class="bg-white sticky top-0 z-10 shadow-sm text-slate-600 text-xs uppercase font-bold">
                         <tr>
-                            <th class="p-4 border-b">বিভাগ</th>
-                            <th class="p-4 border-b">জেলা</th>
-                            <th class="p-4 border-b">উপজেলা</th>
-                            <th class="p-4 border-b text-right">প্রতিষ্ঠান সংখ্যা</th>
+                            <th class="p-3 md:p-4 border-b">বিভাগ</th>
+                            <th class="p-3 md:p-4 border-b">জেলা</th>
+                            <th class="hidden md:table-cell p-3 md:p-4 border-b">উপজেলা সমূহ</th>
+                            <th class="p-3 md:p-4 border-b text-right">সংখ্যা</th>
                         </tr>
                     </thead>
-                    <tbody id="analysisTableBody" class="text-sm divide-y divide-slate-100">
+                    <tbody id="analysisTableBody" class="text-sm divide-y divide-slate-100 bg-white">
                         <!-- Rows -->
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
 
+    <!-- Export Modal & Hidden Card Container -->
+    <div id="exportModal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-slate-800">শেয়ার কার্ড প্রিভিউ</h3>
+                <button onclick="closeExportModal()" class="p-2 hover:bg-slate-100 rounded-full text-slate-500">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 md:p-8 flex justify-center bg-slate-100">
+                <!-- The Card to Capture -->
+                <div id="captureTarget" class="w-[500px] bg-white rounded-none shadow-2xl overflow-hidden relative">
+                    <!-- Header -->
+                    <div class="bg-blue-600 text-white p-6 text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                        <h2 class="text-xl font-bold mb-1 relative z-10">১০ম গ্রেড বাস্তবায়ন পরিষদ</h2>
+                        <p class="text-blue-100 text-sm relative z-10 font-medium" id="cardSubtitle">কর্মবিরতি ও আন্দোলনের পরিসংখ্যান</p>
+                    </div>
+                    
+                    <!-- Stats Grid -->
+                    <div class="p-6 grid grid-cols-3 gap-3">
+                        <div class="bg-slate-50 p-3 rounded-lg text-center border border-slate-100">
+                            <span class="text-xl font-bold text-blue-600 block" id="cardTotalInst">0</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold">প্রতিষ্ঠান</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg text-center border border-slate-100">
+                            <span class="text-xl font-bold text-emerald-600 block" id="cardTotalDist">0</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold">জেলা</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg text-center border border-slate-100">
+                            <span class="text-xl font-bold text-orange-600 block" id="cardTotalUpa">0</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold">উপজেলা</span>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown List -->
+                    <div class="px-6 pb-2">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase mb-3 border-b pb-2 flex justify-between">
+                            <span>শীর্ষ অংশগ্রহণকারী এলাকা</span>
+                            <span class="text-emerald-600" id="cardFilterLabel">সমগ্র দেশ</span>
+                        </h4>
+                        <ul id="cardTopDistricts" class="space-y-2 text-sm">
+                            <!-- Items inserted by JS -->
+                        </ul>
+                    </div>
+
+                    <!-- Chart Placeholder for Visual -->
+                    <div class="px-6 py-4">
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden flex" id="cardProgressBar">
+                            <!-- JS generates bars here -->
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                            <span>অংশগ্রহণ অনুপাত</span>
+                            <span id="cardStatusText">আপডেট চলছে</span>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-slate-50 p-4 text-center border-t border-slate-100">
+                        <p class="text-[10px] text-slate-400 font-medium">তথ্যসূত্র: গুগল শিট ডাটাবেস • রিপোর্ট: <span id="cardDate"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-100 flex justify-end gap-3">
+                <button onclick="closeExportModal()" class="px-4 py-2 text-slate-600 font-bold text-sm hover:bg-slate-100 rounded-lg">বাতিল</button>
+                <button onclick="downloadImage()" class="px-6 py-2 bg-blue-600 text-white font-bold text-sm rounded-lg hover:bg-blue-700 shadow-md flex items-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> ডাউনলোড ইমেজ
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -158,21 +259,35 @@
     <script>
         lucide.createIcons();
 
-        // --- API CONFIGURATION ---
+        // --- API & GLOBALS ---
         const API_KEY = 'AIzaSyDTvwDm19m-xtkMuALsspEJB-NNYV0kdUg'; 
         const SHEET_ID = '1lAgWuhQpBJE-NyrdnNiRxkbS5NdaB6zwOwb2agJAwRc';
         const SHEET_NAME = 'File-Received';
         const DATA_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
-        // Fetch & Process Data
+        let rawData = [];
+        let filteredData = [];
+        let divisionChart = null;
+        let statusChart = null;
+
+        // --- FETCH DATA ---
         async function initAnalysis() {
             try {
                 const response = await fetch(DATA_URL);
                 const result = await response.json();
                 
                 if (result.values && result.values.length > 0) {
-                    const rows = result.values.slice(1); // Skip header
-                    processData(rows);
+                    const rows = result.values.slice(1);
+                    rawData = rows.map(row => ({
+                        division: row[6]?.trim() || "অজানা",
+                        district: row[7]?.trim() || "অজানা",
+                        upazila: row[8]?.trim() || "অজানা",
+                        status: row[10]?.trim() || "No Status"
+                    })).filter(item => item.district !== "অজানা");
+                    
+                    filteredData = [...rawData];
+                    populateAnalysisFilters();
+                    updateDashboard();
                 }
                 
                 document.getElementById('loadingState').classList.add('hidden');
@@ -180,71 +295,134 @@
 
             } catch (error) {
                 console.error("Error:", error);
-                document.getElementById('loadingState').innerHTML = `<p class="text-red-500">ডাটা লোড করতে সমস্যা হয়েছে</p>`;
+                document.getElementById('loadingState').innerHTML = `<p class="text-red-500">ডাটা লোড সমস্যা হয়েছে</p>`;
             }
         }
 
-        function processData(rows) {
-            let data = rows.map(row => ({
-                division: row[6]?.trim() || "অজানা",
-                district: row[7]?.trim() || "অজানা",
-                upazila: row[8]?.trim() || "অজানা",
-                status: row[10]?.trim() || "No Status"
-            })).filter(item => item.district !== "অজানা");
+        // --- FILTER LOGIC ---
+        function populateAnalysisFilters() {
+            const divSelect = document.getElementById('anlDivision');
+            const statSelect = document.getElementById('anlStatus');
 
-            // --- 1. Summary Counts ---
-            const totalCount = data.length;
-            const uniqueDivisions = [...new Set(data.map(d => d.division))].filter(d => d !== "অজানা");
-            const uniqueDistricts = [...new Set(data.map(d => d.district))].filter(d => d !== "অজানা");
-            const uniqueUpazilas = [...new Set(data.map(d => d.upazila))].filter(d => d !== "অজানা");
+            const divisions = [...new Set(rawData.map(d => d.division))].sort();
+            const statuses = [...new Set(rawData.map(d => d.status))].filter(Boolean).sort();
 
-            document.getElementById('totalInstitutes').innerText = toBanglaDigits(totalCount);
-            document.getElementById('totalDivisions').innerText = toBanglaDigits(uniqueDivisions.length);
-            document.getElementById('totalDistricts').innerText = toBanglaDigits(uniqueDistricts.length);
-            document.getElementById('totalUpazilas').innerText = toBanglaDigits(uniqueUpazilas.length);
+            divSelect.innerHTML = '<option value="">সকল বিভাগ</option>';
+            divisions.forEach(d => divSelect.add(new Option(d, d)));
 
-            // --- 2. Charts Data Preparation ---
+            statSelect.innerHTML = '<option value="">সকল স্ট্যাটাস</option>';
+            statuses.forEach(s => statSelect.add(new Option(s, s)));
+
+            updateAnalysisCascadingFilters();
+        }
+
+        function updateAnalysisCascadingFilters() {
+            const divVal = document.getElementById('anlDivision').value;
+            const distSelect = document.getElementById('anlDistrict');
+            const upaSelect = document.getElementById('anlUpazila');
+
+            const availableDistricts = [...new Set(rawData
+                .filter(d => !divVal || d.division === divVal)
+                .map(d => d.district))].sort();
+
+            const currentDist = distSelect.value;
+            distSelect.innerHTML = '<option value="">সকল জেলা</option>';
+            availableDistricts.forEach(d => distSelect.add(new Option(d, d)));
+            if(availableDistricts.includes(currentDist)) distSelect.value = currentDist;
+
+             const distVal = distSelect.value;
+             const availableUpazilas = [...new Set(rawData
+                .filter(d => (!divVal || d.division === divVal) && (!distVal || d.district === distVal))
+                .map(d => d.upazila))].sort();
             
-            // Division Wise Count
-            const divisionCounts = {};
-            data.forEach(item => {
-                if(item.division !== "অজানা") {
-                    divisionCounts[item.division] = (divisionCounts[item.division] || 0) + 1;
-                }
+            const currentUpa = upaSelect.value;
+            upaSelect.innerHTML = '<option value="">সকল উপজেলা</option>';
+            availableUpazilas.forEach(u => upaSelect.add(new Option(u, u)));
+             if(availableUpazilas.includes(currentUpa)) upaSelect.value = currentUpa;
+        }
+
+        function applyAnalysisFilters() {
+            const divVal = document.getElementById('anlDivision').value;
+            const distVal = document.getElementById('anlDistrict').value;
+            const upaVal = document.getElementById('anlUpazila').value;
+            const statVal = document.getElementById('anlStatus').value;
+
+            if(event && (event.target.id === 'anlDivision' || event.target.id === 'anlDistrict')) {
+                updateAnalysisCascadingFilters();
+            }
+
+            filteredData = rawData.filter(item => {
+                return (!divVal || item.division === divVal) &&
+                       (!distVal || item.district === distVal) &&
+                       (!upaVal || item.upazila === upaVal) &&
+                       (!statVal || item.status === statVal);
             });
 
-            // Status Wise Count
+            updateDashboard();
+        }
+
+        function resetAnalysisFilters() {
+            document.getElementById('anlDivision').value = '';
+            document.getElementById('anlDistrict').value = '';
+            document.getElementById('anlUpazila').value = '';
+            document.getElementById('anlStatus').value = '';
+            updateAnalysisCascadingFilters();
+            filteredData = [...rawData];
+            updateDashboard();
+        }
+
+        // --- DASHBOARD UPDATE ---
+        function updateDashboard() {
+            const totalCount = filteredData.length;
+            const uniqueDivs = [...new Set(filteredData.map(d => d.division))].length;
+            const uniqueDists = [...new Set(filteredData.map(d => d.district))].length;
+            const uniqueUpas = [...new Set(filteredData.map(d => d.upazila))].length;
+
+            document.getElementById('totalInstitutes').innerText = toBanglaDigits(rawData.length);
+            document.getElementById('totalDistricts').innerText = toBanglaDigits(uniqueDists);
+            document.getElementById('totalUpazilas').innerText = toBanglaDigits(uniqueUpas);
+            document.getElementById('currentViewCount').innerText = toBanglaDigits(totalCount);
+
+            const divisionCounts = {};
             const statusCounts = {};
-            data.forEach(item => {
+            
+            const isDistrictLevel = document.getElementById('anlDivision').value !== "";
+            const chartLabel = isDistrictLevel ? "জেলা অনুযায়ী" : "বিভাগ অনুযায়ী";
+            
+            filteredData.forEach(item => {
+                const key = isDistrictLevel ? item.district : item.division;
+                divisionCounts[key] = (divisionCounts[key] || 0) + 1;
+
                 const s = item.status === "No Status" ? "স্ট্যাটাস নেই" : item.status;
                 statusCounts[s] = (statusCounts[s] || 0) + 1;
             });
 
-            renderCharts(divisionCounts, statusCounts);
-            renderDetailedTable(data);
+            renderCharts(divisionCounts, statusCounts, chartLabel);
+            renderDetailedTable();
         }
 
-        function renderCharts(divCounts, statCounts) {
-            // Setup Division Chart
+        function renderCharts(mainCounts, statCounts, mainLabel) {
+            if(divisionChart) divisionChart.destroy();
+            if(statusChart) statusChart.destroy();
+
             const divCtx = document.getElementById('divisionChart').getContext('2d');
-            new Chart(divCtx, {
+            divisionChart = new Chart(divCtx, {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(divCounts),
+                    labels: Object.keys(mainCounts),
                     datasets: [{
                         label: 'প্রতিষ্ঠান সংখ্যা',
-                        data: Object.values(divCounts),
+                        data: Object.values(mainCounts),
                         backgroundColor: '#3b82f6',
-                        borderRadius: 6,
-                        barThickness: 30,
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 40
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
                         x: { grid: { display: false } }
@@ -252,11 +430,10 @@
                 }
             });
 
-            // Setup Status Chart
             const statCtx = document.getElementById('statusChart').getContext('2d');
             const statColors = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#94a3b8'];
             
-            new Chart(statCtx, {
+            statusChart = new Chart(statCtx, {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(statCounts),
@@ -270,55 +447,127 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
+                    cutout: '65%',
                     plugins: {
-                        legend: { 
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20,
-                                font: { family: "'Hind Siliguri', sans-serif" }
-                            }
-                        }
+                        legend: { position: 'right', labels: { font: { family: "'Hind Siliguri', sans-serif" }, boxWidth: 12 } }
                     }
                 }
             });
         }
 
-        function renderDetailedTable(data) {
+        function renderDetailedTable() {
             const tbody = document.getElementById('analysisTableBody');
             
-            // Group data by Division -> District -> Upazila
-            // But for a simpler table, let's show District wise summary sorted by count
-            
-            // Calculate District counts first to sort
             const districtMap = {};
-            data.forEach(item => {
+            filteredData.forEach(item => {
                 const key = `${item.division}|${item.district}`;
                 if(!districtMap[key]) districtMap[key] = { count: 0, upazilas: new Set() };
                 districtMap[key].count++;
                 if(item.upazila !== "অজানা") districtMap[key].upazilas.add(item.upazila);
             });
 
-            // Convert to array and sort by Count (High to Low)
             const sortedDistricts = Object.entries(districtMap).map(([key, val]) => {
                 const [div, dist] = key.split('|');
                 return { division: div, district: dist, count: val.count, upazilas: Array.from(val.upazilas).join(', ') };
             }).sort((a, b) => b.count - a.count);
 
-            // Render Rows
             tbody.innerHTML = sortedDistricts.map(item => `
-                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
-                    <td class="p-4 font-medium text-slate-700">${item.division}</td>
-                    <td class="p-4 font-bold text-slate-800">${item.district}</td>
-                    <td class="p-4 text-slate-500 text-xs">${item.upazilas || '-'}</td>
-                    <td class="p-4 text-right">
-                        <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 group">
+                    <td class="p-3 md:p-4 text-slate-500 text-xs md:text-sm group-hover:text-blue-600 font-medium">${item.division}</td>
+                    <td class="p-3 md:p-4 font-bold text-slate-800 text-sm">${item.district}</td>
+                    <td class="hidden md:table-cell p-3 md:p-4 text-slate-400 text-xs">${item.upazilas || '-'}</td>
+                    <td class="p-3 md:p-4 text-right">
+                        <span class="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-100">
                             ${toBanglaDigits(item.count)}
                         </span>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        // --- IMAGE EXPORT LOGIC ---
+        function openExportModal() {
+            const modal = document.getElementById('exportModal');
+            
+            // 1. Determine Dynamic Context Title
+            const divFilter = document.getElementById('anlDivision').value;
+            const distFilter = document.getElementById('anlDistrict').value;
+            const upaFilter = document.getElementById('anlUpazila').value;
+            
+            let contextTitle = "সমগ্র বাংলাদেশ";
+            if (divFilter) contextTitle = `${divFilter} বিভাগ`;
+            if (distFilter) contextTitle = `${distFilter} জেলা, ${divFilter}`;
+            if (upaFilter) contextTitle = `${upaFilter}, ${distFilter}`;
+
+            document.getElementById('cardSubtitle').innerText = `${contextTitle} - পরিসংখ্যান`;
+            document.getElementById('cardFilterLabel').innerText = divFilter || "সমগ্র দেশ";
+
+            // 2. Set Stats based on FILTERED Data
+            document.getElementById('cardTotalInst').innerText = toBanglaDigits(filteredData.length);
+            document.getElementById('cardTotalDist').innerText = toBanglaDigits([...new Set(filteredData.map(d=>d.district))].length);
+            document.getElementById('cardTotalUpa').innerText = toBanglaDigits([...new Set(filteredData.map(d=>d.upazila))].length);
+            
+            // 3. Dynamic Breakdown (District or Upazila based on level)
+            const listContainer = document.getElementById('cardTopDistricts');
+            let breakdownMap = {};
+            
+            // If viewing specific District -> Show Top Upazilas
+            if (distFilter) {
+                document.getElementById('cardFilterLabel').innerText = "অংশগ্রহণকারী উপজেলা";
+                filteredData.forEach(d => { breakdownMap[d.upazila] = (breakdownMap[d.upazila] || 0) + 1; });
+            } else {
+                // Else Show Top Districts
+                document.getElementById('cardFilterLabel').innerText = divFilter ? "শীর্ষ জেলা" : "শীর্ষ জেলাসমূহ";
+                filteredData.forEach(d => { breakdownMap[d.district] = (breakdownMap[d.district] || 0) + 1; });
+            }
+
+            const topItems = Object.entries(breakdownMap)
+                .sort((a,b) => b[1] - a[1])
+                .slice(0, 5); // Top 5
+            
+            const listHtml = topItems.map((d, i) => `
+                <li class="flex justify-between items-center bg-slate-50 p-2 rounded border-b border-slate-100">
+                    <span class="font-semibold text-slate-700"><span class="text-blue-400 mr-2">#${toBanglaDigits(i+1)}</span> ${d[0]}</span>
+                    <span class="font-bold text-slate-800">${toBanglaDigits(d[1])}</span>
+                </li>
+            `).join('');
+            listContainer.innerHTML = listHtml || '<li class="text-center text-slate-400 text-xs py-2">তথ্য নেই</li>';
+
+            // 4. Progress Visual
+            const barColors = ['bg-blue-500', 'bg-emerald-500', 'bg-violet-500', 'bg-orange-500', 'bg-slate-300'];
+            const total = filteredData.length;
+            const barHtml = topItems.map((d, i) => {
+                const width = total > 0 ? (d[1] / total) * 100 : 0;
+                return `<div style="width: ${width}%" class="${barColors[i] || 'bg-slate-400'} h-full"></div>`;
+            }).join('');
+            document.getElementById('cardProgressBar').innerHTML = barHtml + `<div class="bg-slate-100 flex-grow h-full"></div>`;
+
+            // Date
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('cardDate').innerText = dateStr;
+            document.getElementById('cardStatusText').innerText = "আপডেট: " + dateStr;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+        }
+
+        function downloadImage() {
+            const element = document.getElementById('captureTarget');
+            
+            html2canvas(element, { 
+                scale: 2, 
+                backgroundColor: "#ffffff",
+                logging: false 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Status-Card-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
         }
 
         function toBanglaDigits(str) {
