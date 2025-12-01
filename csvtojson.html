@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to JSON Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .drag-active {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4 text-slate-800">
+
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-slate-900 text-white p-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-3">
+                    <i class="fa-solid fa-file-csv text-green-400"></i>
+                    <span>CSV <i class="fa-solid fa-arrow-right text-slate-500 text-sm mx-1"></i> JSON</span>
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">Convert comma-separated values to structured JSON objects instantly.</p>
+            </div>
+            <button onclick="resetApp()" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">
+                <i class="fa-solid fa-rotate-right mr-1"></i> Reset
+            </button>
+        </div>
+
+        <div class="flex flex-col lg:flex-row h-full">
+            
+            <!-- Left Side: Input -->
+            <div class="w-full lg:w-2/5 p-6 border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-50 flex flex-col gap-6">
+                
+                <!-- Upload Area -->
+                <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-xl bg-white p-8 text-center transition-all duration-200 flex flex-col items-center justify-center h-64 group cursor-pointer hover:border-blue-400 hover:bg-slate-50 relative">
+                    <input type="file" id="fileInput" accept=".csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <div class="bg-blue-100 text-blue-600 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg text-slate-700">Click or Drag CSV here</h3>
+                    <p class="text-slate-500 text-sm mt-1">Supports standard CSV files</p>
+                </div>
+
+                <!-- Settings -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-semibold text-slate-700 mb-3 text-sm uppercase tracking-wide">Options</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm text-slate-600">Delimiter</label>
+                            <select id="delimiter" class="text-sm border-slate-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-1 border bg-slate-50">
+                                <option value="auto">Auto-Detect</option>
+                                <option value=",">Comma (,)</option>
+                                <option value=";">Semicolon (;)</option>
+                                <option value="	">Tab (\t)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="headerRow" checked class="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-gray-300">
+                            <label for="headerRow" class="ml-2 text-sm text-slate-600">First row is header</label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="parseNumbers" checked class="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-gray-300">
+                            <label for="parseNumbers" class="ml-2 text-sm text-slate-600">Parse numbers (e.g. "123" → 123)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Message -->
+                <div id="statusMsg" class="hidden p-3 rounded-lg text-sm flex items-center gap-2"></div>
+            </div>
+
+            <!-- Right Side: Output -->
+            <div class="w-full lg:w-3/5 p-6 flex flex-col h-[600px] lg:h-auto bg-white">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold text-slate-700">JSON Output</h2>
+                    <div class="flex gap-2">
+                        <button id="btnCopy" onclick="copyToClipboard()" disabled class="px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                        <button id="btnDownload" onclick="downloadJSON()" disabled class="px-3 py-1.5 text-xs font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
+                            <i class="fa-solid fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+
+                <div class="relative flex-grow border border-slate-200 rounded-xl bg-slate-50 overflow-hidden group">
+                    <!-- Empty State -->
+                    <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+                        <i class="fa-solid fa-code text-4xl mb-3 opacity-20"></i>
+                        <p class="text-sm">Upload a CSV to generate JSON</p>
+                    </div>
+
+                    <!-- Editor/Preview Area -->
+                    <pre id="jsonOutput" class="w-full h-full p-4 overflow-auto code-font text-sm text-slate-800 leading-relaxed hidden"></pre>
+                </div>
+                
+                <div class="mt-3 flex justify-between text-xs text-slate-400">
+                    <span id="recordCount">0 records found</span>
+                    <span id="fileSize">0 KB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('fileInput');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const emptyState = document.getElementById('emptyState');
+        const statusMsg = document.getElementById('statusMsg');
+        const btnCopy = document.getElementById('btnCopy');
+        const btnDownload = document.getElementById('btnDownload');
+        const recordCount = document.getElementById('recordCount');
+        const fileSize = document.getElementById('fileSize');
+        
+        // Options
+        const optDelimiter = document.getElementById('delimiter');
+        const optHeader = document.getElementById('headerRow');
+        const optParseNums = document.getElementById('parseNumbers');
+
+        let currentData = null;
+        let originalFileName = 'data';
+
+        // Event Listeners for File Input
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Event Listeners for Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-active');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-active');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-active');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        // Re-process on option change if data exists
+        [optDelimiter, optHeader, optParseNums].forEach(opt => {
+            opt.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    readFile(fileInput.files[0]);
+                }
+            });
+        });
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (file) {
+                if (file.type && file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                    showStatus('error', 'Please upload a valid CSV file.');
+                    return;
+                }
+                originalFileName = file.name.replace('.csv', '');
+                fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+                readFile(file);
+            }
+        }
+
+        function readFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const text = e.target.result;
+                try {
+                    const delimiter = detectDelimiter(text);
+                    const json = parseCSV(text, delimiter);
+                    currentData = json;
+                    
+                    displayJSON(json);
+                    showStatus('success', 'Conversion successful!');
+                    
+                    // Enable buttons
+                    btnCopy.disabled = false;
+                    btnDownload.disabled = false;
+                    recordCount.textContent = `${json.length} records generated`;
+
+                } catch (err) {
+                    console.error(err);
+                    showStatus('error', 'Error parsing CSV. Check format.');
+                }
+            };
+            
+            reader.onerror = function() {
+                showStatus('error', 'Error reading file.');
+            };
+
+            reader.readAsText(file);
+        }
+
+        // Helper to guess delimiter if set to auto
+        function detectDelimiter(text) {
+            const userSelection = optDelimiter.value;
+            if (userSelection !== 'auto') return userSelection;
+
+            const firstLine = text.split('\n')[0];
+            const commas = (firstLine.match(/,/g) || []).length;
+            const semi = (firstLine.match(/;/g) || []).length;
+            const tabs = (firstLine.match(/\t/g) || []).length;
+
+            if (tabs > commas && tabs > semi) return '\t';
+            if (semi > commas) return ';';
+            return ',';
+        }
+
+        /**
+         * Robust CSV Parser
+         * Handles quoted fields containing delimiters and newlines.
+         */
+        function parseCSV(text, delimiter) {
+            // Normalize line endings
+            text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            
+            const pattern = new RegExp(
+                (
+                    // Delimiter
+                    "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
+                    // Quoted fields
+                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+                    // Standard fields
+                    "([^\"\\" + delimiter + "\\r\\n]*))"
+                ), "gi"
+            );
+
+            const rows = [[]];
+            let matches = null;
+
+            while (matches = pattern.exec(text)) {
+                const matchedDelimiter = matches[1];
+
+                // If the delimiter was a newline, start a new row
+                if (matchedDelimiter.length && matchedDelimiter !== delimiter) {
+                    rows.push([]);
+                }
+
+                let matchedValue;
+                if (matches[2]) {
+                    // Unescape double quotes
+                    matchedValue = matches[2].replace(new RegExp("\"\"", "g"), "\"");
+                } else {
+                    matchedValue = matches[3];
+                }
+
+                rows[rows.length - 1].push(matchedValue);
+            }
+
+            // Remove empty last row often caused by trailing newline
+            if(rows.length > 0 && (rows[rows.length-1].length === 0 || (rows[rows.length-1].length === 1 && rows[rows.length-1][0] === undefined))) {
+                 rows.pop();
+            }
+
+            // Convert to Objects if headers are enabled
+            if (optHeader.checked && rows.length > 0) {
+                const headers = rows[0];
+                const data = [];
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    // Skip empty lines
+                    if (row.length === 1 && !row[0]) continue;
+
+                    const obj = {};
+                    let hasData = false;
+                    
+                    headers.forEach((header, index) => {
+                        let val = row[index];
+                        
+                        // Parse numbers if enabled
+                        if(optParseNums.checked && val !== "" && !isNaN(val)) {
+                            val = Number(val);
+                        }
+                        
+                        // Handle missing headers or values
+                        const key = header ? header.trim() : `field_${index}`;
+                        obj[key] = val !== undefined ? val : null;
+                        
+                        if (val !== undefined && val !== "") hasData = true;
+                    });
+                    
+                    if (hasData) data.push(obj);
+                }
+                return data;
+            } else {
+                // Return Array of Arrays
+                return rows;
+            }
+        }
+
+        function displayJSON(data) {
+            emptyState.classList.add('hidden');
+            jsonOutput.classList.remove('hidden');
+            jsonOutput.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function showStatus(type, msg) {
+            statusMsg.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+            
+            if (type === 'error') {
+                statusMsg.classList.add('bg-red-100', 'text-red-700');
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${msg}`;
+            } else {
+                statusMsg.classList.add('bg-green-100', 'text-green-700');
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${msg}`;
+            }
+        }
+
+        function copyToClipboard() {
+            if (!jsonOutput.textContent) return;
+            
+            // Create a temporary textarea to handle the copy
+            const textarea = document.createElement('textarea');
+            textarea.value = jsonOutput.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const originalText = btnCopy.innerHTML;
+            btnCopy.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Copied`;
+            setTimeout(() => {
+                btnCopy.innerHTML = originalText;
+            }, 2000);
+        }
+
+        function downloadJSON() {
+            if (!currentData) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentData, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", originalFileName + ".json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function resetApp() {
+            fileInput.value = '';
+            jsonOutput.textContent = '';
+            jsonOutput.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            statusMsg.classList.add('hidden');
+            btnCopy.disabled = true;
+            btnDownload.disabled = true;
+            recordCount.textContent = '0 records found';
+            fileSize.textContent = '0 KB';
+            currentData = null;
+        }
+    </script>
+</body>
+</html>
