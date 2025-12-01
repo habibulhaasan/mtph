@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>কর্মবিরতির তথ্য সংগ্রহ</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; }
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
@@ -17,11 +15,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #059669; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden-input { display: none !important; } /* Added !important to ensure visibility toggle works */
     </style>
 </head>
 <body class="bg-pattern min-h-screen text-slate-800 py-6 px-3 md:px-0">
 
-    <!-- Back Button (To Index) -->
     <a href="index.html" class="absolute top-6 left-6 flex items-center gap-2 text-slate-600 hover:text-slate-900 font-bold bg-white px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all z-10">
         <i data-lucide="arrow-left" class="w-5 h-5"></i> হোম পেজ
     </a>
@@ -32,29 +30,28 @@
                 <i data-lucide="database" class="text-white w-8 h-8"></i>
             </div>
             <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">কর্মবিরতির তথ্য জমাদিন</h1>
-            <p class="text-slate-400 text-sm">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
-            <p class="text-red-400 text-sm">প্রতি প্রতিষ্ঠান থেকে মাত্র একজন তথ্য দিন। আপনার প্রতিষ্ঠান তথ্য দিয়েছে কিনা চেক করুন <a href="layup.html" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-1 px-3 rounded transition-colors no-underline">এখানে</a></p>
+            <p class="text-slate-400 text-sm">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্ট ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
+            <p class="text-red-400 text-sm">প্রতি প্রতিষ্ঠান থেকে মাত্র একজন তথ্য দিন। আপনার প্রতিষ্ঠান তথ্য দিয়েছে কিনা চেক করুন <a href="layup.html" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-1 px-3 rounded transition-colors no-underline">এখানে</a></p>
         </div>
 
         <div class="glass rounded-2xl shadow-2xl overflow-hidden relative">
             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
 
             <form id="dataForm" class="p-6 md:p-10 space-y-8">
-
                 <!-- Personal Info -->
                 <div class="space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
                         <i data-lucide="user-circle" class="w-5 h-5 text-emerald-600"></i> প্রাথমিক তথ্য
                     </h3>
                     <div class="grid md:grid-cols-2 gap-5">
-                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার নাম *</label><input type="text" name="name" placeholder="বাংলায় লিখুন" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার নাম *</label><input type="text" name="name" placeholder="বাংলায় লিখুন" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
                         <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">মোবাইল নাম্বার *</label><input type="tel" name="mobile" placeholder="017xxxxxxxx" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-5">
-                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ইমেইল (ঐচ্ছিক)</label><input type="email" name="email" placeholder="abx@xyz.com" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ইমেইল (ঐচ্ছিক)</label><input type="email" name="email" placeholder="abx@xyz.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ব্লাড গ্রুপ</label>
-                            <select name="bloodGroup" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ব্লাড গ্রুপ *</label>
+                            <select name="bloodGroup" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500">
                                 <option value="" disabled selected>সিলেক্ট করুন...</option>
                                 <option value="A+">A+</option><option value="A-">A-</option>
                                 <option value="B+">B+</option><option value="B-">B-</option>
@@ -80,26 +77,48 @@
                 <!-- Location Info -->
                 <div class="space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                        <i data-lucide="map-pin" class="w-5 h-5 text-emerald-600"></i> কর্মস্থলের ঠিকানা
+                        <i data-lucide="map-pin" class="w-5 h-5 text-emerald-600"></i> কর্মস্থলের ঠিকানা ও প্রতিষ্ঠান
                     </h3>
                     <div class="grid md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">বিভাগ *</label>
-                            <select id="division" name="division" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"><option value="" disabled selected>বিভাগ নির্বাচন করুন</option></select>
+                            <select id="division" name="division" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500">
+                                <option value="" disabled selected>বিভাগ নির্বাচন করুন</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">জেলা *</label>
-                            <select id="district" name="district" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100"><option value="" disabled selected>আগে বিভাগ দিন</option></select>
+                            <select id="district" name="district" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে বিভাগ দিন</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">উপজেলা *</label>
-                            <select id="upazila" name="upazila" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100"><option value="" disabled selected>আগে জেলা দিন</option></select>
+                            <select id="upazila" name="upazila" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে জেলা দিন</option>
+                            </select>
                         </div>
                     </div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">প্রতিষ্ঠানের নাম *</label><input type="text" name="institute" placeholder="Write in English" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">প্রতিষ্ঠানের নাম *</label>
+                        
+                        <!-- Dropdown -->
+                        <select id="instituteSelect" name="institute" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100">
+                            <option value="" disabled selected>আগে উপজেলা নির্বাচন করুন</option>
+                        </select>
+                        
+                        <!-- Manual Input Wrapper (Hidden by default) -->
+                        <div id="manualInstituteDiv" class="hidden-input mt-3 animate-fade-in bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <label class="block text-xs font-bold text-emerald-800 mb-2">প্রতিষ্ঠানের নাম লিখুন (বাংলা/ইংরেজি):</label>
+                            <input type="text" id="instituteInput" placeholder="এখানে প্রতিষ্ঠানের নাম লিখুন..." class="w-full px-4 py-3 bg-white border border-emerald-300 rounded-lg focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
+                            <button type="button" id="backToSelectBtn" class="text-xs font-bold text-red-500 mt-2 flex items-center gap-1 hover:text-red-700">
+                                <i data-lucide="x-circle" class="w-3 h-3"></i> বাতিল করুন এবং তালিকায় ফিরে যান
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- File Upload Section -->
+                <!-- File Upload -->
                 <div class="space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
                         <i data-lucide="paperclip" class="w-5 h-5 text-emerald-600"></i> ফাইল সংযুক্তি (সর্বোচ্চ ২ টি) *
@@ -115,58 +134,38 @@
                     </button>
                 </div>
 
-                <!-- Comment -->
+                <!-- Comment & Status -->
                 <div class="space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
                         <i data-lucide="file-edit" class="w-5 h-5 text-emerald-600"></i> মন্তব্য
                     </h3>
-
-                    
-
-                    <!-- Radio option Starts -->
-
-                     <div>
+                    <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-3">আপনার প্রতিষ্ঠানে কর্মবিরতি পালিত হয়েছে?</label>
-                        
-                        <div class="flex items-center gap-6">
+                        <div class="flex flex-wrap items-center gap-4 md:gap-6">
                             <label class="flex items-center gap-2 cursor-pointer group">
                                 <input type="radio" name="status" value="২ ঘন্টা" class="w-5 h-5 accent-emerald-600 cursor-pointer" required>
                                 <span class="text-slate-700 font-medium group-hover:text-emerald-700 transition-colors">২ ঘন্টা</span>
                             </label>
-
                             <label class="flex items-center gap-2 cursor-pointer group">
                                 <input type="radio" name="status" value="অর্ধ দিবস" class="w-5 h-5 accent-emerald-600 cursor-pointer">
                                 <span class="text-slate-700 font-medium group-hover:text-red-600 transition-colors">অর্ধ দিবস</span>
                             </label>
-
-
                             <label class="flex items-center gap-2 cursor-pointer group">
                                 <input type="radio" name="status" value="পূর্ণ দিবস" class="w-5 h-5 accent-emerald-600 cursor-pointer">
                                 <span class="text-slate-700 font-medium group-hover:text-red-600 transition-colors">পূর্ণ দিবস</span>
                             </label>
-
                             <label class="flex items-center gap-2 cursor-pointer group">
-                                <input type="radio" name="status" value="পালিত হয়নি" class="w-5 h-5 accent-emerald-600 cursor-pointer">
-                                <span class="text-slate-700 font-medium group-hover:text-red-600 transition-colors">পালিত হয়নি</span>
+                                <input type="radio" name="status" value="পালিত হয়নি" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+                                <span class="text-slate-700 font-medium group-hover:text-red-600 transition-colors">পালিত হয়নি</span>
                             </label>
                         </div>
                     </div>
-                    <!-- Radio option End -->
-
-
-<!-- Text Comment option Starts -->
-
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার কোনো মন্তব্য থাকলে লিখুন</label>
                         <textarea name="comment" rows="2" placeholder="সংক্ষেপে আপনার মন্তব্য লিখুন" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500"></textarea>
                     </div>
-
-                    <!-- Text Comment option Starts -->
-
-
                 </div>
 
-                <!-- Submit -->
                 <div class="pt-2">
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2">
                         <span>ডাটাবেসে জমা দিন</span> <i data-lucide="send" class="w-5 h-5"></i>
@@ -175,9 +174,9 @@
             </form>
         </div>
     </div>
-    <!--Dev info-->
+
     <div class="text-center pb-8 mt-8">
-        <p class="text-slate-500 text-xs mb-3">© ২০২৫ ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
+        <p class="text-slate-500 text-xs mb-3">© ২০২৫ ১০ম গ্রেড বাস্তবায়ন পরিষদ</p>
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[10px] text-slate-500">
             <i data-lucide="code-2" class="w-3 h-3 text-emerald-500"></i>
             <span>Developed by</span>
@@ -185,106 +184,921 @@
         </div>
     </div>
 
-    <!-- Modal & Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center"><div class="loader mx-auto mb-4"></div><p class="text-lg font-bold text-slate-700">তথ্য জমা হচ্ছে...</p><p class="text-xs text-slate-400 mt-2">অপেক্ষা করুন</p></div></div>
-    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 animate-fade-in"><div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check-circle" class="w-10 h-10"></i></div><h3 class="text-2xl font-bold text-slate-800 mb-2">সফল!</h3><p class="text-slate-600 mb-6">আপনার তথ্য সফলভাবে জমা হয়েছে।</p><button onclick="window.location.reload()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 w-full">নতুন তথ্য দিন</button></div></div>
+    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 animate-fade-in"><div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check-circle" class="w-10 h-10"></i></div><h3 class="text-2xl font-bold text-slate-800 mb-2">সফল!</h3><p class="text-slate-600 mb-6">আপনার তথ্য সফলভাবে জমা হয়েছে।</p><button onclick="window.location.reload()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 w-full">নতুন তথ্য দিন</button></div></div>
 
     <script>
         lucide.createIcons();
 
-        // --- LOCATION DATA ---
-        const divisions = [{"id":"1","name":"Barishal","bn_name":"বরিশাল"},{"id":"2","name":"Chattogram","bn_name":"চট্টগ্রাম"},{"id":"3","name":"Dhaka","bn_name":"ঢাকা"},{"id":"4","name":"Khulna","bn_name":"খুলনা"},{"id":"5","name":"Rajshahi","bn_name":"রাজশাহী"},{"id":"6","name":"Rangpur","bn_name":"রংপুর"},{"id":"7","name":"Sylhet","bn_name":"সিলেট"},{"id":"8","name":"Mymensingh","bn_name":"ময়মনসিংহ"}];
-        const districts = [{"id":"1","division_id":"3","bn_name":"ঢাকা"},{"id":"2","division_id":"3","bn_name":"ফরিদপুর"},{"id":"3","division_id":"3","bn_name":"গাজীপুর"},{"id":"4","division_id":"3","bn_name":"গোপালগঞ্জ"},{"id":"5","division_id":"8","bn_name":"জামালপুর"},{"id":"6","division_id":"3","bn_name":"কিশোরগঞ্জ"},{"id":"7","division_id":"3","bn_name":"মাদারীপুর"},{"id":"8","division_id":"3","bn_name":"মানিকগঞ্জ"},{"id":"9","division_id":"3","bn_name":"মুন্সিগঞ্জ"},{"id":"10","division_id":"8","bn_name":"ময়মনসিংহ"},{"id":"11","division_id":"3","bn_name":"নারায়াণগঞ্জ"},{"id":"12","division_id":"3","bn_name":"নরসিংদী"},{"id":"13","division_id":"8","bn_name":"নেত্রকোণা"},{"id":"14","division_id":"3","bn_name":"রাজবাড়ি"},{"id":"15","division_id":"3","bn_name":"শরীয়তপুর"},{"id":"16","division_id":"8","bn_name":"শেরপুর"},{"id":"17","division_id":"3","bn_name":"টাঙ্গাইল"},{"id":"18","division_id":"5","bn_name":"বগুড়া"},{"id":"19","division_id":"5","bn_name":"জয়পুরহাট"},{"id":"20","division_id":"5","bn_name":"নওগাঁ"},{"id":"21","division_id":"5","bn_name":"নাটোর"},{"id":"22","division_id":"5","bn_name":"নবাবগঞ্জ"},{"id":"23","division_id":"5","bn_name":"পাবনা"},{"id":"24","division_id":"5","bn_name":"রাজশাহী"},{"id":"25","division_id":"5","bn_name":"সিরাজগঞ্জ"},{"id":"26","division_id":"6","bn_name":"দিনাজপুর"},{"id":"27","division_id":"6","bn_name":"গাইবান্ধা"},{"id":"28","division_id":"6","bn_name":"কুড়িগ্রাম"},{"id":"29","division_id":"6","bn_name":"লালমনিরহাট"},{"id":"30","division_id":"6","bn_name":"নীলফামারী"},{"id":"31","division_id":"6","bn_name":"পঞ্চগড়"},{"id":"32","division_id":"6","bn_name":"রংপুর"},{"id":"33","division_id":"6","bn_name":"ঠাকুরগাঁও"},{"id":"34","division_id":"1","bn_name":"বরগুনা"},{"id":"35","division_id":"1","bn_name":"বরিশাল"},{"id":"36","division_id":"1","bn_name":"ভোলা"},{"id":"37","division_id":"1","bn_name":"ঝালকাঠি"},{"id":"38","division_id":"1","bn_name":"পটুয়াখালী"},{"id":"39","division_id":"1","bn_name":"পিরোজপুর"},{"id":"40","division_id":"2","bn_name":"বান্দরবান"},{"id":"41","division_id":"2","bn_name":"ব্রাহ্মণবাড়িয়া"},{"id":"42","division_id":"2","bn_name":"চাঁদপুর"},{"id":"43","division_id":"2","bn_name":"চট্টগ্রাম"},{"id":"44","division_id":"2","bn_name":"কুমিল্লা"},{"id":"45","division_id":"2","bn_name":"কক্স বাজার"},{"id":"46","division_id":"2","bn_name":"ফেনী"},{"id":"47","division_id":"2","bn_name":"খাগড়াছড়ি"},{"id":"48","division_id":"2","bn_name":"লক্ষ্মীপুর"},{"id":"49","division_id":"2","bn_name":"নোয়াখালী"},{"id":"50","division_id":"2","bn_name":"রাঙ্গামাটি"},{"id":"51","division_id":"7","bn_name":"হবিগঞ্জ"},{"id":"52","division_id":"7","bn_name":"মৌলভীবাজার"},{"id":"53","division_id":"7","bn_name":"সুনামগঞ্জ"},{"id":"54","division_id":"7","bn_name":"সিলেট"},{"id":"55","division_id":"4","bn_name":"বাগেরহাট"},{"id":"56","division_id":"4","bn_name":"চুয়াডাঙ্গা"},{"id":"57","division_id":"4","bn_name":"যশোর"},{"id":"58","division_id":"4","bn_name":"ঝিনাইদহ"},{"id":"59","division_id":"4","bn_name":"খুলনা"},{"id":"60","division_id":"4","bn_name":"কুষ্টিয়া"},{"id":"61","division_id":"4","bn_name":"মাগুরা"},{"id":"62","division_id":"4","bn_name":"মেহেরপুর"},{"id":"63","division_id":"4","bn_name":"নড়াইল"},{"id":"64","division_id":"4","bn_name":"সাতক্ষীরা"}];
+        // --- FULL HOSPITAL DATASETS ---
+        // Format: "Division|District|Upazila|HospitalName"
+        // Using compressed string array to fit all data
+        const rawHospitalData = [
+            "ঢাকা|ঢাকা|শাহবাগ|বাংলাদেশ মেডিকেল বিশ্ববিদ্যালয়",
+            "রাজশাহী|রাজশাহী|রাজপাড়া|রাজশাহী মেডিকেল বিশ্ববিদ্যালয়",
+            "ঢাকা|ঢাকা|বনানী|জাতীয় ক্যান্সার গবেষণা ইনস্টিটিউট ও হাসপাতাল",
+            "ঢাকা|ঢাকা|শের-ই-বাংলা নগর|জাতীয় হৃদরোগ ইনস্টিটিউট",
+            "ঢাকা|ঢাকা|বনানী|জাতীয় বক্ষব্যাধি ইনস্টিটিউট ও হাসপাতাল",
+            "ঢাকা|ঢাকা|দক্ষিণ সিটি|জাতীয় কিডনি ডিজিজেজ এন্ড ইউরোলজী ইনস্টিটিউট",
+            "ঢাকা|ঢাকা|দক্ষিণ সিটি|ন্যাশনাল ইনসস্টিউট অব মেণ্টাল হেলথ",
+            "ঢাকা|ঢাকা|মোহাম্মদপুর|জাতীয় চক্ষু বিজ্ঞান ইনষ্টিটিউট ও হাসপাতাল",
+            "ঢাকা|ঢাকা|দক্ষিণ সিটি|জাতীয় অর্থোপেডিক হাসপাতাল ও পুনর্বাসন প্রতিষ্ঠান",
+            "চট্টগ্রাম|চট্টগ্রাম|সীতাকুণ্ড|বাংলাদেশ ইনস্টিটিউট অব ট্রপিক্যাল এন্ড ইনফেকশাস ডিজিজেস",
+            "ঢাকা|ঢাকা|যাত্রাবাড়ী|শিশু ও মাতৃ স্বাস্থ্য ইনষ্টিটিউট, মাতুয়াইল",
+            "ঢাকা|ঢাকা|তেজগাঁও|ন্যাশনাল ইনস্টিটিউট অব ইএনটি",
+            "ঢাকা|ঢাকা|আগারগাঁও|ন্যাশনাল ইন্সষ্টিটিউট অব নিউরো সাইন্সেস এন্ড হাসপাতাল",
+            "ঢাকা|ঢাকা|শাহবাগ|ঢাকা মেডিকেল কলেজ",
+            "ঢাকা|ঢাকা|শের-ই-বাংলা নগর|শহীদ সোহরাওয়ার্দী মেডিকেল কলেজ",
+            "ঢাকা|ঢাকা|কোতওয়ালী|স্যার সলিমুল্লাহ মেডিকেল কলেজ",
+            "ঢাকা|ফরিদপুর|ফরিদপুর সদর|ফরিদপুর মেডিকেল কলেজ",
+            "ময়মনসিংহ|ময়মনসিংহ|ময়মনসিংহ সদর|ময়মনসিংহ মেডিকেল কলেজ",
+            "চট্টগ্রাম|চট্টগ্রাম|পাঁচলাইশ|চট্টগ্রাম মেডিকেল কলেজ",
+            "চট্টগ্রাম|কুমিল্লা|কুমিল্লা আদর্শ সদর|কুমিল্লা মেডিকেল কলেজ",
+            "রাজশাহী|বগুড়া|বগুড়া সদর|শহীদ জিয়াউর রহমান মেডিকেল কলেজ",
+            "রংপুর|দিনাজপুর|দিনাজপুর সদর|দিনাজপুর মেডিকেল কলেজ",
+            "রাজশাহী|রাজশাহী|রাজপাড়া|রাজশাহী মেডিকেল কলেজ",
+            "রংপুর|রংপুর|রংপুর সদর|রংপুর মেডিকেল কলেজ",
+            "খুলনা|খুলনা|সোনাডাঙ্গা|খুলনা মেডিকেল কলেজ",
+            "বরিশাল|বরিশাল|বরিশাল সদর|শের-ই-বাংলা মেডিকেল কলেজ",
+            "সিলেট|সিলেট|কোতওয়ালী|সিলেট এমএজি ওসমানী মেডিকেল কলেজ",
+            "রাজশাহী|পাবনা|পাবনা সদর|পাবনা মেডিকেল কলেজ",
+            "ঢাকা|গোপালগঞ্জ|গোপালগঞ্জ সদর|গোপালগঞ্জ মেডিকেল কলেজ",
+            "খুলনা|যশোর|যশোর সদর|যশোর মেডিকেল কলেজ",
+            "চট্টগ্রাম|নোয়াখালী|বেগমগঞ্জ|নোয়াখালী মেডিকেল কলেজ",
+            "খুলনা|কুষ্টিয়া|কুষ্টিয়া সদর|কুষ্টিয়া মেডিকেল কলেজ",
+            "ঢাকা|কিশোরগঞ্জ|কিশোরগঞ্জ সদর|শহীদ সৈয়দ নজরুল ইসলাম মেডিকেল কলেজ",
+            "চট্টগ্রাম|কক্স বাজার|কক্স বাজার সদর|কক্সবাজার মেডিকেল কলেজ",
+            "খুলনা|সাতক্ষীরা|সাতক্ষীরা সদর|সাতক্ষীরা মেডিকেল কলেজ",
+            "ঢাকা|গাজীপুর|গাজীপুর সদর|শহীদ তাজ উদ্দিন আহমেদ মেডিকেল কলেজ",
+            "ঢাকা|টাঙ্গাইল|টাঙ্গাইল সদর|টাঙ্গাইল মেডিকেল কলেজ",
+            "ঢাকা|মানিকগঞ্জ|মানিকগঞ্জ সদর|মানিকগঞ্জ মেডিকেল কলেজ",
+            "রাজশাহী|সিরাজগঞ্জ|সিরাজগঞ্জ সদর|শহীদ এম মনসুর আলী মেডিকেল কলেজ",
+            "ময়মনসিংহ|জামালপুর|জামালপুর সদর|জামালপুর মেডিকেল কলেজ",
+            "বরিশাল|পটুয়াখালী|পটুয়াখালী সদর|পটুয়াখালী মেডিকেল কলেজ",
+            "চট্টগ্রাম|রাঙ্গামাটি|রাঙ্গামাটি সদর|রাঙামাটি মেডিকেল কলেজ",
+            "ঢাকা|ঢাকা|মুগদা|মুগদা মেডিকেল কলেজ",
+            "সিলেট|হবিগঞ্জ|হবিগঞ্জ সদর|হবিগঞ্জ মেডিকেল কলেজ",
+            "ময়মনসিংহ|নেত্রকোনা|নেত্রকোনা সদর|নেত্রকোনা মেডিকেল কলেজ",
+            "চট্টগ্রাম|চাঁদপুর|চাঁদপুর সদর|চাঁদপুর মেডিকেল কলেজ",
+            "রাজশাহী|নওগাঁ|নওগাঁ সদর|নওগাঁ মেডিকেল কলেজ",
+            "খুলনা|মাগুরা|মাগুরা সদর|মাগুরা মেডিকেল কলেজ",
+            "রংপুর|নীলফামারী|নীলফামারী সদর|নীলফামারী মেডিকেল কলেজ",
+            "খুলনা|খুলনা|খুলনা সদর|খুলনা ডেন্টাল কলেজ",
+            "সিলেট|সুনামগঞ্জ|সুনামগঞ্জ সদর|সুনামগঞ্জ মেডিকেল কলেজ",
+            "ঢাকা|ঢাকা|শাহবাগ|ঢাকা মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|ঢাকা|শের-ই-বাংলা নগর|শহীদ সোহরাওয়ার্দী মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|ঢাকা|কোতওয়ালী|স্যার সলিমুল্লাহ মেডিকেল কলেজ মিটফোর্ড হাসপাতাল",
+            "ঢাকা|ফরিদপুর|ফরিদপুর সদর|ফরিদপুর মেডিকেল কলেজ হাসপাতাল",
+            "ময়মনসিংহ|ময়মনসিংহ|ময়মনসিংহ সদর|ময়মনসিংহ মেডিকেল কলেজ হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|পাঁচলাইশ|চট্টগ্রাম মেডিকেল কলেজ হাসপাতাল",
+            "চট্টগ্রাম|কুমিল্লা|কুমিল্লা আদর্শ সদর|কুমিল্লা মেডিকেল কলেজ হাসপাতাল",
+            "রাজশাহী|বগুড়া|বগুড়া সদর|শহীদ জিয়াউর রহমান মেডিকেল কলেজ হাসপাতাল",
+            "রাজশাহী|রাজশাহী|রাজপাড়া|রাজশাহী মেডিকেল কলেজ হাসপাতাল",
+            "রংপুর|রংপুর|রংপুর সদর|রংপুর মেডিকেল কলেজ হাসপাতাল",
+            "খুলনা|খুলনা|সোনাডাঙ্গা|খুলনা মেডিকেল কলেজ হাসপাতাল",
+            "বরিশাল|বরিশাল|বরিশাল সদর|শের-ই-বাংলা মেডিকেল কলেজ হাসপাতাল",
+            "সিলেট|সিলেট|কোতওয়ালী|সিলেট এমএজি ওসমানী মেডিকেল কলেজ হাসপাতাল",
+            "রংপুর|দিনাজপুর|দিনাজপুর সদর|দিনাজপুর মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|ঢাকা|মুগদা|মুগদা মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|গাজীপুর|গাজীপুর সদর|শহীদ তাজ উদ্দীন আহমদ মেডিকেল কলেজ হাসপাতাল",
+            "খুলনা|সাতক্ষীরা|সাতক্ষীরা সদর|সাতক্ষীরা মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|টাঙ্গাইল|টাঙ্গাইল সদর|টাঙ্গাইল মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|কিশোরগঞ্জ|কিশোরগঞ্জ সদর|শহীদ সৈয়দ নজরুল ইসলাম মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|মানিকগঞ্জ|মানিকগঞ্জ সদর|মানিকগঞ্জ মেডিকেল কলেজ হাসপাতাল",
+            "রাজশাহী|সিরাজগঞ্জ|সিরাজগঞ্জ সদর|শহীদ এম মনসুর আলী মেডিকেল কলেজ হাসপাতাল",
+            "খুলনা|যশোর|যশোর সদর|যশোর মেডিকেল কলেজ হাসপাতাল",
+            "খুলনা|কুষ্টিয়া|কুষ্টিয়া সদর|কুষ্টিয়া মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|গোপালগঞ্জ|গোপালগঞ্জ সদর|গোপালগঞ্জ মেডিকেল কলেজ হাসপাতাল",
+            "খুলনা|মাগুরা|মাগুরা সদর|মাগুরা মেডিকেল কলেজ হাসপাতাল",
+            "ময়মনসিংহ|জামালপুর|জামালপুর সদর|জামালপুর মেডিকেল কলেজ হাসপাতাল",
+            "রাজশাহী|পাবনা|পাবনা সদর|পাবনা মেডিকেল কলেজ হাসপাতাল",
+            "চট্টগ্রাম|কক্স বাজার|কক্স বাজার সদর|কক্সবাজার মেডিকেল কলেজ হাসপাতাল",
+            "চট্টগ্রাম|নোয়াখালী|নোয়াখালী সদর|নোয়াখালী মেডিকেল কলেজ হাসপাতাল",
+            "চট্টগ্রাম|রাঙ্গামাটি|রাঙ্গামাটি সদর|রাঙামাটি মেডিকেল কলেজ হাসপাতাল",
+            "সিলেট|হবিগঞ্জ|হবিগঞ্জ সদর|হবিগঞ্জ মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|ঢাকা|ভাষানটেক|ঢাকা ডেন্টাল কলেজ হাসপাতাল",
+            "ঢাকা|গোপালগঞ্জ|গোপালগঞ্জ সদর|গোপালগঞ্জ ডেন্টাল কলেজ হাসপাতাল",
+            "ঢাকা|ঢাকা|ভাষানটেক|সরকারী হোমিওপ্যাথিক মেডিকেল কলেজ",
+            "সিলেট|সিলেট|কোতওয়ালী|সরকারী ইউনানী ও আযুর্বেদিক মেডিকেল কলেজ ও হাসপাতাল",
+            "ঢাকা|ঢাকা|কাফরুল|সরকারী ইউনানী ও আয়ুর্বেদিক মেডিকেল কলেজ",
+            "ঢাকা|ঢাকা|মিরপুর|সরকারী ইউনানী ও আয়ুর্বেদিক মেডিকেল কলেজ হাসপাতাল",
+            "ঢাকা|ঢাকা|ভাষানটেক|সরকারী হোমিওপ্যাথিক মেডিকেল কলেজ হাসপাতাল",
+            "বরিশাল|বরিশাল|বরিশাল সদর|বরিশাল ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "ঢাকা|গোপালগঞ্জ|গোপালগঞ্জ সদর|গোপালগঞ্জ ইনস্টিটিউট অব হেলথ টেকনোলজি",
+            "ময়মনসিংহ|জামালপুর|জামালপুর সদর|জামালপুর ইনস্টিটিউট অব হেলথ টেকনোলজি",
+            "খুলনা|সাতক্ষীরা|সাতক্ষীরা সদর|সাতক্ষীরা ইনস্টিটিউট অব হেলথ টেকনোলজি",
+            "রাজশাহী|জয়পুরহাট|আক্কেলপুর|গোপিনাথপুর ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "ঢাকা|মুন্সিগঞ্জ|শ্রীনগর|মুন্সিগঞ্জ ইনস্টিটিউট অব হেলথ টেকনোলজি",
+            "খুলনা|খুলনা|খুলনা সদর|খুলনা ইনষ্টিটিউট অব হেলথ টেকনোলজি",
+            "ঢাকা|মাদারীপুর|মাদারীপুর সদর|মাদারীপুর ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "ঢাকা|মানিকগঞ্জ|মানিকগঞ্জ সদর|মানিকগঞ্জ ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "চট্টগ্রাম|নোয়াখালী|কবিরহাট|কবিরহাট ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "ঢাকা|গোপালগঞ্জ|কাশিয়ানী|কাশিয়ানী ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "ময়মনসিংহ|ময়মনসিংহ|ময়মনসিংহ সদর|ময়মনসিংহ ইনস্টিটিউট অব হেলথ টেকনোলজি",
+            "ঢাকা|গোপালগঞ্জ|টুঙ্গিপাড়া|টুঙ্গিপাড়া ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "রাজশাহী|নওগাঁ|ধামইরহাট|ধামইরহাট ইনস্টিটিউট অফ হেলথ টেকনোলজি",
+            "সিলেট|মৌলভীবাজার|শ্রীমঙ্গল|শ্রীমঙ্গল ৫০ শয্যা হাসপাতাল",
+            "ঢাকা|ঢাকা|শ্যামপুর|শ্যামপুর ৫০ শয্যা হাসপাতাল",
+            "চট্টগ্রাম|কুমিল্লা|দাউদকান্দি|মালিগাও ৫০ শয্যা হাসপাতাল",
+            "ঢাকা|ঢাকা|তেজগাঁও|তেজগাঁও স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|চন্দনাইশ|দোহাজারী ৩১ শয্যা হাসপাতাল",
+            "রাজশাহী|রাজশাহী|গোদাগারি|গোদাগাড়ী ৩১ শয্যা বিশিষ্ট হাসপাতাল",
+            "রংপুর|রংপুর|কাউনিয়া|হারাগাছা ৩১ শয্যা হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|রাউজান|সুলতানপুর ৩১ শয্যা হাসপাতাল",
+            "ঢাকা|ঢাকা|কামরাঙ্গীরচর|কামরাঙ্গীরচর ৩১ শয্যা হাসপাতাল",
+            "সিলেট|সিলেট|শাহপরাণ|খাদিমপাড়া ৩১ শয্যাবিশিষ্ট হাসপাতাল",
+            "ঢাকা|নারায়াণগঞ্জ|আড়াইহাজার|মনোহরগ্রাম ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "ঢাকা|শরীয়তপুর|গোসাইরহাট|কেদালপুর ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|কুমিল্লা|বড়ুরা|সোনাইমুড়ি ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|কক্স বাজার|টেকনাফ|সেন্ট মার্টিন ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|নোয়াখালী|কবিরহাট|চর আলগী ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "রাজশাহী|বগুড়া|নন্দিগ্রাম|নন্দীগ্রামে ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "রাজশাহী|বগুড়া|শিবগঞ্জ|আলীয়াহাট ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "রংপুর|লালমনিরহাট|পাটগ্রাম|দহগ্রাম ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "বরিশাল|পটুয়াখালী|মির্জাগঞ্জ|কাঠালতলি ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "ময়মনসিংহ|ময়মনসিংহ|ময়মনসিং সদর|চরাঞ্চল ২০ শয্যা হাসপাতাল",
+            "ঢাকা|ঢাকা|কেরানীগঞ্জ|হযরতপুর ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "ঢাকা|ঢাকা|কেরানীগঞ্জ|কুন্দা ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|সন্দ্বীপ|হারামিয়া ২০ শয্যা হাসপাতাল",
+            "ঢাকা|ঢাকা|ধামরাই|কৃষ্ণনগর ২০ শয্যা হাসপাতাল",
+            "চট্টগ্রাম|কুমিল্লা|দাউদকান্দি|দোনারচর ২০ শয্যা হাসপাতাল",
+            "ঢাকা|মাদারীপুর|রাজৈর|কবিরাজপুর ২০ বেড হাসপাতাল",
+            "ঢাকা|শরীয়তপুর|ভেদরগঞ্জ|তারাবুনিয়া ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "ঢাকা|গোপালগঞ্জ|কাশিয়ানী|ব্যাসপুর ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "সিলেট|সুনামগঞ্জ|দিরাই|জগদল ২০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|নোয়াখালী|হাতিয়া|ভাসানচর ২০ বিশিষ্ট হাসপাতাল",
+            "বরিশাল|পিরোজপুর|মঠবাড়িয়া|টিয়ারখালী ২০ শষ্যাবিশিষ্ট হাসপাতাল",
+            "ঢাকা|গাজীপুর|কালীগঞ্জ|তালিয়া ২০ বেড হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|সন্দ্বীপ|সন্দ্বীপ ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|কুমিল্লা|চৌদ্দগ্রাম|কালিকাপুর ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|খাগড়াছড়ি|মাটিরাঙ্গা|তবলছড়ি ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "চট্টগ্রাম|রাঙ্গামাটি|কাপ্তাই|কাপ্তাই ১০ শয্যা হাসপাতাল",
+            "রংপুর|গাইবান্ধা|গাইবান্ধা সদর|রামচন্দ্রপুর ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|রায়গঞ্জ ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "রাজশাহী|সিরাজগঞ্জ|সিরাজগঞ্জ সদর|খোকশাবাড়ি ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "খুলনা|খুলনা|পাইকগাছা|কপিলমনি ভরতচন্দ্র হাসপাতাল",
+            "বরিশাল|বরগুনা|আমতলী|খোকোয়া ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "বরিশাল|বরিশাল|বানারীপাড়া|চাখার ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "বরিশাল|ঝালকাঠি|ঝালকাঠি সদর|কির্তিপাশা ১০ শয্যা বিশিষ্ট হাসপাতাল",
+            "রাজশাহী|পাবনা|বেড়া|বাসন্তী বসু স্মৃতি ১০ বেড হাসপাতাল",
+            "সিলেট|সিলেট|শাহপরাণ|তানিম ১০ শয‌্যা উপ-স্বাস্থ্য কেন্দ্র",
+            "ঢাকা|ফরিদপুর|ফরিদপুর সদর|ফরিদপুর জেনারেল হাসপাতাল",
+            "ময়মনসিংহ|জামালপুর|জামালপুর সদর|জামালপুর ২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "ঢাকা|কিশোরগঞ্জ|কিশোরগঞ্জ সদর|২৫০ শয্যা জেনারেল হাসপাতাল, কিশোরগঞ্জ",
+            "ঢাকা|মাদারীপুর|মাদারীপুর সদর|২৫০ শয্যা জেলা হাসপাতাল মাদারীপুর",
+            "ঢাকা|মুন্সিগঞ্জ|মুন্সিগঞ্জ সদর|মুন্সীগঞ্জ ২৫০ বেড জেলা হাসপাতাল",
+            "ঢাকা|নারায়াণগঞ্জ|নারায়ানগঞ্জ সদর|নারায়ণগঞ্জ জেনারেল (ভিক্টোরিয়া) হাসপাতাল",
+            "ঢাকা|নরসিংদী|নরসিংদী সদর|নরসিংদী জেলা হাসপাতাল",
+            "ময়মনসিংহ|নেত্রকোনা|নেত্রকোনা সদর|নেত্রকোনা জেলা হাসপাতাল",
+            "ঢাকা|রাজবাড়ি|রাজবাড়ি সদর|রাজবাড়ী জেলা সদর হাসপাতাল",
+            "ঢাকা|শরীয়তপুর|শরীয়তপুর সদর|শরীযতপুর জেলা হাসপাতাল",
+            "ময়মনসিংহ|শেরপুর|শেরপুর সদর|শেরপুর ২৫০ বেড জেলা সদর হাসপাতাল",
+            "ঢাকা|টাঙ্গাইল|টাঙ্গাইল সদর|টাঙ্গাইল ২৫০ শয্যা বিশিষ্ট জেলা হাসপাতাল",
+            "চট্টগ্রাম|বান্দরবান|বান্দরবান সদর|বান্দরবান ২৫০ শয্যা জেলা হাসপাতাল",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|ব্রাহ্মণবাড়িয়া সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল, ব্রাহ্মণবাড়িয়া",
+            "চট্টগ্রাম|চাঁদপুর|চাঁদপুর সদর|চাঁদপুর ২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|কোতওয়ালী|চট্টগ্রাম ২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "চট্টগ্রাম|কুমিল্লা|কুমিল্লা আদর্শ সদর|কুমিল্লা জেনারেল হাসপাতাল",
+            "চট্টগ্রাম|কক্স বাজার|কক্স বাজার সদর|কক্সবাজার ২৫০ শয্যা জেলা সদর হাসপাতাল",
+            "চট্টগ্রাম|ফেনী|ফেনী সদর|২৫০ শয্যা জেলা সদর হাসপাতাল, ফেনী",
+            "চট্টগ্রাম|খাগড়াছড়ি|খাগড়াছড়ি সদর|খাগড়াছড়ি জেলা হাসপাতাল",
+            "চট্টগ্রাম|লক্ষ্মীপুর|লক্ষ্মীপুর সদর|লক্ষ্মীপুর জেলা হাসপাতাল",
+            "চট্টগ্রাম|নোয়াখালী|নোয়াখালী সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল,নোয়াখালী",
+            "চট্টগ্রাম|রাঙ্গামাটি|রাঙ্গামাটি সদর|রাঙ্গামাটি জেনারেল হাসপাতাল",
+            "রাজশাহী|বগুড়া|বগুড়া সদর|২৫০ শয্যা বিশিষ্ট মোহাম্মদ আলী হাসপাতাল",
+            "রাজশাহী|নবাবগঞ্জ|নবাবগঞ্জ সদর|২৫০ শয্যা বিশিষ্ট জেলা হাসপাতাল, চাঁপাইনবাবগঞ্জ",
+            "রংপুর|দিনাজপুর|দিনাজপুর সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল, দিনাজপুর",
+            "রংপুর|গাইবান্ধা|গাইবান্ধা সদর|২৫০ শয্যা বিশিষ্ট গাইবান্ধা জেনারেল হাসপাতাল",
+            "রাজশাহী|জয়পুরহাট|জয়পুরহাট সদর|২৫০ শয‌্যা বিশিষ্ট জেনারেল হাসপাতাল, জয়পুরহাট",
+            "রংপুর|কুড়িগ্রাম|কুড়িগ্রাম সদর|কুড়িগ্রাম ২৫০ বেড জেলা হাসপাতাল",
+            "রংপুর|লালমনিরহাট|লালমনিরহাট সদর|লালমনিরহাট জেলা হাসপাতাল",
+            "রাজশাহী|নওগাঁ|নওগাঁ সদর|২৫০ শয্যা জেনারেল হাসপাতাল, নওগাঁ",
+            "রাজশাহী|নাটোর|নাটোর সদর|আধু‌নিক সদর হাসপাতাল,নাটোর",
+            "রংপুর|নীলফামারী|নীলফামারী সদর|জেনারেল হাসপাতাল,নীলফামারী",
+            "রাজশাহী|পাবনা|পাবনা সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল, পাবনা",
+            "রংপুর|পঞ্চগড়|পঞ্চগড় সদর|পঞ্চগড় সদর হাসপাতাল",
+            "রাজশাহী|সিরাজগঞ্জ|সিরাজগঞ্জ সদর|সিরাজগঞ্জ 250 শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "রংপুর|ঠাকুরগাঁও|ঠাকুরগাঁও সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল, ঠাকুরগাঁও",
+            "খুলনা|বাগেরহাট|বাগেরহাট সদর|বাগেরহাট জেলা হাসপাতাল",
+            "খুলনা|চুয়াডাঙ্গা|চুয়াডাঙ্গা সদর|চুয়াডাঙ্গা জেলা হাসপাতাল",
+            "খুলনা|ঝিনাইদহ|ঝিনাইদহ সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল, ঝিনাইদহ",
+            "খুলনা|খুলনা|খুলনা সদর|খুলনা ২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "খুলনা|কুষ্টিয়া|কুষ্টিয়া সদর|কুষ্টিয়া ২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "খুলনা|মাগুরা|মাগুরা সদর|মাগুরা ২৫০ শয্যা বিশিষ্ট জেলা হাসপাতাল",
+            "খুলনা|মেহেরপুর|মেহেরপুর সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল মেহেরপুর",
+            "খুলনা|নড়াইল|নড়াইল সদর|নড়াইল জেলা হাসপাতাল",
+            "খুলনা|সাতক্ষীরা|সাতক্ষীরা সদর|সাতক্ষীরা জেলা হাসপাতাল",
+            "বরিশাল|বরগুনা|বরগুনা সদর|বরগুনা ২৫০ বেড জেনারেল হাসপাতাল",
+            "বরিশাল|বরিশাল|বরিশাল সদর|বরিশাল জেনারেল হাসপাতাল",
+            "বরিশাল|ভোলা|ভোলা সদর|ভোলা ২৫০ শয্যা জেলা সদর হাসপাতাল",
+            "বরিশাল|ঝালকাঠি|ঝালকাঠি সদর|ঝালকাঠী সদর হাসপাতাল",
+            "বরিশাল|পটুয়াখালী|পটুয়াখালী সদর|পটুয়াখালী ২৫০ শয্যা বিশিষ্ট সদর হাসপাতাল",
+            "বরিশাল|পিরোজপুর|পিরোজপুর সদর|পিরোজপুর জেলা হাসপাতাল",
+            "সিলেট|হবিগঞ্জ|হবিগঞ্জ সদর|২৫০ শয্যা জেলা সদর হাসপাতাল,হবিগঞ্জ",
+            "সিলেট|মৌলভীবাজার|মৌলভীবাজার সদর|মৌলভীবাজার ২৫০ শয্যা বিশিষ্ট জেলা সদর হাসপাতাল",
+            "সিলেট|সুনামগঞ্জ|সুনামগঞ্জ সদর|সুনামগঞ্জ ২৫০ শয্যা বিশিষ্ট জেলা সদর হাসপাতাল",
+            "সিলেট|সিলেট|কোতওয়ালী|সিলেট শহীদ শামসুদ্দিন আহমেদ জেলা হাসপাতাল",
+            "ঢাকা|গোপালগঞ্জ|গোপালগঞ্জ সদর|২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল, গোপালগঞ্জ",
+            "খুলনা|যশোর|যশোর সদর|যশোর ২৫০ শয্যা বিশিষ্ট জেনারেল হাসপাতাল",
+            "রাজশাহী|রাজশাহী|রাজপাড়া|রাজশাহী সদর হাসপাতাল",
+            "ঢাকা|ঢাকা|ধামরাই|ধামরাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ঢাকা|দোহার|দোহার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ঢাকা|কেরানীগঞ্জ|কেরানীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ঢাকা|নবাবগঞ্জ|নবাবগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ঢাকা|সাভার|সাভার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|আলফাডাঙ্গা|আলফাডাঙ্গা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|ভাঙ্গা|ভাঙ্গা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|বোয়ালমারি|বোয়ালমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|চরভদ্রাসন|চরভদ্রাশন উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|মধুখালি|মধুখালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|নগরকান্ড|নগরকান্দা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|সদরপুর|সদরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গাজীপুর|কালিয়াকৈর|কালিয়াকৈর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গাজীপুর|কালীগঞ্জ|কালীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গাজীপুর|কাপাসিয়া|কাপাসিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গাজীপুর|শ্রীপুর|শ্রীপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গোপালগঞ্জ|কাশিয়ানী|কাশিয়ানী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গোপালগঞ্জ|কোটালিপাড়া|কোটালীপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গোপালগঞ্জ|মুকসুদপুর|মুকসুদপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|গোপালগঞ্জ|টুঙ্গিপাড়া|টুংগীপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|জামালপুর|বকসিগঞ্জ|বকশীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|জামালপুর|দেওয়ানগঞ্জ|দেওয়ানগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|জামালপুর|ইসলামপুর|ইসলামপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|জামালপুর|মাদারগঞ্জ|মাদারগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|জামালপুর|মেলানদাহা|মেলান্দহ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|জামালপুর|সরিষাবাড়ি|সরিষাবাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|অষ্টগ্রাম|অষ্টগ্রাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|বাজিতপুর|বাজিতপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|ভৈরব|ভৈরব উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|হোসেনপুর|হোসেনপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|ইটনা|ইটনা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|করিমগঞ্জ|করিমগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|কতিয়াদি|কটিয়াদী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|কুলিয়ারচর|কুলিয়ারচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|মিঠামাইন|মিঠামইন উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|নিকলি|নিকলী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|পাকুন্ডা|পাকুন্দিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|কিশোরগঞ্জ|তাড়াইল|তাড়াইল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মাদারীপুর|কালকিনি|কালকিনি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মাদারীপুর|রাজইর|রাজৈর উপেজলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মাদারীপুর|শিবচর|শিবচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মানিকগঞ্জ|দৌলতপুর|দৌলতপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মানিকগঞ্জ|ঘিওর|ঘিওর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মানিকগঞ্জ|হরিরামপুর|হরিরামপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মানিকগঞ্জ|সাটুরিয়া|সাটুরিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মানিকগঞ্জ|শিবালয়|শিবালয় উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মানিকগঞ্জ|সিঙ্গাইর|সিংগাইর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মুন্সিগঞ্জ|গজারিয়া|গজারিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মুন্সিগঞ্জ|লোহাজং|লৌহজং উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মুন্সিগঞ্জ|সিরাজদিখান|সিরাজদিখান উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মুন্সিগঞ্জ|শ্রীনগর|শ্রীনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মুন্সিগঞ্জ|টঙ্গিবাড়ি|টুংগীবাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|ভালুকা|ভালুকা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|ধবারুয়া|ধোবাউড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|ফুলবাড়িয়া|ফুলবাড়ীয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|ফুলপুর|ফুলপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|গফরগাঁও|গফরগাঁও উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|গৌরিপুর|গৌরীপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|হালুয়াঘাট|হালুয়াঘাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|ঈশ্বরগঞ্জ|ঈশ্বরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|মুক্তাগাছা|মুক্তাগাছা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|নান্দাইল|নান্দাইল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|ত্রিশাল|ত্রিশাল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নারায়াণগঞ্জ|আড়াইহাজার|আড়াইহাজার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নারায়াণগঞ্জ|বান্দার|বন্দর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নারায়াণগঞ্জ|রূপগঞ্জ|রুপগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নারায়াণগঞ্জ|সোনারগাঁও|সোনারগাঁও উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নরসিংদী|বেলাবো|বেলাব উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নরসিংদী|মনোহরদি|মনোহরদী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নরসিংদী|পলাশ|পলাশ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নরসিংদী|রায়পুর|রায়পুরা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|নরসিংদী|শিবপুর|শিবপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|আটপাড়া|আটপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|বরহাট্টা|বারহাট্টা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|দুর্গাপুর|দুর্গাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|কলমাকান্দা|কলমাকান্দা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|কেন্দুয়া|কেন্দুয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|খালিয়াজুরি|খালিয়াজুরী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|মদন|মদন উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|মোহনগঞ্জ|মোহনগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|নেত্রকোনা|পূর্বধলা|পূর্বধলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|রাজবাড়ি|বালিয়াকান্দি|বালিয়াকান্দি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|রাজবাড়ি|গোয়ালন্দ ঘাট|গোয়ালন্দ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|রাজবাড়ি|কালুখালি|কালুখালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|রাজবাড়ি|পাংশা|পাংশা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|শরীয়তপুর|ভেদারগঞ্জ|ভেদরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|শরীয়তপুর|দামুদিয়া|ডামুড্যা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|শরীয়তপুর|গোসাইর হাট|গোসাইরহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|শরীয়তপুর|নড়িয়া|নড়িয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|শরীয়তপুর|জাজিরা|জাজিরা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|শেরপুর|ঝিনাইগাতি|ঝিনাইগাতি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|শেরপুর|নাকলা|নকলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|শেরপুর|নালিতাবাড়ি|নালিতাবাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|শেরপুর|শ্রীবরদি|শ্রীবর্দী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|বসাইল|বাসাইল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|ভুয়াপুর|ভূঞাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|দেলদুয়ার|দেলদুয়ার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|ধানবাড়ি|ধনবাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|ঘাটাইল|ঘাটাইল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|গোপালপুর|গোপালপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|কালিহাতি|কালিহাতী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|মির্জাপুর|মির্জাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|মধুপুর|মধুপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|নগরপুর|নাগরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|টাঙ্গাইল|সখিপুর|সখীপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|বান্দরবান|আলী কদম|আলীকদম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|বান্দরবান|লামা|লামা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|বান্দরবান|নাইখংছড়ি|নাইক্ষ্যংছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|বান্দরবান|রউয়াংছড়ি|রোয়াংছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|বান্দরবান|রুমা|রুমা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|বান্দরবান|থানচি|থানচি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|আখাউরা|আখাউড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|আশুগঞ্জ|আশুগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|বাঞ্ছারামপুর|বাঞ্চারামপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|কসবা|কসবা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|নবীনগর|নবীনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|নাসির নগর|নাসিরনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|সরাইল|সরাইল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|ফরিদগঞ্জ|ফরিদগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|হাইমচর|হাইমচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|হাজীগঞ্জ|হাজীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|কচুয়া|কচুয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|মতলব দক্ষিণ|মতলব (দঃ) উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|মতলব উত্তর|মতলব (উত্তর) উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|শাহরাস্তি|শাহ্‌রাস্তি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|আনোয়ারা|আনোয়ারা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|বাশখালি|বাঁশখালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|বোয়ালখালি|বোয়ালখালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|চন্দনাইশ|চন্দনাইশ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|ফটিকছড়ি|ফটিকছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|হাঠহাজারী|হাটহাজারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|লোহাগারা|লোহাগাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|মিরসরাই|মীরসরাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|পটিয়া|পটিয়ার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|রাঙ্গুনিয়া|রাঙ্গুনিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|রাউজান|রাউজান উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|সন্দ্বীপ|সন্দ্বীপ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|সাতকানিয়া|সাতকানিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|সীতাকুণ্ড|সীতাকুন্ড উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|বড়ুরা|বরুড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|ব্রাহ্মণপাড়া|ব্রাহ্মণপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|বুড়িচং|বুড়িচং উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|চৌদ্দগ্রাম|চৌদ্দগ্রাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|চান্দিনা|চান্দিনা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|কুমিল্লা সদর দক্ষিণ|কুমিল্লা সদর দক্ষিণ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|দাউদকান্দি|দাউদকান্দি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|দেবীদ্বার|দেবিদ্বার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|হোমনা|হোমনা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|লাকসাম|লাকসাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|মেঘনা|মেঘনা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|মনোহরগঞ্জ|মনোহরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|মুরাদনগর|মুরাদনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|তিতাস|তিতাস উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|চকরিয়া|চকরিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|কুতুবদিয়া|কুতুবদিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|পেকুয়া|পেকুয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|রামু|রামু উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|টেকনাফ|টেকনাফ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|উখিয়া|উখিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ফেনী|ছাগল নাইয়া|ছাগলনাইয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ফেনী|দাগানভিয়া|দাগনভূঞা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ফেনী|ফুলগাজি|ফুলগাজী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ফেনী|পরশুরাম|পরশুরাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ফেনী|সোনাগাজি|সোনাগাজী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|দিঘিনালা|দীঘিনালা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|লক্ষ্মীছড়ি|লক্ষীছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|মানিকছড়ি|মানিকছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|মাটিরাঙ্গা|মাটিরাঙ্গা উপজিলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|মহলছড়ি|মহালছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|পানছড়ি|পানছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|রামগড়|রামগড় উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|লক্ষ্মীপুর|কমল নগর|কমলনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|লক্ষ্মীপুর|রায়পুর|রায়পুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|লক্ষ্মীপুর|রামগঞ্জ|রামগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|লক্ষ্মীপুর|রামগতি|রামগতি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|বেগমগঞ্জ|বেগমগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|চাটখিল|চাটখিল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|কোম্পানীগঞ্জ|কোম্পানীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|হাতিয়া|হাতিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|কবিরহাট|কবিরহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|শেনবাগ|সেনবাগ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|সোনাইমুরি|সোনাইমুড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|নোয়াখালী|সুবর্ণ চর|সুবর্ণচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|বাঘাইছড়ি|বাঘাইছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|বরকল|বরকল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|বেলাইছড়ি|বিলাইছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|জুরাইছড়ি|জুরাছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|কাপ্তাই|কাপ্তাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|কাউখালি|কাউখালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|লাঙ্গাডু|লংগদু উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|নান্নেরচর|নানিয়ারচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|রাঙ্গামাটি|রাজাস্থলি|রাজস্থলী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|আদমদিঘী|আদমদীঘি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|ধুনট|ধুনট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|দুপচাচিয়া|দুপচাঁচিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|গাবতলি|গাবতলী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|কাহালু|কাহালু উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|নন্দিগ্রাম|নন্দীগ্রাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|সারিয়াকান্দি|সারিয়াকান্দি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|শাহজাহানপুর|শাজাহানপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|শেরপুর|শেরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|শিবগঞ্জ|শিবগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|বগুড়া|সোনাতলা|সোনাতলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নবাবগঞ্জ|ভোলাহাট|ভোলাহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নবাবগঞ্জ|গোমস্তাপুর|গোমস্তাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নবাবগঞ্জ|নাচোল|নাচোল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|বিরামপুর|বিরামপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|বীরগঞ্জ|বীরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|বিড়াল|বিরল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|বোচাগঞ্জ|বোঁচাগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|চিরিরবন্দর|চিরিরবন্দর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|ফুলবাড়ি|ফুলবাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|ঘোড়াঘাট|ঘোড়াঘাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|হাকিমপুর|হাকিমপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|কাহারোল|কাহারোল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|খানসামা|খানসামা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|পার্বতীপুর|পার্বতীপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|গাইবান্ধা|ফুলছড়ি|ফুলছড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|গাইবান্ধা|গোবিন্দগঞ্জ|গোবিন্দগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|গাইবান্ধা|পলাশবাড়ী|পলাশবাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|গাইবান্ধা|সাদুল্যাপুর|সাদুল্লাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|গাইবান্ধা|সাঘাটা|সাঘাটা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|গাইবান্ধা|সুন্দরগঞ্জ|সুন্দরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|জয়পুরহাট|আক্কেলপুর|আক্কেলপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|জয়পুরহাট|কালাই|কালাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|জয়পুরহাট|খেতলাল|ক্ষেতলাল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|জয়পুরহাট|পাঁচবিবি|পাঁচবিবি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|চিলমারি|চিলমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|নাগেশ্বরী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|রাজারহাট|রাজারহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|চর রাজিবপুর|রাজিবপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|রউমারি|রৌমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|উলিপুর|উলিপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|লালমনিরহাট|আদিতমারি|আদিতমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|লালমনিরহাট|হাতিবান্ধা|হাতীবান্ধা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|লালমনিরহাট|পাটগ্রাম|পাটগ্রাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|আত্রাই|আত্রাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|বদলগাছি|বদলগাছী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|ধামইরহাট|ধামইরহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|মান্দা|মান্দা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|মহাদেবপুর|মহাদেবপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|নিয়ামতপুর|নিয়ামতপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|পত্নীতলা|পত্নীতলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|পোরশা|পোরশা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|রাণীনগর|রানীনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নওগাঁ|সাপাহার|সাপাহার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নাটোর|বাগাতিপাড়া|বাগাতিপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নাটোর|বড়াইগ্রাম|বড়াইগ্রাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নাটোর|গুরুদাসপুর|গুরুদাসপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নাটোর|লালপুর|লালপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নাটোর|সিংরা|সিংড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|নীলফামারী|ডিমলা|ডিমলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|নীলফামারী|ডোমার|ডোমার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|নীলফামারী|জলঢাকা|জলঢাকা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|নীলফামারী|কিশোরগঞ্জ|কিশোরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|নীলফামারী|সৈয়দপুর|সৈয়দপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|আটঘরিয়া|আটঘরিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|ভাঙ্গুরা|ভাঙ্গুড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|বেড়া|বেড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|চাটমোহর|চাটমোহর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|ফরিদপুর|ফরিদপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|ঈশ্বরদী|ঈশ্বরদী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|সাথিয়া|সাঁথিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|পাবনা|সুজানগর|সুজানগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|পঞ্চগড়|আটোয়ারি|আটোয়ারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|পঞ্চগড়|বোদা|বোদা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|পঞ্চগড়|দেবীগঞ্জ|দেবীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|পঞ্চগড়|তেঁতুলিয়া|তেঁতুলিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|বাগমারা|বাগমারা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|বাঘা|বাঘা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|চারঘাট|চারঘাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|গোদাগারি|গোদাগাড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|মোহনপুর|মোহনপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|পবা|পবা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|পুঠিয়া|পুঠিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|রাজশাহী|তানোর|তানোর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|বদরগঞ্জ|বদরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|গঙ্গাচরা|গংগাচড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|কাউনিয়া|কাউনিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|মিঠাপুকুর|মিঠাপুকুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|পীরগাছা|পীরগাছা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|পীরগঞ্জ|পীরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|রংপুর|তারাগঞ্জ|তারাগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|বেলকুচি|বেলকুচি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|চৌহালি|চৌহালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|কামারখান্দা|কামারখন্দ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|কাজীপুর|কাজিপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|রায়গঞ্জ|রায়গঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|শাহজাদপুর|শাহজাদপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|তারাশ|তাড়াশ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|সিরাজগঞ্জ|উল্লাপাড়া|উল্লাপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|ঠাকুরগাঁও|বালিয়াডাঙ্গি|বালিয়াডাঙ্গী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|ঠাকুরগাঁও|হরিপুর|হরিপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|ঠাকুরগাঁও|রাণীসংকইল|রানীসংকৈল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|চিতলমাড়ি|চিতলমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|ফকিরহাট|ফকিরহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|মোল্লাহাট|মোল্লাহাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|মংলা|মোংলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|মরেলগঞ্জ|মোরেলগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|রামপাল|রামপাল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|স্মরণখোলা|শরণখোলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|চুয়াডাঙ্গা|আলমডাঙ্গা|আলমডাঙ্গা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|চুয়াডাঙ্গা|দামুরহুদা|দামুড়হুদা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|চুয়াডাঙ্গা|জীবন নগর|জীবননগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|অভয়নগর|অভয়নগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|বাঘের পাড়া|বাঘারপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|চৌগাছা|চৌগাছা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|ঝিকরগাছা|ঝিকরগাছা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|কেশবপুর|কেশবপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|মনিরামপুর|মনিরামপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|যশোর|সারশা|শার্শা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|ঝিনাইদহ|হাড়িনাকুন্দা|হরিণাকুণ্ডু উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|ঝিনাইদহ|কোট চাঁদপুর|কোটচাঁদপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|ঝিনাইদহ|মহেশপুর|মহেশপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|ঝিনাইদহ|শৈলকুপা|শৈলকুপা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|বাটিয়াঘাটা|বটিয়াঘাটা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|ডাকপে|দাকোপ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|দিঘলিয়া|দিঘলিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|ডুমুরিয়া|ডুমুরিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|ফুলতলা|ফুলতলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|কয়ড়া|কয়রা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|পাইকগাছা|পাইকগাছা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|রূপসা|রূপসা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|খুলনা|তেরোখাদা|তেরখাদা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|কুষ্টিয়া|ভেরামারা|ভেড়ামারা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|কুষ্টিয়া|খোকসা|খোকসা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|কুষ্টিয়া|কুমারখালি|কুমারখালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|কুষ্টিয়া|মিরপুর|মিরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|মাগুরা|মোহাম্মাদপুর|মহম্মদপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|মাগুরা|শালিখা|শালিখা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|মেহেরপুর|আংনি|গাংনী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|মেহেরপুর|মুজিব নগর|মুজিবনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|নড়াইল|কালিয়া|কালিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|সাতক্ষীরা|আসসাশুনি|আশাশুনি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|সাতক্ষীরা|দেভাটা|দেবহাটা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|সাতক্ষীরা|কলরোয়া|কলারোয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|সাতক্ষীরা|শ্যামনগর|শ্যমনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|সাতক্ষীরা|তালা|তালা উপেজলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরগুনা|আমতলী|আমতলী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরগুনা|বামনা|বামনা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরগুনা|বেতাগি|বেতাগী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরগুনা|পাথরঘাটা|পাথরঘাটা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|আগাইলঝরা|আগৈলঝাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|বাবুগঞ্জ|বাবুগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|বাকেরগঞ্জ|বাকেরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|বানাড়িপারা|বানারীপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|গৌরনদী|গৌরনদী উপজেলা স্বাস্থ্য কমপ্লেক্সে",
+            "বরিশাল|বরিশাল|হিজলা|হিজলা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|মেহেদিগঞ্জ|মেহেন্দিগঞ্জ উপজেলা হেলথ কমপ্লেক্স",
+            "বরিশাল|বরিশাল|মুলাদি|মুলাদী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|বরিশাল|ওয়াজিরপুর|উজিরপুর উপাজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ভোলা|বুরহানউদ্দিন|বোরহানউদ্দিন উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ভোলা|দৌলতখান|দৌলতখান উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ভোলা|লালমোহন|লালমোহন উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ভোলা|মনপুরা|মনপুরা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ভোলা|তাজুমুদ্দিন|তজুমদ্দিন উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ঝালকাঠি|কাঁঠালিয়া|কাঁঠালিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ঝালকাঠি|নালচিতি|নলছিটি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|ঝালকাঠি|রাজাপুর|রাজাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|বাউফল|বাউফল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|দশমিনা|দশমিনা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|ডুমকি|দুমকী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|গলাচিপা|গলাচিপা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|কালাপারা|কলাপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|মির্জাগঞ্জ|মির্জাগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পিরোজপুর|ভ্যান্ডারিয়া|ভান্ডারিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পিরোজপুর|কাউখালি|কাউখালী উপজেলা হেলথ কমপ্লেক্স",
+            "বরিশাল|পিরোজপুর|মাঠবাড়িয়া|মঠবাড়িয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পিরোজপুর|নাজিরপুর|নাজিরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পিরোজপুর|নেসারাবাদ|নেছারাবাদ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পিরোজপুর|জিয়ানগর|ইন্দুরকানী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|আজমিরিগঞ্জ|আজমিরীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|বাহুবল|বাহুবল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|বানিয়াচং|বানিয়াচং উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|চুনারুঘাট|চুনারুঘাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|লাক্ষাই|লাখাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|মাধবপুর|মাধবপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|মৌলভীবাজার|বড়লেখা|বড়লেখা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|মৌলভীবাজার|জুড়ি|জুড়ী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|মৌলভীবাজার|কামালগঞ্জ|কমলগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|মৌলভীবাজার|কুলাউরা|কুলাউড়া উপজেলা স্বাস্থ্য কমপ্লেক্সে",
+            "সিলেট|মৌলভীবাজার|রাজনগর|রাজনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|মৌলভীবাজার|শ্রীমঙ্গল|শ্রীমঙ্গল উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|বিসশম্ভারপুর|বিশ্বম্ভরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|ছাতক|ছাতক উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|শান্তিগঞ্জ|শান্তিগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|দেড়াই|দিরাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|ধরমপাশা|ধর্মপাশা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|দোয়ারাবাজার|দোয়ারাবাজার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|জগন্নাথপুর|জগন্নাথপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|জামালগঞ্জ|জামালগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|সুল্লা|শাল্লা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সুনামগঞ্জ|তাহিরপুর|তাহেরপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|বালাগঞ্জ|বালাগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|বেয়ানিবাজার|বিয়ানীবাজার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|বিশ্বনাথ|বিশ্বনাথ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|ফেঞ্চুগঞ্জ|ফেঞ্চুগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|গোলাপগঞ্জ|গোলাপগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|গোয়াইনঘাট|গোয়াইনঘাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|জৈন্তাপুর|জৈন্তাপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|কানাইঘাট|কানাইঘাট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|জাকিগঞ্জ|জকিগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|বাগেরহাট|কচুয়া|কচুয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|লালমনিরহাট|কালীগঞ্জ|কালীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|মাগুরা|শ্রীপুর|শ্রীপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|কোম্পানিগঞ্জ|কোম্পানীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নবাবগঞ্জ|শিবগঞ্জ|শিবগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|নড়াইল|লোহাগাড়া|লোহাগড়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|সাতক্ষীরা|কালীগঞ্জ|কালিগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|ঝিনাইদহ|কালীগঞ্জ|কালীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "খুলনা|কুষ্টিয়া|দৌলতপুর|দৌলতপুর উপজেলা স্বাস্থ্য কমপ্লেক্সে",
+            "চট্টগ্রাম|কুমিল্লা|নাঙ্গালকোট|নাঙ্গলকোট উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|ঠাকুরগাঁও|পীরগঞ্জ|পীরগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|দিনাজপুর|নবাবগঞ্জ|নবাবগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর|কুড়িগ্রাম|ফুলবাড়ি|ফুলবাড়ি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|দক্ষিণ সুরমা|দক্ষিণ সুরমা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|ফরিদপুর|শালথা|সালথা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "বরিশাল|পটুয়াখালী|রাঙ্গাবালি|রাঙ্গাবালী উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|বিজয় নগর|বিজয়নগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|হবিগঞ্জ|শায়েস্তাগঞ্জ|শায়েস্তাগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কুমিল্লা|কুমিল্লা সদর দক্ষিণ|লালমাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "সিলেট|সিলেট|দক্ষিণ সুরমা|ওসমানীনগর উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চট্টগ্রাম|কর্ণফুলি|কর্নফুলি উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "ময়মনসিংহ|ময়মনসিংহ|তারাকান্দা|তারাকান্দা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রাজশাহী|নাটোর|নলডাঙ্গা|নলডাঙ্গা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|কক্স বাজার|ঈদগাঁও|ঈদগাঁও উপজেলা স্বাস্থ্য কমপ্নেক্স",
+            "ঢাকা|মাদারীপুর|দশর|ডাসার উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|গুইমারা|গুইমারা উপজেলা স্বাস্থ্য কমপ্নেক্স",
+            "চট্টগ্রাম|খাগড়াছড়ি|খাগড়াছড়ি সদর|মা ও শিশু কল্যাণ কেন্দ্র (এমসিডব্লিউসি)",
+            "চট্টগ্রাম|বান্দরবান|বান্দরবান সদর|মা ও শিশু কল্যান কেন্দ্র",
+            "ঢাকা|মানিকগঞ্জ|শিবালয়|মালুচী মা ও শিশু কল্যাণ কেন্দ্র",
+            "ঢাকা|নারায়াণগঞ্জ|নারায়ানগঞ্জ সদর|মা ও শিশু কল্যাণ কেন্দ্র",
+            "চট্টগ্রাম|রাঙ্গামাটি|লংগদু|সদর ক্লিনিক, লংগদু",
+            "চট্টগ্রাম|রাঙ্গামাটি|বিলাইছড়ি|সদর ক্লিনিক, বিলাইছড়ি",
+            "চট্টগ্রাম|রাঙ্গামাটি|রাজাস্থলি|সদর ক্লিনিক, রাজস্থলী",
+            "রংপুর|কুড়িগ্রাম|রাজারহাট|সদর ক্লিনিক,রাজারহাট",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|উপজেলা পরিবার পরিকল্পনা অফিস, নাগেশ্বরী",
+            "ময়মনসিংহ|শেরপুর|শ্রীবরদি|উপজেলা পরিবার পরিকল্পনা কাযালয়, শ্রীবদী",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|পরিবার কল্যাণ কেন্দ্র, হাসনাবাদ",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|পরিবার কল্যাণ কেন্দ্র, কারীগঞ্জ",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|পরিবার কল্যাণ কেন্দ্র, নুনখাওয়া",
+            "রংপুর|কুড়িগ্রাম|নাগেশ্বরী|পরিবার কল্যাণ কেন্দ্র, নারায়নপুর",
+            "চট্টগ্রাম|বান্দরবান|লামা|সদর ক্লিনিক, সদর, লামা",
+            "রংপুর|কুড়িগ্রাম|উলিপুর|উপজেলা পরিবার পরিকল্পনা অফিস, উলিপুর",
+            "চট্টগ্রাম|বান্দরবান|আলীকদম|সদর ক্লিনিক, আলীকদম",
+            "চট্টগ্রাম|বান্দরবান|রউয়াংছড়ি|সদর ক্লিনিক, রোয়াংছড়ি",
+            "চট্টগ্রাম|বান্দরবান|রুমা|সদর ক্লিনিক, রুমা",
+            "চট্টগ্রাম|বান্দরবান|থানচি|সদর ক্লিনিক, থানচী",
+            "ঢাকা|নারায়াণগঞ্জ|আড়াইহাজার|উপজেলা পরিবার পরিকল্পনা সদর ক্লিনিক আড়াইহাজার",
+            "ঢাকা|ঢাকা|গুলশান|ঢাকা সংক্রামক ব্যাধি হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|সীতাকুণ্ড|চট্টগ্রাম সংক্রামক ব্যাধি হাসপাতাল",
+            "রাজশাহী|রাজশাহী|রাজপাড়া|রাজশাহী সংক্রামক ব্যাধি হাসপাতাল",
+            "খুলনা|খুলনা|খান জাহান আলী|খুলনা সংক্রামক ব্যাধি হাসপাতাল",
+            "চট্টগ্রাম|ব্রাহ্মণবাড়িয়া|ব্রাহ্মণবাড়িয়া সদর|ব্রাক্ষ্মনবাড়ীয়া বক্ষব্যাধি হাসপাতাল",
+            "চট্টগ্রাম|চট্টগ্রাম|সীতাকুণ্ড|ফৌজদারহাট বক্ষব্যাধি হাসপাতাল",
+            "চট্টগ্রাম|ফেনী|ফেনী সদর|ফেনী বক্ষব্যাধি হাসপাতাল",
+            "রাজশাহী|বগুড়া|বগুড়া সদর|বগুড়া বক্ষব্যাধি হাসপাতাল",
+            "রাজশাহী|পাবনা|পাবনা সদর|পাবনা বক্ষব্যাধি হাসপাতাল",
+            "রাজশাহী|রাজশাহী|রাজপাড়া|রাজশাহী বক্ষব্যাধি হাসপাতাল",
+            "খুলনা|খুলনা|খান জাহান আলী|খুলনা বক্ষব্যাধি হাসপাতাল",
+            "বরিশাল|বরিশাল|বরিশাল সদর|বরিশাল বক্ষব্যাধি হাসপাতাল",
+            "সিলেট|সিলেট|কোতওয়ালী|সিলেট বক্ষব্যাধি হাসপাতাল",
+            "রংপুর|নীলফামারী|নীলফামারী সদর|নীলফামারী কুষ্ঠ হাসপাতাল",
+            "সিলেট|সিলেট|সিলেট সদর|সিলেট কুষ্ঠ হাসপাতাল",
+            "ঢাকা|ঢাকা|তেজগাঁও|বিজি প্রেস আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|মতিঝিল|বঙ্গভবন আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|নিউমার্কেট|গ্রীন রোড আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|ধানমন্ডি|ঝিগাতলা আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|মিরপুর|মিরপুর ওল্ড কলোনি আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|মতিঝিল|মতিঝিল আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|বনানী|নয়াটোলা আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|মিরপুর|পলাশী ব্যারাক আরবান ডিসপেনসারি",
+            "ঢাকা|ঢাকা|শের-ই-বাংলা নগর|শের-ই-বাংলা নগর ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|কোতওয়ালী|আগ্রাবাদ আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|কর্ণেলহাট আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|ফিরোজশাহ কলোনি আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|গাউছুল আজম আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|হালিশহর আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|মেরিন একাডেমী আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|পাঁচলাইশ আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|রৌফাবাদ আরবান ডিসপেনসারি",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম বন্দর|শেরশাহ আরবান ডিসপেনসারি",
+            "রংপুর|দিনাজপুর|দিনাজপুর সদর|হাউজিং স্টেট আরবান ডিসপেনসারি",
+            "রংপুর|নীলফামারী|সৈয়দপুর|গভ: আউটডার আরবান ডিসপেনসারি",
+            "রাজশাহী|রাজশাহী|বোয়ালিয়া|রানীনগর আরবান ডিসপেনসারি",
+            "রাজশাহী|রাজশাহী|শাহ মখদুম|সেরুইল আরবান ডিসপেনসারি",
+            "খুলনা|খুলনা|খালিশপুর|খালিশপুর আরবান ডিসপেনসারি",
+            "খুলনা|খুলনা|খুলনা সদর|টুটপাড়া আরবান ডিসপেনসারি",
+            "সিলেট|সিলেট|সিলেট সদর|এম সি কলেজ ডিসপেনসারি",
+            "ঢাকা|ঢাকা|মতিঝিল|মতিঝিল, জি ও ডি ও মাতৃসনদ কেন্দ্র",
+            "ঢাকা|গোপালগঞ্জ|গোপালগঞ্জ সদর|গোপালগঞ্জ বক্ষব্যাধি ক্লিনিক",
+            "ময়মনসিংহ|জামালপুর|জামালপুর সদর|জামালপুর বক্ষব্যাধি ক্লিনিক",
+            "ঢাকা|কিশোরগঞ্জ|কিশোরগঞ্জ সদর|কিশোরগঞ্জ বক্ষব্যাধি ক্লিনিক",
+            "ঢাকা|মাদারীপুর|মাদারীপুর সদর|মাদারীপুর বক্ষব্যাধি ক্লিনিক",
+            "ঢাকা|মুন্সিগঞ্জ|মুন্সিগঞ্জ সদর|মুন্সিগঞ্জ বক্ষব্যাধি ক্লিনিক",
+            "ঢাকা|টাঙ্গাইল|টাঙ্গাইল সদর|টাঙ্গাইল বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|চাঁদপুর|চাঁদপুর সদর|চাঁদপুর বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|চট্টগ্রাম|কোতওয়ালী|চট্টগ্রাম বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|কুমিল্লা|কুমিল্লা আদর্শ সদর|কুমিল্লা বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|কক্স বাজার|কক্স বাজার সদর|কক্সবাজার বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|ফেনী|ফেনী সদর|ফেনী বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|নোয়াখালী|নোয়াখালী সদর|নোয়াখালী বক্ষব্যাধি ক্লিনিক",
+            "চট্টগ্রাম|রাঙ্গামাটি|রাঙ্গামাটি সদর|রাঙ্গামাটি বক্ষব্যাধি ক্লিনিক",
+            "রাজশাহী|বগুড়া|বগুড়া সদর|বগুড়া বক্ষব্যাধি ক্লিনিক",
+            "রাজশাহী|নাটোর|নাটোর সদর|নাটোর বক্ষব্যাধি ক্লিনিক",
+            "রাজশাহী|রাজশাহী|বোয়ালিয়া|বক্ষব্যাধি ক্লিনিক,রাজশাহী",
+            "রাজশাহী|সিরাজগঞ্জ|সিরাজগঞ্জ সদর|সিরাজগঞ্জ বক্ষব্যাধি ক্লিনিক",
+            "খুলনা|চুয়াডাঙ্গা|চুয়াডাঙ্গা সদর|চুয়াডাঙ্গা বক্ষব্যাধি ক্লিনিক",
+            "খুলনা|খুলনা|সোনাডাঙ্গা|খুলনা বক্ষব্যাধি ক্লিনিক",
+            "খুলনা|কুষ্টিয়া|কুষ্টিয়া সদর|কুষ্টিয়া বক্ষব্যাধি ক্লিনিক",
+            "খুলনা|মাগুরা|মাগুরা সদর|মাগুরা বক্ষব্যাধি ক্লিনিক",
+            "খুলনা|সাতক্ষীরা|সাতক্ষীরা সদর|সাতক্ষীরা বক্ষব্যাধি ক্লিনিক",
+            "বরিশাল|বরিশাল|বরিশাল সদর|বরিশাল বক্ষব্যাধি ক্লিনিক",
+            "বরিশাল|পিরোজপুর|পিরোজপুর সদর|পিরোজপুর বক্ষব্যাধি ক্লিনিক",
+            "সিলেট|মৌলভীবাজার|মৌলভীবাজার সদর|বক্ষব্যাধি ক্লিনিক,মৌলভীবাজার",
+            "সিলেট|সুনামগঞ্জ|সুনামগঞ্জ সদর|সুনামগঞ্জ বক্ষব্যাধি ক্লিনিক",
+            "সিলেট|সিলেট|এয়ারপোর্ট|সিলেট বক্ষব্যাধি ক্লিনিক",
+            "ঢাকা|ঢাকা|পল্টন|বাংলাদেশ সচিবালয় ক্লিনিক",
+            "রংপুর|রংপুর|রংপুর সদর|রংপুর ১০০ বেড শিশু হাসপাতাল",
+            "ময়মনসিংহ|ময়মনসিংহ|ময়মনসিংহ সদর|ময়মনসিংহ বিভাগীয় কার্যালয়",
+            "খুলনা|ঝিনাইদহ|ঝিনাইদহ সদর|ঝিনাইদহ ২৫ শয্যা শিশু হাসপাতাল",
+            "ঢাকা|ঢাকা|ঢাকা দক্ষিণ সিটি|বাংলাদেশ কোরিয়া মৈত্রী হাসপাতালে",
+            "ঢাকা|ঢাকা|বনানী|ন্যাশনাল ড্রাগ কন্ট্রোল ল্যাবরেটরী",
+            "চট্টগ্রাম|চট্টগ্রাম|চট্টগ্রাম সদর|চট্রগাম বিভাগীয় ল্যাবরেটরী",
+            "রাজশাহী|রাজশাহী|রাজশাহী সদর|রাজশাহী বিভাগীয় ল্যাবরেটরী",
+            "ঢাকা|গাজীপুর|গাজীপুর সদর|শহীদ আহ্সান উল্লাহ্ মাষ্টার জেনারেল হাসপাতাল",
+            "ঢাকা|নারায়াণগঞ্জ|নারায়ানগঞ্জ সদর|নারায়ণগঞ্জ ৩০০ শয্যা হাসপাতাল",
+            "ঢাকা|নরসিংদী|নরসিংদী সদর|১০০ শয‌্যা বিশিষ্ট জেলা হাসপাতাল, নরসিংদী",
+            "রংপুর|নীলফামারী|সৈয়দপুর|সৈয়দপুর ১০০ শয্যা হাসপাতাল",
+            "ঢাকা|ঢাকা|ক্যান্টনমেন্ট|কুর্মিটোলা জেনারেল হাসপাতাল",
+            "ঢাকা|ঢাকা|উত্তরা পশ্চিম|কুয়েত বাংলাদেশ মৈত্রী সরকারি হাসপাতাল"
+        ];
 
-        let upazilas = [{"id":"1","district_id":"34","bn_name":"আমতলী"},{"id":"496","district_id":"43","bn_name":"কর্ণফুলি"},{"id":"2","district_id":"34","bn_name":"বামনা"},{"id":"3","district_id":"34","bn_name":"বরগুনা সদর"},{"id":"4","district_id":"34","bn_name":"বেতাগি"},{"id":"5","district_id":"34","bn_name":"পাথরঘাটা"},{"id":"6","district_id":"34","bn_name":"তালতলী"},{"id":"7","district_id":"35","bn_name":"মুলাদি"},{"id":"8","district_id":"35","bn_name":"বাবুগঞ্জ"},{"id":"9","district_id":"35","bn_name":"আগাইলঝরা"},{"id":"10","district_id":"35","bn_name":"বরিশাল সদর"},{"id":"11","district_id":"35","bn_name":"বাকেরগঞ্জ"},{"id":"12","district_id":"35","bn_name":"বানাড়িপারা"},{"id":"13","district_id":"35","bn_name":"গৌরনদী"},{"id":"14","district_id":"35","bn_name":"হিজলা"},{"id":"15","district_id":"35","bn_name":"মেহেদিগঞ্জ "},{"id":"16","district_id":"35","bn_name":"ওয়াজিরপুর"},{"id":"17","district_id":"36","bn_name":"ভোলা সদর"},{"id":"18","district_id":"36","bn_name":"বুরহানউদ্দিন"},{"id":"19","district_id":"36","bn_name":"চর ফ্যাশন"},{"id":"20","district_id":"36","bn_name":"দৌলতখান"},{"id":"21","district_id":"36","bn_name":"লালমোহন"},{"id":"22","district_id":"36","bn_name":"মনপুরা"},{"id":"23","district_id":"36","bn_name":"তাজুমুদ্দিন"},{"id":"24","district_id":"37","bn_name":"ঝালকাঠি সদর"},{"id":"25","district_id":"37","bn_name":"কাঁঠালিয়া"},{"id":"26","district_id":"37","bn_name":"নালচিতি"},{"id":"27","district_id":"37","bn_name":"রাজাপুর"},{"id":"28","district_id":"38","bn_name":"বাউফল"},{"id":"29","district_id":"38","bn_name":"দশমিনা"},{"id":"30","district_id":"38","bn_name":"গলাচিপা"},{"id":"31","district_id":"38","bn_name":"কালাপারা"},{"id":"32","district_id":"38","bn_name":"মির্জাগঞ্জ "},{"id":"33","district_id":"38","bn_name":"পটুয়াখালী সদর"},{"id":"34","district_id":"38","bn_name":"ডুমকি"},{"id":"35","district_id":"38","bn_name":"রাঙ্গাবালি"},{"id":"36","district_id":"39","bn_name":"ভ্যান্ডারিয়া"},{"id":"37","district_id":"39","bn_name":"কাউখালি"},{"id":"38","district_id":"39","bn_name":"মাঠবাড়িয়া"},{"id":"39","district_id":"39","bn_name":"নাজিরপুর"},{"id":"40","district_id":"39","bn_name":"নেসারাবাদ"},{"id":"41","district_id":"39","bn_name":"পিরোজপুর সদর"},{"id":"42","district_id":"39","bn_name":"জিয়ানগর"},{"id":"43","district_id":"40","bn_name":"বান্দরবন সদর"},{"id":"44","district_id":"40","bn_name":"থানচি"},{"id":"45","district_id":"40","bn_name":"লামা"},{"id":"46","district_id":"40","bn_name":"নাইখংছড়ি "},{"id":"47","district_id":"40","bn_name":"আলী কদম"},{"id":"48","district_id":"40","bn_name":"রউয়াংছড়ি "},{"id":"49","district_id":"40","bn_name":"রুমা"},{"id":"50","district_id":"41","bn_name":"ব্রাহ্মণবাড়িয়া সদর"},{"id":"51","district_id":"41","bn_name":"আশুগঞ্জ"},{"id":"52","district_id":"41","bn_name":"নাসির নগর"},{"id":"53","district_id":"41","bn_name":"নবীনগর"},{"id":"54","district_id":"41","bn_name":"সরাইল"},{"id":"55","district_id":"41","bn_name":"শাহবাজপুর টাউন"},{"id":"56","district_id":"41","bn_name":"কসবা"},{"id":"57","district_id":"41","bn_name":"আখাউরা"},{"id":"58","district_id":"41","bn_name":"বাঞ্ছারামপুর"},{"id":"59","district_id":"41","bn_name":"বিজয় নগর"},{"id":"60","district_id":"42","bn_name":"চাঁদপুর সদর"},{"id":"61","district_id":"42","bn_name":"ফরিদগঞ্জ"},{"id":"62","district_id":"42","bn_name":"হাইমচর"},{"id":"63","district_id":"42","bn_name":"হাজীগঞ্জ"},{"id":"64","district_id":"42","bn_name":"কচুয়া"},{"id":"65","district_id":"42","bn_name":"মতলব উত্তর"},{"id":"66","district_id":"42","bn_name":"মতলব দক্ষিণ"},{"id":"67","district_id":"42","bn_name":"শাহরাস্তি"},{"id":"68","district_id":"43","bn_name":"আনোয়ারা"},{"id":"69","district_id":"43","bn_name":"বাশখালি"},{"id":"70","district_id":"43","bn_name":"বোয়ালখালি"},{"id":"71","district_id":"43","bn_name":"চন্দনাইশ"},{"id":"72","district_id":"43","bn_name":"ফটিকছড়ি"},{"id":"73","district_id":"43","bn_name":"হাঠহাজারী"},{"id":"74","district_id":"43","bn_name":"লোহাগারা"},{"id":"75","district_id":"43","bn_name":"মিরসরাই"},{"id":"76","district_id":"43","bn_name":"পটিয়া"},{"id":"77","district_id":"43","bn_name":"রাঙ্গুনিয়া"},{"id":"78","district_id":"43","bn_name":"রাউজান"},{"id":"79","district_id":"43","bn_name":"সন্দ্বীপ"},{"id":"80","district_id":"43","bn_name":"সাতকানিয়া"},{"id":"81","district_id":"43","bn_name":"সীতাকুণ্ড"},{"id":"82","district_id":"44","bn_name":"বড়ুরা"},{"id":"83","district_id":"44","bn_name":"ব্রাহ্মণপাড়া"},{"id":"84","district_id":"44","bn_name":"বুড়িচং"},{"id":"85","district_id":"44","bn_name":"চান্দিনা"},{"id":"86","district_id":"44","bn_name":"চৌদ্দগ্রাম"},{"id":"87","district_id":"44","bn_name":"দাউদকান্দি"},{"id":"88","district_id":"44","bn_name":"দেবীদ্বার"},{"id":"89","district_id":"44","bn_name":"হোমনা"},{"id":"90","district_id":"44","bn_name":"কুমিল্লা সদর"},{"id":"91","district_id":"44","bn_name":"লাকসাম"},{"id":"92","district_id":"44","bn_name":"মনোহরগঞ্জ"},{"id":"93","district_id":"44","bn_name":"মেঘনা"},{"id":"94","district_id":"44","bn_name":"মুরাদনগর"},{"id":"95","district_id":"44","bn_name":"নাঙ্গালকোট"},{"id":"96","district_id":"44","bn_name":"কুমিল্লা সদর দক্ষিণ"},{"id":"97","district_id":"44","bn_name":"তিতাস"},{"id":"98","district_id":"45","bn_name":"চকরিয়া"},{"id":"100","district_id":"45","bn_name":"কক্স বাজার সদর"},{"id":"101","district_id":"45","bn_name":"কুতুবদিয়া"},{"id":"102","district_id":"45","bn_name":"মহেশখালী"},{"id":"103","district_id":"45","bn_name":"রামু"},{"id":"104","district_id":"45","bn_name":"টেকনাফ"},{"id":"105","district_id":"45","bn_name":"উখিয়া"},{"id":"106","district_id":"45","bn_name":"পেকুয়া"},{"id":"107","district_id":"46","bn_name":"ফেনী সদর"},{"id":"108","district_id":"46","bn_name":"ছাগল নাইয়া"},{"id":"109","district_id":"46","bn_name":"দাগানভিয়া"},{"id":"110","district_id":"46","bn_name":"পরশুরাম"},{"id":"111","district_id":"46","bn_name":"ফুলগাজি"},{"id":"112","district_id":"46","bn_name":"সোনাগাজি"},{"id":"113","district_id":"47","bn_name":"দিঘিনালা "},{"id":"114","district_id":"47","bn_name":"খাগড়াছড়ি"},{"id":"115","district_id":"47","bn_name":"লক্ষ্মীছড়ি"},{"id":"116","district_id":"47","bn_name":"মহলছড়ি"},{"id":"117","district_id":"47","bn_name":"মানিকছড়ি"},{"id":"118","district_id":"47","bn_name":"মাটিরাঙ্গা"},{"id":"119","district_id":"47","bn_name":"পানছড়ি"},{"id":"120","district_id":"47","bn_name":"রামগড়"},{"id":"121","district_id":"48","bn_name":"লক্ষ্মীপুর সদর"},{"id":"122","district_id":"48","bn_name":"রায়পুর"},{"id":"123","district_id":"48","bn_name":"রামগঞ্জ"},{"id":"124","district_id":"48","bn_name":"রামগতি"},{"id":"125","district_id":"48","bn_name":"কমল নগর"},{"id":"126","district_id":"49","bn_name":"নোয়াখালী সদর"},{"id":"127","district_id":"49","bn_name":"বেগমগঞ্জ"},{"id":"128","district_id":"49","bn_name":"চাটখিল"},{"id":"129","district_id":"49","bn_name":"কোম্পানীগঞ্জ"},{"id":"130","district_id":"49","bn_name":"শেনবাগ"},{"id":"131","district_id":"49","bn_name":"হাতিয়া"},{"id":"132","district_id":"49","bn_name":"কবিরহাট "},{"id":"133","district_id":"49","bn_name":"সোনাইমুরি"},{"id":"134","district_id":"49","bn_name":"সুবর্ণ চর "},{"id":"135","district_id":"50","bn_name":"রাঙ্গামাটি সদর"},{"id":"136","district_id":"50","bn_name":"বেলাইছড়ি"},{"id":"137","district_id":"50","bn_name":"বাঘাইছড়ি"},{"id":"138","district_id":"50","bn_name":"বরকল"},{"id":"139","district_id":"50","bn_name":"জুরাইছড়ি"},{"id":"140","district_id":"50","bn_name":"রাজাস্থলি"},{"id":"141","district_id":"50","bn_name":"কাপ্তাই"},{"id":"142","district_id":"50","bn_name":"লাঙ্গাডু"},{"id":"143","district_id":"50","bn_name":"নান্নেরচর "},{"id":"144","district_id":"50","bn_name":"কাউখালি"},{"id":"145","district_id":"1","bn_name":"ধামরাই"},{"id":"146","district_id":"1","bn_name":"দোহার"},{"id":"147","district_id":"1","bn_name":"কেরানীগঞ্জ"},{"id":"148","district_id":"1","bn_name":"নবাবগঞ্জ"},{"id":"149","district_id":"1","bn_name":"সাভার"},{"id":"150","district_id":"2","bn_name":"ফরিদপুর সদর"},{"id":"151","district_id":"2","bn_name":"বোয়ালমারী"},{"id":"152","district_id":"2","bn_name":"আলফাডাঙ্গা"},{"id":"153","district_id":"2","bn_name":"মধুখালি"},{"id":"154","district_id":"2","bn_name":"ভাঙ্গা"},{"id":"155","district_id":"2","bn_name":"নগরকান্ড"},{"id":"156","district_id":"2","bn_name":"চরভদ্রাসন "},{"id":"157","district_id":"2","bn_name":"সদরপুর"},{"id":"158","district_id":"2","bn_name":"শালথা"},{"id":"159","district_id":"3","bn_name":"গাজীপুর সদর"},{"id":"160","district_id":"3","bn_name":"কালিয়াকৈর"},{"id":"161","district_id":"3","bn_name":"কাপাসিয়া"},{"id":"162","district_id":"3","bn_name":"শ্রীপুর"},{"id":"163","district_id":"3","bn_name":"কালীগঞ্জ"},{"id":"164","district_id":"3","bn_name":"টঙ্গি"},{"id":"165","district_id":"4","bn_name":"গোপালগঞ্জ সদর"},{"id":"166","district_id":"4","bn_name":"কাশিয়ানি"},{"id":"167","district_id":"4","bn_name":"কোটালিপাড়া"},{"id":"168","district_id":"4","bn_name":"মুকসুদপুর"},{"id":"169","district_id":"4","bn_name":"টুঙ্গিপাড়া"},{"id":"170","district_id":"5","bn_name":"দেওয়ানগঞ্জ"},{"id":"171","district_id":"5","bn_name":"বকসিগঞ্জ"},{"id":"172","district_id":"5","bn_name":"ইসলামপুর"},{"id":"173","district_id":"5","bn_name":"জামালপুর সদর"},{"id":"174","district_id":"5","bn_name":"মাদারগঞ্জ"},{"id":"175","district_id":"5","bn_name":"মেলানদাহা"},{"id":"176","district_id":"5","bn_name":"সরিষাবাড়ি "},{"id":"177","district_id":"5","bn_name":"নারুন্দি"},{"id":"178","district_id":"6","bn_name":"অষ্টগ্রাম"},{"id":"179","district_id":"6","bn_name":"বাজিতপুর"},{"id":"180","district_id":"6","bn_name":"ভৈরব"},{"id":"181","district_id":"6","bn_name":"হোসেনপুর "},{"id":"182","district_id":"6","bn_name":"ইটনা"},{"id":"183","district_id":"6","bn_name":"করিমগঞ্জ"},{"id":"184","district_id":"6","bn_name":"কতিয়াদি"},{"id":"185","district_id":"6","bn_name":"কিশোরগঞ্জ সদর"},{"id":"186","district_id":"6","bn_name":"কুলিয়ারচর"},{"id":"187","district_id":"6","bn_name":"মিঠামাইন"},{"id":"188","district_id":"6","bn_name":"নিকলি"},{"id":"189","district_id":"6","bn_name":"পাকুন্ডা"},{"id":"190","district_id":"6","bn_name":"তাড়াইল"},{"id":"191","district_id":"7","bn_name":"মাদারীপুর সদর"},{"id":"192","district_id":"7","bn_name":"কালকিনি"},{"id":"193","district_id":"7","bn_name":"রাজইর"},{"id":"194","district_id":"7","bn_name":"শিবচর"},{"id":"195","district_id":"8","bn_name":"মানিকগঞ্জ সদর"},{"id":"196","district_id":"8","bn_name":"সিঙ্গাইর"},{"id":"197","district_id":"8","bn_name":"শিবালয়"},{"id":"198","district_id":"8","bn_name":"সাটুরিয়া"},{"id":"199","district_id":"8","bn_name":"হরিরামপুর"},{"id":"200","district_id":"8","bn_name":"ঘিওর"},{"id":"201","district_id":"8","bn_name":"দৌলতপুর"},{"id":"202","district_id":"9","bn_name":"লোহাজং"},{"id":"203","district_id":"9","bn_name":"শ্রীনগর"},{"id":"204","district_id":"9","bn_name":"মুন্সিগঞ্জ সদর"},{"id":"205","district_id":"9","bn_name":"সিরাজদিখান"},{"id":"206","district_id":"9","bn_name":"টঙ্গিবাড়ি"},{"id":"207","district_id":"9","bn_name":"গজারিয়া"},{"id":"208","district_id":"10","bn_name":"ভালুকা"},{"id":"209","district_id":"10","bn_name":"ত্রিশাল"},{"id":"210","district_id":"10","bn_name":"হালুয়াঘাট"},{"id":"211","district_id":"10","bn_name":"মুক্তাগাছা"},{"id":"212","district_id":"10","bn_name":"ধবারুয়া"},{"id":"213","district_id":"10","bn_name":"ফুলবাড়িয়া"},{"id":"214","district_id":"10","bn_name":"গফরগাঁও"},{"id":"215","district_id":"10","bn_name":"গৌরিপুর"},{"id":"216","district_id":"10","bn_name":"ঈশ্বরগঞ্জ"},{"id":"217","district_id":"10","bn_name":"ময়মনসিং সদর"},{"id":"218","district_id":"10","bn_name":"নন্দাইল"},{"id":"219","district_id":"10","bn_name":"ফুলপুর"},{"id":"220","district_id":"11","bn_name":"আড়াইহাজার"},{"id":"221","district_id":"11","bn_name":"সোনারগাঁও"},{"id":"222","district_id":"11","bn_name":"বান্দার"},{"id":"223","district_id":"11","bn_name":"নারায়ানগঞ্জ সদর"},{"id":"224","district_id":"11","bn_name":"রূপগঞ্জ"},{"id":"225","district_id":"11","bn_name":"সিদ্ধিরগঞ্জ"},{"id":"226","district_id":"12","bn_name":"বেলাবো"},{"id":"227","district_id":"12","bn_name":"মনোহরদি"},{"id":"228","district_id":"12","bn_name":"নরসিংদী সদর"},{"id":"229","district_id":"12","bn_name":"পলাশ"},{"id":"230","district_id":"12","bn_name":"রায়পুর"},{"id":"231","district_id":"12","bn_name":"শিবপুর"},{"id":"232","district_id":"13","bn_name":"কেন্দুয়া"},{"id":"233","district_id":"13","bn_name":"আটপাড়া"},{"id":"234","district_id":"13","bn_name":"বরহাট্টা"},{"id":"235","district_id":"13","bn_name":"দুর্গাপুর"},{"id":"236","district_id":"13","bn_name":"কলমাকান্দা"},{"id":"237","district_id":"13","bn_name":"মদন"},{"id":"238","district_id":"13","bn_name":"মোহনগঞ্জ"},{"id":"239","district_id":"13","bn_name":"নেত্রকোনা সদর"},{"id":"240","district_id":"13","bn_name":"পূর্বধলা"},{"id":"241","district_id":"13","bn_name":"খালিয়াজুরি"},{"id":"242","district_id":"14","bn_name":"বালিয়াকান্দি"},{"id":"243","district_id":"14","bn_name":"গোয়ালন্দ ঘাট"},{"id":"244","district_id":"14","bn_name":"পাংশা"},{"id":"245","district_id":"14","bn_name":"কালুখালি"},{"id":"246","district_id":"14","bn_name":"রাজবাড়ি সদর"},{"id":"247","district_id":"15","bn_name":"শরীয়তপুর সদর "},{"id":"248","district_id":"15","bn_name":"দামুদিয়া"},{"id":"249","district_id":"15","bn_name":"নড়িয়া"},{"id":"250","district_id":"15","bn_name":"জাজিরা"},{"id":"251","district_id":"15","bn_name":"ভেদারগঞ্জ"},{"id":"252","district_id":"15","bn_name":"গোসাইর হাট "},{"id":"253","district_id":"16","bn_name":"ঝিনাইগাতি"},{"id":"254","district_id":"16","bn_name":"নাকলা"},{"id":"255","district_id":"16","bn_name":"নালিতাবাড়ি"},{"id":"256","district_id":"16","bn_name":" শেরপুর সদর"},{"id":"257","district_id":"16","bn_name":"শ্রীবরদি"},{"id":"258","district_id":"17","bn_name":"টাঙ্গাইল সদর"},{"id":"259","district_id":"17","bn_name":"সখিপুর"},{"id":"260","district_id":"17","bn_name":"বসাইল"},{"id":"261","district_id":"17","bn_name":"মধুপুর"},{"id":"262","district_id":"17","bn_name":"ঘাটাইল"},{"id":"263","district_id":"17","bn_name":"কালিহাতি"},{"id":"264","district_id":"17","bn_name":"নগরপুর"},{"id":"265","district_id":"17","bn_name":"মির্জাপুর"},{"id":"266","district_id":"17","bn_name":"গোপালপুর"},{"id":"267","district_id":"17","bn_name":"দেলদুয়ার"},{"id":"268","district_id":"17","bn_name":"ভুয়াপুর"},{"id":"269","district_id":"17","bn_name":"ধানবাড়ি"},{"id":"270","district_id":"55","bn_name":"বাগেরহাট সদর"},{"id":"271","district_id":"55","bn_name":"চিতলমাড়ি"},{"id":"272","district_id":"55","bn_name":"ফকিরহাট"},{"id":"273","district_id":"55","bn_name":"কচুয়া"},{"id":"274","district_id":"55","bn_name":"মোল্লাহাট "},{"id":"275","district_id":"55","bn_name":"মংলা"},{"id":"276","district_id":"55","bn_name":"মরেলগঞ্জ"},{"id":"277","district_id":"55","bn_name":"রামপাল"},{"id":"278","district_id":"55","bn_name":"স্মরণখোলা"},{"id":"279","district_id":"56","bn_name":"দামুরহুদা"},{"id":"280","district_id":"56","bn_name":"চুয়াডাঙ্গা সদর"},{"id":"281","district_id":"56","bn_name":"জীবন নগর "},{"id":"282","district_id":"56","bn_name":"আলমডাঙ্গা"},{"id":"283","district_id":"57","bn_name":"অভয়নগর"},{"id":"284","district_id":"57","bn_name":"কেশবপুর"},{"id":"285","district_id":"57","bn_name":"বাঘের পাড়া "},{"id":"286","district_id":"57","bn_name":"যশোর সদর"},{"id":"287","district_id":"57","bn_name":"চৌগাছা"},{"id":"288","district_id":"57","bn_name":"মনিরামপুর "},{"id":"289","district_id":"57","bn_name":"ঝিকরগাছা"},{"id":"290","district_id":"57","bn_name":"সারশা"},{"id":"291","district_id":"58","bn_name":"ঝিনাইদহ সদর"},{"id":"292","district_id":"58","bn_name":"মহেশপুর"},{"id":"293","district_id":"58","bn_name":"কালীগঞ্জ"},{"id":"294","district_id":"58","bn_name":"কোট চাঁদপুর "},{"id":"295","district_id":"58","bn_name":"শৈলকুপা"},{"id":"296","district_id":"58","bn_name":"হাড়িনাকুন্দা"},{"id":"297","district_id":"59","bn_name":"তেরোখাদা"},{"id":"298","district_id":"59","bn_name":"বাটিয়াঘাটা "},{"id":"299","district_id":"59","bn_name":"ডাকপে"},{"id":"300","district_id":"59","bn_name":"ডুমুরিয়া"},{"id":"301","district_id":"59","bn_name":"দিঘলিয়া"},{"id":"302","district_id":"59","bn_name":"কয়ড়া"},{"id":"303","district_id":"59","bn_name":"পাইকগাছা"},{"id":"304","district_id":"59","bn_name":"ফুলতলা"},{"id":"305","district_id":"59","bn_name":"রূপসা"},{"id":"306","district_id":"60","bn_name":"কুষ্টিয়া সদর"},{"id":"307","district_id":"60","bn_name":"কুমারখালি"},{"id":"308","district_id":"60","bn_name":"দৌলতপুর"},{"id":"309","district_id":"60","bn_name":"মিরপুর"},{"id":"310","district_id":"60","bn_name":"ভেরামারা"},{"id":"311","district_id":"60","bn_name":"খোকসা"},{"id":"312","district_id":"61","bn_name":"মাগুরা সদর"},{"id":"313","district_id":"61","bn_name":"মোহাম্মাদপুর"},{"id":"314","district_id":"61","bn_name":"শালিখা"},{"id":"315","district_id":"61","bn_name":"শ্রীপুর"},{"id":"316","district_id":"62","bn_name":"আংনি"},{"id":"317","district_id":"62","bn_name":"মুজিব নগর"},{"id":"318","district_id":"62","bn_name":"মেহেরপুর সদর"},{"id":"319","district_id":"63","bn_name":"নড়াইল সদর"},{"id":"320","district_id":"63","bn_name":"লোহাগাড়া"},{"id":"321","district_id":"63","bn_name":"কালিয়া"},{"id":"322","district_id":"64","bn_name":"সাতক্ষীরা সদর"},{"id":"323","district_id":"64","bn_name":"আসসাশুনি "},{"id":"324","district_id":"64","bn_name":"দেভাটা"},{"id":"325","district_id":"64","bn_name":"তালা"},{"id":"326","district_id":"64","bn_name":"কলরোয়া"},{"id":"327","district_id":"64","bn_name":"কালীগঞ্জ"},{"id":"328","district_id":"64","bn_name":"শ্যামনগর"},{"id":"329","district_id":"18","bn_name":"আদমদিঘী"},{"id":"330","district_id":"18","bn_name":"বগুড়া সদর"},{"id":"331","district_id":"18","bn_name":"শেরপুর"},{"id":"332","district_id":"18","bn_name":"ধুনট"},{"id":"333","district_id":"18","bn_name":"দুপচাচিয়া"},{"id":"334","district_id":"18","bn_name":"গাবতলি"},{"id":"335","district_id":"18","bn_name":"কাহালু"},{"id":"336","district_id":"18","bn_name":"নন্দিগ্রাম"},{"id":"337","district_id":"18","bn_name":"শাহজাহানপুর"},{"id":"338","district_id":"18","bn_name":"সারিয়াকান্দি"},{"id":"339","district_id":"18","bn_name":"শিবগঞ্জ"},{"id":"340","district_id":"18","bn_name":"সোনাতলা"},{"id":"341","district_id":"19","bn_name":"জয়পুরহাট সদর"},{"id":"342","district_id":"19","bn_name":"আক্কেলপুর"},{"id":"343","district_id":"19","bn_name":"কালাই"},{"id":"344","district_id":"19","bn_name":"খেতলাল"},{"id":"345","district_id":"19","bn_name":"পাঁচবিবি"},{"id":"346","district_id":"20","bn_name":"নওগাঁ সদর"},{"id":"347","district_id":"20","bn_name":"মহাদেবপুর"},{"id":"348","district_id":"20","bn_name":"মান্দা"},{"id":"349","district_id":"20","bn_name":"নিয়ামতপুর"},{"id":"350","district_id":"20","bn_name":"আত্রাই"},{"id":"351","district_id":"20","bn_name":"রাণীনগর"},{"id":"352","district_id":"20","bn_name":"পত্নীতলা"},{"id":"353","district_id":"20","bn_name":"ধামইরহাট "},{"id":"354","district_id":"20","bn_name":"সাপাহার"},{"id":"355","district_id":"20","bn_name":"পোরশা"},{"id":"356","district_id":"20","bn_name":"বদলগাছি"},{"id":"357","district_id":"21","bn_name":"নাটোর সদর"},{"id":"358","district_id":"21","bn_name":"বড়াইগ্রাম"},{"id":"359","district_id":"21","bn_name":"বাগাতিপাড়া"},{"id":"360","district_id":"21","bn_name":"লালপুর"},{"id":"361","district_id":"21","bn_name":"নাটোর সদর"},{"id":"362","district_id":"21","bn_name":"বড়াই গ্রাম"},{"id":"363","district_id":"22","bn_name":"ভোলাহাট"},{"id":"364","district_id":"22","bn_name":"গোমস্তাপুর"},{"id":"365","district_id":"22","bn_name":"নাচোল"},{"id":"366","district_id":"22","bn_name":"নবাবগঞ্জ সদর"},{"id":"367","district_id":"22","bn_name":"শিবগঞ্জ"},{"id":"368","district_id":"23","bn_name":"আটঘরিয়া"},{"id":"369","district_id":"23","bn_name":"বেড়া"},{"id":"370","district_id":"23","bn_name":"ভাঙ্গুরা"},{"id":"371","district_id":"23","bn_name":"চাটমোহর"},{"id":"372","district_id":"23","bn_name":"ফরিদপুর"},{"id":"373","district_id":"23","bn_name":"ঈশ্বরদী"},{"id":"374","district_id":"23","bn_name":"পাবনা সদর"},{"id":"375","district_id":"23","bn_name":"সাথিয়া"},{"id":"376","district_id":"23","bn_name":"সুজানগর"},{"id":"377","district_id":"24","bn_name":"বাঘা"},{"id":"378","district_id":"24","bn_name":"বাগমারা"},{"id":"379","district_id":"24","bn_name":"চারঘাট"},{"id":"380","district_id":"24","bn_name":"দুর্গাপুর"},{"id":"381","district_id":"24","bn_name":"গোদাগারি"},{"id":"382","district_id":"24","bn_name":"মোহনপুর"},{"id":"383","district_id":"24","bn_name":"পবা"},{"id":"384","district_id":"24","bn_name":"পুঠিয়া"},{"id":"385","district_id":"24","bn_name":"তানোর"},{"id":"386","district_id":"25","bn_name":"সিরাজগঞ্জ সদর"},{"id":"387","district_id":"25","bn_name":"বেলকুচি"},{"id":"388","district_id":"25","bn_name":"চৌহালি"},{"id":"389","district_id":"25","bn_name":"কামারখান্দা"},{"id":"390","district_id":"25","bn_name":"কাজীপুর"},{"id":"391","district_id":"25","bn_name":"রায়গঞ্জ"},{"id":"392","district_id":"25","bn_name":"শাহজাদপুর"},{"id":"393","district_id":"25","bn_name":"তারাশ"},{"id":"394","district_id":"25","bn_name":"উল্লাপাড়া"},{"id":"395","district_id":"26","bn_name":"বিরামপুর"},{"id":"396","district_id":"26","bn_name":"বীরগঞ্জ"},{"id":"397","district_id":"26","bn_name":"বিড়াল"},{"id":"398","district_id":"26","bn_name":"বোচাগঞ্জ"},{"id":"399","district_id":"26","bn_name":"চিরিরবন্দর"},{"id":"400","district_id":"26","bn_name":"ফুলবাড়ি"},{"id":"401","district_id":"26","bn_name":"ঘোড়াঘাট"},{"id":"402","district_id":"26","bn_name":"হাকিমপুর"},{"id":"403","district_id":"26","bn_name":"কাহারোল"},{"id":"404","district_id":"26","bn_name":"খানসামা"},{"id":"405","district_id":"26","bn_name":"দিনাজপুর সদর"},{"id":"406","district_id":"26","bn_name":"নবাবগঞ্জ"},{"id":"407","district_id":"26","bn_name":"পার্বতীপুর"},{"id":"408","district_id":"27","bn_name":"ফুলছড়ি"},{"id":"409","district_id":"27","bn_name":"গাইবান্ধা সদর"},{"id":"410","district_id":"27","bn_name":"গোবিন্দগঞ্জ"},{"id":"411","district_id":"27","bn_name":"পলাশবাড়ী"},{"id":"412","district_id":"27","bn_name":"সাদুল্যাপুর"},{"id":"413","district_id":"27","bn_name":"সাঘাটা"},{"id":"414","district_id":"27","bn_name":"সুন্দরগঞ্জ"},{"id":"415","district_id":"28","bn_name":"কুড়িগ্রাম সদর"},{"id":"416","district_id":"28","bn_name":"নাগেশ্বরী"},{"id":"417","district_id":"28","bn_name":"ভুরুঙ্গামারি"},{"id":"418","district_id":"28","bn_name":"ফুলবাড়ি"},{"id":"419","district_id":"28","bn_name":"রাজারহাট"},{"id":"420","district_id":"28","bn_name":"উলিপুর"},{"id":"421","district_id":"28","bn_name":"চিলমারি"},{"id":"422","district_id":"28","bn_name":"রউমারি"},{"id":"423","district_id":"28","bn_name":"চর রাজিবপুর"},{"id":"424","district_id":"29","bn_name":"লালমনিরহাট সদর"},{"id":"425","district_id":"29","bn_name":"আদিতমারি"},{"id":"426","district_id":"29","bn_name":"কালীগঞ্জ"},{"id":"427","district_id":"29","bn_name":"হাতিবান্ধা"},{"id":"428","district_id":"29","bn_name":"পাটগ্রাম"},{"id":"429","district_id":"30","bn_name":"নীলফামারী সদর"},{"id":"430","district_id":"30","bn_name":"সৈয়দপুর"},{"id":"431","district_id":"30","bn_name":"জলঢাকা"},{"id":"432","district_id":"30","bn_name":"কিশোরগঞ্জ"},{"id":"433","district_id":"30","bn_name":"ডোমার"},{"id":"434","district_id":"30","bn_name":"ডিমলা"},{"id":"435","district_id":"31","bn_name":"পঞ্চগড় সদর"},{"id":"436","district_id":"31","bn_name":"দেবীগঞ্জ"},{"id":"437","district_id":"31","bn_name":"বোদা"},{"id":"438","district_id":"31","bn_name":"আটোয়ারি"},{"id":"439","district_id":"31","bn_name":"তেঁতুলিয়া"},{"id":"440","district_id":"32","bn_name":"বদরগঞ্জ"},{"id":"441","district_id":"32","bn_name":"মিঠাপুকুর"},{"id":"442","district_id":"32","bn_name":"গঙ্গাচরা"},{"id":"443","district_id":"32","bn_name":"কাউনিয়া"},{"id":"444","district_id":"32","bn_name":"রংপুর সদর"},{"id":"445","district_id":"32","bn_name":"পীরগাছা"},{"id":"446","district_id":"32","bn_name":"পীরগঞ্জ"},{"id":"447","district_id":"32","bn_name":"তারাগঞ্জ"},{"id":"448","district_id":"33","bn_name":"ঠাকুরগাঁও সদর"},{"id":"449","district_id":"33","bn_name":"পীরগঞ্জ"},{"id":"450","district_id":"33","bn_name":"বালিয়াডাঙ্গি"},{"id":"451","district_id":"33","bn_name":"হরিপুর"},{"id":"452","district_id":"33","bn_name":"রাণীসংকইল"},{"id":"453","district_id":"51","bn_name":"আজমিরিগঞ্জ"},{"id":"454","district_id":"51","bn_name":"বানিয়াচং"},{"id":"455","district_id":"51","bn_name":"বাহুবল"},{"id":"456","district_id":"51","bn_name":"চুনারুঘাট"},{"id":"457","district_id":"51","bn_name":"হবিগঞ্জ সদর"},{"id":"458","district_id":"51","bn_name":"লাক্ষাই"},{"id":"459","district_id":"51","bn_name":"মাধবপুর"},{"id":"460","district_id":"51","bn_name":"নবীগঞ্জ"},{"id":"461","district_id":"51","bn_name":"শায়েস্তাগঞ্জ"},{"id":"462","district_id":"52","bn_name":"মৌলভীবাজার"},{"id":"463","district_id":"52","bn_name":"বড়লেখা"},{"id":"464","district_id":"52","bn_name":"জুড়ি"},{"id":"465","district_id":"52","bn_name":"কামালগঞ্জ"},{"id":"466","district_id":"52","bn_name":"কুলাউরা"},{"id":"467","district_id":"52","bn_name":"রাজনগর"},{"id":"468","district_id":"52","bn_name":"শ্রীমঙ্গল"},{"id":"469","district_id":"53","bn_name":"বিসশম্ভারপুর"},{"id":"470","district_id":"53","bn_name":"ছাতক"},{"id":"471","district_id":"53","bn_name":"দেড়াই"},{"id":"472","district_id":"53","bn_name":"ধরমপাশা"},{"id":"473","district_id":"53","bn_name":"দোয়ারাবাজার"},{"id":"474","district_id":"53","bn_name":"জগন্নাথপুর"},{"id":"475","district_id":"53","bn_name":"জামালগঞ্জ"},{"id":"476","district_id":"53","bn_name":"সুল্লা"},{"id":"477","district_id":"53","bn_name":"সুনামগঞ্জ সদর"},{"id":"478","district_id":"53","bn_name":"শান্তিগঞ্জ"},{"id":"479","district_id":"53","bn_name":"তাহিরপুর"},{"id":"480","district_id":"54","bn_name":"সিলেট সদর"},{"id":"481","district_id":"54","bn_name":"বেয়ানিবাজার"},{"id":"482","district_id":"54","bn_name":"বিশ্বনাথ"},{"id":"483","district_id":"54","bn_name":"দক্ষিণ সুরমা"},{"id":"484","district_id":"54","bn_name":"বালাগঞ্জ"},{"id":"485","district_id":"54","bn_name":"কোম্পানিগঞ্জ"},{"id":"486","district_id":"54","bn_name":"ফেঞ্চুগঞ্জ"},{"id":"487","district_id":"54","bn_name":"গোলাপগঞ্জ"},{"id":"488","district_id":"54","bn_name":"গোয়াইনঘাট"},{"id":"489","district_id":"54","bn_name":"জৈন্তাপুর"},{"id":"490","district_id":"54","bn_name":"কানাইঘাট"},{"id":"491","district_id":"54","bn_name":"জাকিগঞ্জ"},{"id":"492","district_id":"54","bn_name":"নবীগঞ্জ"},{"id":"493","district_id":"45","bn_name":"ঈদগাঁও"},{"id":"494","district_id":"53","bn_name":"মধ্যনগর"},{"id":"495","district_id":"7","bn_name":"দশর"}];
+        // --- DATA PROCESSING LOGIC ---
+        const hierarchy = {};
 
-        // Dhaka City Zones
-        const dhakaCityZones = [{id: "Gulshan", bn_name: "গুলশান", district_id: "1"}, {id: "Banani", bn_name: "বনানী", district_id: "1"},{id: "Baridhara", bn_name: "বারিধারা", district_id: "1"},{id: "Uttara", bn_name: "উত্তরা", district_id: "1"},{id: "Mirpur", bn_name: "মিরপুর", district_id: "1"}, {id: "Mohakhali", bn_name: "মহাখালী", district_id: "1"},{id: "Niketon", bn_name: "নিকেতন", district_id: "1"},{id: "Khilkhet", bn_name: "খিলক্ষেত", district_id: "1"},{id: "Badda", bn_name: "বাড্ডা", district_id: "1"},{id: "Cantonment", bn_name: "ক্যান্টনমেন্ট", district_id: "1"},{id: "Kuril", bn_name: "কুড়িল", district_id: "1"},{id: "Vatara", bn_name: "ভাটারা", district_id: "1"},{id: "Adabor", bn_name: "আদাবর", district_id: "1"},{id: "Agargaon", bn_name: "আগারগাঁও", district_id: "1"},{id: "Dhanmondi", bn_name: "ধানমন্ডি", district_id: "1"},{id: "Mohammadpur", bn_name: "মোহাম্মদপুর", district_id: "1"},{id: "Lalbagh", bn_name: "লালবাগ", district_id: "1"},{id: "Kotwali", bn_name: "কোতওয়ালী", district_id: "1"},{id: "Shahbag", bn_name: "শাহবাগ", district_id: "1"},{id: "Ramna", bn_name: "রমনা", district_id: "1"},{id: "Motijheel", bn_name: "মতিঝিল", district_id: "1"},{id: "Khilgaon", bn_name: "খিলগাঁও", district_id: "1"},{id: "Jatrabari", bn_name: "যাত্রাবাড়ি", district_id: "1"},{id: "Demra", bn_name: "ডেমরা", district_id: "1"},{id: "Sutrapur", bn_name: "সুত্রাপুর", district_id: "1"},{id: "Tejgaon", bn_name: "তেজগাঁও", district_id: "1"},{id: "Paltan", bn_name: "পল্টন", district_id: "1"},{id: "New Market", bn_name: "নিউ মার্কেট", district_id: "1"}];
+        // Process the raw strings into hierarchy
+        rawHospitalData.forEach(entry => {
+            const parts = entry.split('|');
+            if (parts.length === 4) {
+                const div = parts[0].trim();
+                const dist = parts[1].trim();
+                const upa = parts[2].trim() || "সদর/অন্যান্য";
+                const hospital = parts[3].trim();
 
-        // Merge Dhaka City Zones into Upazilas for Dhaka District (ID: 1)
-        const dhakaZonesFormatted = dhakaCityZones.map(zone => ({
-            id: `zone-${zone.id}`,
-            district_id: "1",
-            bn_name: zone.bn_name
-        }));
-
-        // Combine both
-        const allUpazilas = [...upazilas, ...dhakaZonesFormatted];
-
-
-        // ----------------------------------------------
-        // DOM Elements & Logic
-        // ----------------------------------------------
-        const divisionSelect = document.getElementById('division');
-        const districtSelect = document.getElementById('district');
-        const upazilaSelect = document.getElementById('upazila');
-
-        // Populate Division Dropdown
-        divisions.forEach(div => {
-            const option = document.createElement('option');
-            option.value = div.id; 
-            option.textContent = div.bn_name;
-            divisionSelect.appendChild(option);
+                if (!hierarchy[div]) hierarchy[div] = {};
+                if (!hierarchy[div][dist]) hierarchy[div][dist] = {};
+                if (!hierarchy[div][dist][upa]) hierarchy[div][dist][upa] = [];
+                
+                // Add if not exists
+                if (!hierarchy[div][dist][upa].includes(hospital)) {
+                    hierarchy[div][dist][upa].push(hospital);
+                }
+            }
         });
 
-        // Handle Division Change
-        divisionSelect.addEventListener('change', function() {
-            const divId = this.value;
+        // --- DOM Elements ---
+        const divSelect = document.getElementById('division');
+        const distSelect = document.getElementById('district');
+        const upaSelect = document.getElementById('upazila');
+        const instSelect = document.getElementById('instituteSelect');
+        const instInputDiv = document.getElementById('manualInstituteDiv');
+        const instInput = document.getElementById('instituteInput');
+        const backToSelectBtn = document.getElementById('backToSelectBtn');
 
-            // Reset Child Dropdowns
-            districtSelect.innerHTML = '<option value="" disabled selected>জেলা নির্বাচন করুন</option>';
-            upazilaSelect.innerHTML = '<option value="" disabled selected>আগে জেলা দিন</option>';
-
-            districtSelect.disabled = false;
-            districtSelect.classList.remove('bg-slate-100');
-            upazilaSelect.disabled = true;
-            upazilaSelect.classList.add('bg-slate-100');
-
-            // Filter Districts
-            const filteredDistricts = districts.filter(d => d.division_id === divId);
-
-            filteredDistricts.forEach(dist => {
-                const option = document.createElement('option');
-                option.value = dist.id; 
-                option.textContent = dist.bn_name;
-                districtSelect.appendChild(option);
-            });
+        // Populate Divisions
+        const sortedDivisions = Object.keys(hierarchy).sort();
+        sortedDivisions.forEach(div => {
+            const opt = document.createElement('option');
+            opt.value = div;
+            opt.textContent = div;
+            divSelect.appendChild(opt);
         });
 
-        // Handle District Change
-        districtSelect.addEventListener('change', function() {
-            const distId = this.value;
+        // --- EVENT LISTENERS ---
+        
+        // 1. Division Change
+        divSelect.addEventListener('change', function() {
+            const selectedDiv = this.value;
+            
+            distSelect.innerHTML = '<option value="" disabled selected>জেলা নির্বাচন করুন</option>';
+            upaSelect.innerHTML = '<option value="" disabled selected>আগে জেলা দিন</option>';
+            instSelect.innerHTML = '<option value="" disabled selected>আগে উপজেলা দিন</option>';
+            
+            distSelect.disabled = false;
+            distSelect.classList.remove('disabled:bg-slate-100');
+            upaSelect.disabled = true;
+            instSelect.disabled = true;
+            resetManualInput();
 
-            // Reset Upazila Dropdown
-            upazilaSelect.innerHTML = '<option value="" disabled selected>উপজেলা / এলাকা নির্বাচন করুন</option>';
-            upazilaSelect.disabled = false;
-            upazilaSelect.classList.remove('bg-slate-100');
-
-            // Filter Upazilas (Now includes Dhaka Zones)
-            const filteredUpazilas = allUpazilas.filter(u => u.district_id === distId);
-
-            // Sort alphabetically by Bangla name for better UX
-            filteredUpazilas.sort((a, b) => a.bn_name.localeCompare(b.bn_name, 'bn'));
-
-            filteredUpazilas.forEach(upa => {
-                const option = document.createElement('option');
-                option.value = upa.bn_name; 
-                option.textContent = upa.bn_name;
-                upazilaSelect.appendChild(option);
-            });
+            if (hierarchy[selectedDiv]) {
+                const sortedDistricts = Object.keys(hierarchy[selectedDiv]).sort();
+                sortedDistricts.forEach(dist => {
+                    const opt = document.createElement('option');
+                    opt.value = dist;
+                    opt.textContent = dist;
+                    distSelect.appendChild(opt);
+                });
+            }
         });
 
-        // ----------------------------------------------
-        // FILE HANDLING (BASE64)
-        // ----------------------------------------------
+        // 2. District Change
+        distSelect.addEventListener('change', function() {
+            const selectedDiv = divSelect.value;
+            const selectedDist = this.value;
+
+            upaSelect.innerHTML = '<option value="" disabled selected>উপজেলা নির্বাচন করুন</option>';
+            instSelect.innerHTML = '<option value="" disabled selected>আগে উপজেলা দিন</option>';
+            
+            upaSelect.disabled = false;
+            upaSelect.classList.remove('disabled:bg-slate-100');
+            instSelect.disabled = true;
+            resetManualInput();
+
+            if (hierarchy[selectedDiv] && hierarchy[selectedDiv][selectedDist]) {
+                const sortedUpazilas = Object.keys(hierarchy[selectedDiv][selectedDist]).sort();
+                sortedUpazilas.forEach(upa => {
+                    const opt = document.createElement('option');
+                    opt.value = upa;
+                    opt.textContent = upa;
+                    upaSelect.appendChild(opt);
+                });
+            }
+        });
+
+        // 3. Upazila Change
+        upaSelect.addEventListener('change', function() {
+            const selectedDiv = divSelect.value;
+            const selectedDist = distSelect.value;
+            const selectedUpa = this.value;
+
+            instSelect.innerHTML = '<option value="" disabled selected>প্রতিষ্ঠান নির্বাচন করুন...</option>';
+            instSelect.disabled = false;
+            instSelect.classList.remove('disabled:bg-slate-100');
+            resetManualInput();
+
+            if (hierarchy[selectedDiv][selectedDist][selectedUpa]) {
+                const institutes = hierarchy[selectedDiv][selectedDist][selectedUpa].sort();
+                institutes.forEach(inst => {
+                    const opt = document.createElement('option');
+                    opt.value = inst;
+                    opt.textContent = inst;
+                    instSelect.appendChild(opt);
+                });
+                
+                // "Other" Option
+                const otherOpt = document.createElement('option');
+                otherOpt.value = "Other";
+                otherOpt.textContent = "⚠️ তালিকায় নেই (নিজে লিখুন)";
+                otherOpt.style.fontWeight = "bold";
+                otherOpt.style.color = "#d97706"; 
+                instSelect.appendChild(otherOpt);
+            }
+        });
+
+        // 4. Handle "Other" Selection
+        instSelect.addEventListener('change', function() {
+            if (this.value === "Other") {
+                // FIX: Just hide the SELECT element, not the parent
+                this.classList.add('hidden-input'); 
+                this.removeAttribute('name');       
+                this.removeAttribute('required');
+
+                instInputDiv.classList.remove('hidden-input'); 
+                instInput.setAttribute('name', 'institute');   
+                instInput.setAttribute('required', 'true');    
+                instInput.focus();
+            }
+        });
+
+        // 5. Back Button
+        backToSelectBtn.addEventListener('click', function() {
+            resetManualInput();
+        });
+
+        function resetManualInput() {
+            // Hide Input Div
+            instInputDiv.classList.add('hidden-input');
+            instInput.removeAttribute('name');
+            instInput.removeAttribute('required');
+            instInput.value = "";
+
+            // Show Select
+            instSelect.classList.remove('hidden-input');
+            instSelect.setAttribute('name', 'institute');
+            instSelect.setAttribute('required', 'true');
+            instSelect.value = ""; 
+        }
+
+        // --- FILE UPLOAD & SUBMISSION ---
         const form = document.getElementById('dataForm');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const successModal = document.getElementById('successModal');
         const fileContainer = document.getElementById('fileContainer');
         const addFileBtn = document.getElementById('addFileBtn');
-
-        // REPLACE THIS URL WITH YOUR NEW DEPLOYMENT URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTWqoUY8n0Hs6wCYAgRj08Mrp2RtUY6f7Z52cKepwI_BITdMZ-IHGl0hf2W5OW0yAI/exec'; 
+        
+        // YOUR APPS SCRIPT URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTWqoUY8n0Hs6wCYAgRj08Mrp2RtUY6f7Z52cKepwI_BITdMZ-IHGl0hf2W5OW0yAI/exec';
 
         const fileToBase64 = (file) => {
             return new Promise((resolve, reject) => {
@@ -295,7 +1109,6 @@
             });
         };
 
-        // Add File Logic
         addFileBtn.addEventListener('click', () => {
             const currentFiles = fileContainer.querySelectorAll('input[type="file"]').length;
             if(currentFiles >= 2) return;
@@ -313,7 +1126,7 @@
 
         function checkFileCount() {
             const count = fileContainer.querySelectorAll('input[type="file"]').length;
-            addFileBtn.style.display = count >=  2? 'none' : 'flex';
+            addFileBtn.style.display = count >= 2 ? 'none' : 'flex';
         }
 
         form.addEventListener('submit', async function(e) {
@@ -321,8 +1134,17 @@
             loadingOverlay.classList.remove('hidden');
 
             const formData = new FormData(form);
-            const divName = divisionSelect.options[divisionSelect.selectedIndex].text;
-            const distName = districtSelect.options[districtSelect.selectedIndex].text;
+            
+            // Radio Button Fix
+            const statusEl = document.querySelector('input[name="status"]:checked');
+            const statusVal = statusEl ? statusEl.value : "উল্লেখ নেই";
+
+            // Determine Institute Name
+            let instituteName = formData.get('institute');
+            // If manual input is visible, use its value
+            if (!instInputDiv.classList.contains('hidden-input')) {
+                instituteName = instInput.value;
+            }
 
             const payload = {
                 name: formData.get('name'),
@@ -330,11 +1152,11 @@
                 email: formData.get('email'),
                 designation: formData.get('designation'),
                 bloodGroup: formData.get('bloodGroup'),
-                division: divName,
-                district: distName,
+                division: formData.get('division'),
+                district: formData.get('district'),
                 upazila: formData.get('upazila'), 
-                institute: formData.get('institute'),
-                status: formData.get('status'),
+                institute: instituteName, 
+                status: statusVal,
                 comment: formData.get('comment'),
                 files: []
             };
@@ -343,7 +1165,6 @@
             for (const input of fileInputs) {
                 if (input.files.length > 0) {
                     const file = input.files[0];
-                    // REMOVED FILE SIZE LIMIT AS REQUESTED
                     try {
                         const base64 = await fileToBase64(file);
                         payload.files.push({
@@ -355,7 +1176,6 @@
                 }
             }
 
-            // Using pure text/plain to avoid preflight OPTIONS request issues sometimes seen in GAS
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
@@ -368,6 +1188,10 @@
                     form.reset();
                     fileContainer.innerHTML = `<div class="flex items-center gap-2"><input type="file" class="file-input w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" accept="image/*,application/pdf"></div>`;
                     checkFileCount();
+                    resetManualInput();
+                    distSelect.disabled = true;
+                    upaSelect.disabled = true;
+                    instSelect.disabled = true;
                 } else {
                     alert("Error: " + (result.error || "Unknown error"));
                 }
@@ -375,12 +1199,11 @@
             .catch(error => {
                 console.log(error);
                 loadingOverlay.classList.add('hidden');
-                // GAS might throw a CORS error even on success depending on deployment
-                // Check if it's a syntax error or network error
-                alert("Submission failed. Please check your internet or try again.");
+                alert("Submission failed. Please check your internet.");
             });
         });
-
     </script>
 </body>
 </html>
+
+
