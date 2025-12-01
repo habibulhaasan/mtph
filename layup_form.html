@@ -15,7 +15,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #059669; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .hidden-input { display: none; }
+        .hidden-input { display: none !important; } /* Added !important to ensure visibility toggle works */
     </style>
 </head>
 <body class="bg-pattern min-h-screen text-slate-800 py-6 px-3 md:px-0">
@@ -101,11 +101,13 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">প্রতিষ্ঠানের নাম *</label>
+                        
+                        <!-- Dropdown -->
                         <select id="instituteSelect" name="institute" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 disabled:bg-slate-100">
                             <option value="" disabled selected>আগে উপজেলা নির্বাচন করুন</option>
                         </select>
                         
-                        <!-- Manual Input -->
+                        <!-- Manual Input Wrapper (Hidden by default) -->
                         <div id="manualInstituteDiv" class="hidden-input mt-3 animate-fade-in bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                             <label class="block text-xs font-bold text-emerald-800 mb-2">প্রতিষ্ঠানের নাম লিখুন (বাংলা/ইংরেজি):</label>
                             <input type="text" id="instituteInput" placeholder="এখানে প্রতিষ্ঠানের নাম লিখুন..." class="w-full px-4 py-3 bg-white border border-emerald-300 rounded-lg focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
@@ -1057,8 +1059,8 @@
         // 4. Handle "Other" Selection
         instSelect.addEventListener('change', function() {
             if (this.value === "Other") {
-                this.parentElement.classList.add('hidden'); // Hide select wrapper
-                this.classList.add('hidden-input');
+                // FIX: Just hide the SELECT element, not the parent
+                this.classList.add('hidden-input'); 
                 this.removeAttribute('name');       
                 this.removeAttribute('required');
 
@@ -1075,12 +1077,13 @@
         });
 
         function resetManualInput() {
+            // Hide Input Div
             instInputDiv.classList.add('hidden-input');
             instInput.removeAttribute('name');
             instInput.removeAttribute('required');
             instInput.value = "";
 
-            instSelect.parentElement.classList.remove('hidden');
+            // Show Select
             instSelect.classList.remove('hidden-input');
             instSelect.setAttribute('name', 'institute');
             instSelect.setAttribute('required', 'true');
@@ -1138,7 +1141,7 @@
 
             // Determine Institute Name
             let instituteName = formData.get('institute');
-            // If manual input is active, it overrides the select
+            // If manual input is visible, use its value
             if (!instInputDiv.classList.contains('hidden-input')) {
                 instituteName = instInput.value;
             }
