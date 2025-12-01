@@ -159,10 +159,10 @@
                     <i data-lucide="list-filter" class="w-4 h-4 md:w-5 md:h-5 text-slate-400"></i>
                     বিস্তারিত পরিসংখ্যান (সর্বোচ্চ অংশগ্রহণকারী জেলা)
                 </h3>
-                <p class="text-xs text-slate-500 mt-1 ml-6 md:ml-7">জেলার নামের উপর ক্লিক করে উপজেলার বিস্তারিত দেখুন</p>
+                <p class="text-xs text-slate-500 mt-1 ml-6 md:ml-7">জেলার নামের উপর ক্লিক করুন → তারপর উপজেলার উপর ক্লিক করুন বিস্তারিত দেখতে</p>
             </div>
             
-            <div class="max-h-[600px] overflow-y-auto custom-scrollbar">
+            <div class="max-h-[800px] overflow-y-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-white sticky top-0 z-10 shadow-sm text-slate-600 text-xs uppercase font-bold">
                         <tr>
@@ -289,7 +289,9 @@
                         division: row[6]?.trim() || "অজানা",
                         district: row[7]?.trim() || "অজানা",
                         upazila: row[8]?.trim() || "অজানা",
-                        status: row[10]?.trim() || "No Status"
+                        institute: row[9]?.trim() || "", // Added Institute
+                        status: row[10]?.trim() || "No Status",
+                        comment: row[11]?.trim() || "" // Added Comment
                     })).filter(item => item.district !== "অজানা");
                     
                     filteredData = [...rawData];
@@ -481,13 +483,12 @@
             });
         }
 
-        // --- DETAILED TABLE WITH ACCORDION ---
+        // --- DETAILED TABLE WITH NESTED ACCORDION ---
         function renderDetailedTable() {
             const tbody = document.getElementById('analysisTableBody');
             
-            // 1. Process Data Group by District
+            // 1. Process Data Group by District -> Upazila -> Records
             const districtStats = {}; 
-            // Key: "Division|District", Value: { total: 0, division: "", district: "", upazilas: { "UpaName": count } }
 
             filteredData.forEach(item => {
                 const key = `${item.division}|${item.district}`;
@@ -498,33 +499,62 @@
                 districtStats[key].total++;
                 
                 const upa = item.upazila || "অজানা";
-                districtStats[key].upazilas[upa] = (districtStats[key].upazilas[upa] || 0) + 1;
+                if (!districtStats[key].upazilas[upa]) {
+                    districtStats[key].upazilas[upa] = [];
+                }
+                districtStats[key].upazilas[upa].push(item);
             });
 
-            // 2. Sort Districts by Total Count (Descending)
+            // 2. Sort Districts by Total Count
             const sortedDistricts = Object.values(districtStats).sort((a, b) => b.total - a.total);
 
             // 3. Generate HTML
-            tbody.innerHTML = sortedDistricts.map((item, index) => {
-                const rowId = `row-${index}`;
+            tbody.innerHTML = sortedDistricts.map((item, dIndex) => {
+                const rowId = `row-${dIndex}`;
                 
-                // Sort Upazilas inside the district by count
+                // Sort Upazilas inside district
                 const sortedUpazilas = Object.entries(item.upazilas)
-                    .sort((a, b) => b[1] - a[1]);
+                    .sort((a, b) => b[1].length - a[1].length);
 
-                // Generate Upazila List HTML for the hidden row
-                const upazilaListHTML = sortedUpazilas.map(([name, count]) => `
-                    <div class="flex justify-between items-center p-2 border border-slate-200 rounded-lg bg-white hover:border-blue-300 transition-colors shadow-sm">
-                        <span class="text-sm text-slate-700 font-medium flex items-center gap-1.5">
-                            <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
-                            ${name}
-                        </span>
-                        <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100">${toBanglaDigits(count)}</span>
-                    </div>
-                `).join('');
+                // Generate Upazila List HTML (Nested Accordion)
+                const upazilaListHTML = sortedUpazilas.map(([upaName, records], uIndex) => {
+                    const upaId = `upa-${dIndex}-${uIndex}`;
+                    
+                    // Generate Institute List for this Upazila
+                    const instituteListHTML = records.map(rec => `
+                        <div class="flex items-start gap-2 p-3 border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                            <i data-lucide="building-2" class="w-4 h-4 text-slate-400 mt-0.5 shrink-0"></i>
+                            <div>
+                                <div class="text-sm font-semibold text-slate-700">${rec.institute || "প্রতিষ্ঠান নাম নেই"}</div>
+                                <div class="flex flex-wrap gap-2 mt-1">
+                                    ${rec.status ? `<span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100 font-bold">${rec.status}</span>` : ''}
+                                </div>
+                                ${rec.comment ? `<p class="text-xs text-slate-500 mt-1 italic">"${rec.comment}"</p>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="border border-slate-200 rounded-lg mb-2 bg-white overflow-hidden shadow-sm">
+                            <!-- Upazila Header (Clickable) -->
+                            <div onclick="toggleDetails('${upaId}')" class="flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50 transition-colors">
+                                <span class="text-sm text-slate-700 font-bold flex items-center gap-2">
+                                    <i id="icon-${upaId}" data-lucide="chevron-right" class="w-4 h-4 text-slate-300 transition-transform duration-200"></i>
+                                    ${upaName}
+                                </span>
+                                <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded-full border border-slate-200">${toBanglaDigits(records.length)}</span>
+                            </div>
+                            
+                            <!-- Upazila Details (Hidden Institutes List) -->
+                            <div id="${upaId}" class="hidden border-t border-slate-100 bg-slate-50/50">
+                                ${instituteListHTML}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
                 return `
-                    <!-- Main Row -->
+                    <!-- Main District Row -->
                     <tr onclick="toggleDetails('${rowId}')" class="cursor-pointer hover:bg-slate-50 transition-colors border-b border-slate-50 group select-none">
                         <td class="p-3 md:p-4 text-slate-500 text-xs md:text-sm group-hover:text-blue-600 font-medium align-middle">${item.division}</td>
                         <td class="p-3 md:p-4 font-bold text-slate-800 text-sm align-middle">
@@ -543,15 +573,15 @@
                         </td>
                     </tr>
                     
-                    <!-- Detail Row (Hidden) -->
-                    <tr id="${rowId}" class="hidden bg-slate-50/50">
+                    <!-- District Detail Row (Hidden) -->
+                    <tr id="${rowId}" class="hidden bg-slate-50/30">
                         <td colspan="4" class="p-0 border-b border-slate-100">
-                            <div class="p-3 md:p-4 pl-8 md:pl-12">
-                                <div class="mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <div class="p-3 md:p-4 pl-4 md:pl-10">
+                                <div class="mb-3 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                                     <i data-lucide="corner-down-right" class="w-4 h-4"></i>
-                                    ${item.district} জেলার বিস্তারিত (${toBanglaDigits(sortedUpazilas.length)} উপজেলা)
+                                    ${item.district}-এর বিস্তারিত তালিকা
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                <div class="flex flex-col gap-1">
                                     ${upazilaListHTML}
                                 </div>
                             </div>
@@ -565,12 +595,14 @@
 
         // Toggle function for Accordion
         function toggleDetails(id) {
+            // Stop propagation if clicked inside nested elements to avoid bubbling issues if any
+            if (event && event.stopPropagation) event.stopPropagation();
+
             const row = document.getElementById(id);
             const icon = document.getElementById(`icon-${id}`);
             
             if (row.classList.contains('hidden')) {
                 row.classList.remove('hidden');
-                // Optional: Add fade-in effect logic if desired, but CSS transition is tricky on table rows
                 icon.style.transform = "rotate(90deg)";
             } else {
                 row.classList.add('hidden');
