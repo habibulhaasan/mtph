@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega CSV Tool - Translate, Edit, Export</title>
+    <title>Mega CSV Tool - Gemini AI Powered</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -51,6 +51,14 @@
         tr {
             transition: background-color 0.15s ease;
         }
+
+        /* Column Tag Animation */
+        .col-tag {
+            transition: all 0.2s;
+        }
+        .col-tag:hover {
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-6 px-4 text-slate-800">
@@ -61,20 +69,26 @@
         <div class="bg-slate-900 text-white p-5 flex justify-between items-center shrink-0 shadow-md z-20">
             <div>
                 <h1 class="text-xl font-bold flex items-center gap-3">
-                    <div class="bg-blue-600 p-2 rounded-lg">
-                        <i class="fa-solid fa-database text-white"></i>
+                    <div class="bg-indigo-600 p-2 rounded-lg shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-robot text-white"></i>
                     </div>
-                    <span>Mega CSV Tool</span>
+                    <span>Mega CSV Tool <span class="text-xs bg-indigo-500 px-2 py-0.5 rounded-full ml-2">AI Powered</span></span>
                 </h1>
-                <p class="text-slate-400 text-xs mt-1 ml-1">Translate • Search • Export to JSON/Python/JS</p>
+                <p class="text-slate-400 text-xs mt-1 ml-1">Translate • Edit Columns • Export to Code</p>
             </div>
             
-            <div class="flex gap-3">
-                 <button onclick="resetApp()" class="px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-sm font-medium">
-                    <i class="fa-solid fa-folder-open mr-2"></i> Open New File
+            <div class="flex gap-3 items-center">
+                 <button onclick="resetApp()" class="px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-sm font-medium mr-2">
+                    <i class="fa-solid fa-folder-open mr-2"></i> New
                 </button>
                 
-                <!-- Export Dropdown Logic (Simplified as group) -->
+                <!-- Compact Toggle -->
+                <label class="flex items-center text-xs text-slate-400 mr-3 cursor-pointer hover:text-white transition-colors" title="Export entire dataset in one single line">
+                    <input type="checkbox" id="compactExport" class="mr-2 accent-indigo-500 w-4 h-4 rounded border-slate-600 bg-slate-800"> 
+                    Compact Mode
+                </label>
+
+                <!-- Export Dropdown Logic -->
                 <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
                     <button onclick="downloadCSV()" id="btnExpCsv" disabled class="px-3 py-1.5 text-xs font-semibold rounded hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-green-400">
                         CSV
@@ -96,39 +110,67 @@
         </div>
 
         <!-- Toolbar (Only visible after upload) -->
-        <div id="toolbar" class="bg-white border-b border-slate-200 p-4 flex flex-wrap gap-4 items-center hidden shrink-0 shadow-sm z-10">
+        <div id="toolbar" class="bg-white border-b border-slate-200 p-4 flex flex-wrap gap-4 items-center hidden shrink-0 shadow-sm z-10 transition-all">
             
             <!-- Search Bar -->
-            <div class="relative flex-1 min-w-[200px] max-w-md">
+            <div class="relative flex-1 min-w-[200px] max-w-sm">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" placeholder="Search any text in any column..." 
-                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 outline-none text-sm transition-all"
+                <input type="text" id="searchInput" placeholder="Search any text..." 
+                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 outline-none text-sm transition-all"
                     onkeyup="handleSearch(this.value)">
             </div>
+
+            <button onclick="toggleColumnManager()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-md shadow-sm transition-colors text-sm border border-slate-200">
+                <i class="fa-solid fa-table-columns mr-1"></i> Columns
+            </button>
 
             <div class="h-8 w-[1px] bg-slate-200 mx-2 hidden md:block"></div>
 
             <!-- Translation Tools -->
             <div class="flex flex-wrap gap-2 items-end flex-grow">
-                <div class="w-48">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Translate Column</label>
-                    <select id="colSelect" class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-green-500 outline-none">
-                        <option value="" disabled selected>Select column...</option>
+                <div class="w-40">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Column</label>
+                    <select id="colSelect" class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <option value="" disabled selected>Select...</option>
                     </select>
                 </div>
 
                 <div class="w-56">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mode</label>
-                    <select id="modeSelect" class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-green-500 outline-none">
-                        <option value="date_full">Full Date (12 Jan 2024 → ১২ জানু ২০২৪)</option>
-                        <option value="number">Numbers Only (123.45 → ১২৩.৪৫)</option>
-                        <option value="text">Month/Day Names Only (July → জুলাই)</option>
-                        <option value="general_api" class="font-bold text-green-700">★ AI Auto-Translate (General Text)</option>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Translate Mode</label>
+                    <select id="modeSelect" onchange="toggleApiKeyInput()" class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                        <option value="gemini_api" class="font-bold text-indigo-600">✨ Gemini AI (Best Quality)</option>
+                        <option value="date_full">Rule: Full Date (12 Jan -> ১২ জানু)</option>
+                        <option value="number">Rule: Numbers Only (123 -> ১২৩)</option>
+                        <option value="text">Rule: Month/Day Names</option>
+                        <option value="general_api">Legacy Auto-Translate</option>
                     </select>
                 </div>
 
-                <button onclick="applyTranslation()" class="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-sm transition-colors text-sm h-[34px] mt-auto">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Translate
+                <!-- API Key Input (Hidden by default) -->
+                <div id="apiKeyContainer" class="w-48 transition-all duration-300">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block flex justify-between">
+                        <span>Gemini API Key</span>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 hover:text-indigo-700 cursor-pointer" title="Get Key"><i class="fa-solid fa-circle-info"></i></a>
+                    </label>
+                    <input type="password" id="apiKeyInput" placeholder="Paste Key Here..." class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-indigo-500 outline-none font-mono" value="AIzaSyCKjh4p9Ox1oPIgKpihDKqqj_7gTgz_wYA">
+                </div>
+
+                <button onclick="applyTranslation()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm transition-colors text-sm h-[34px] mt-auto">
+                    Translate
+                </button>
+            </div>
+        </div>
+
+        <!-- Column Manager Panel (Hidden by default) -->
+        <div id="columnManager" class="bg-slate-50 border-b border-slate-200 p-4 hidden shrink-0 shadow-inner z-10 transition-all">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Manage Columns</h3>
+            <div class="flex flex-wrap gap-2 mb-4" id="columnTagContainer">
+                <!-- Tags injected here -->
+            </div>
+            <div class="flex gap-2 max-w-sm">
+                <input type="text" id="newColInput" placeholder="New Column Name" class="flex-1 px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                <button onclick="addNewColumn()" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs font-semibold transition-colors">
+                    <i class="fa-solid fa-plus mr-1"></i> Add
                 </button>
             </div>
         </div>
@@ -138,9 +180,9 @@
             
             <!-- Upload Overlay -->
             <div id="uploadOverlay" class="absolute inset-0 flex items-center justify-center z-20 bg-slate-50">
-                <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-2xl bg-white p-12 text-center transition-all duration-200 flex flex-col items-center justify-center w-3/4 max-w-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 hover:shadow-lg">
+                <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-2xl bg-white p-12 text-center transition-all duration-200 flex flex-col items-center justify-center w-3/4 max-w-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-lg">
                     <input type="file" id="fileInput" accept=".csv" class="hidden">
-                    <div class="bg-blue-100 text-blue-600 rounded-full p-6 mb-6">
+                    <div class="bg-indigo-100 text-indigo-600 rounded-full p-6 mb-6">
                         <i class="fa-solid fa-cloud-arrow-up text-4xl"></i>
                     </div>
                     <h3 class="font-bold text-xl text-slate-700 mb-2">Upload CSV File</h3>
@@ -151,7 +193,7 @@
 
             <!-- Loader -->
             <div id="loader" class="hidden absolute inset-0 z-30 bg-white/95 flex flex-col items-center justify-center backdrop-blur-sm">
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-600 mb-4"></div>
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-600 mb-4"></div>
                 <p id="loaderText" class="text-slate-800 font-bold text-lg animate-pulse">Processing...</p>
                 <p id="loaderSubText" class="text-slate-500 text-sm mt-2 font-mono bg-slate-100 px-2 py-1 rounded"></p>
             </div>
@@ -243,12 +285,20 @@
         const tableHeader = document.getElementById('tableHeader');
         const tableBody = document.getElementById('tableBody');
         const colSelect = document.getElementById('colSelect');
+        const modeSelect = document.getElementById('modeSelect');
+        const apiKeyContainer = document.getElementById('apiKeyContainer');
         const loader = document.getElementById('loader');
         const loaderText = document.getElementById('loaderText');
         const loaderSubText = document.getElementById('loaderSubText');
         const noResults = document.getElementById('noResults');
         
-        // Export Buttons
+        // Column Manager Elements
+        const columnManager = document.getElementById('columnManager');
+        const columnTagContainer = document.getElementById('columnTagContainer');
+        const newColInput = document.getElementById('newColInput');
+        
+        // Export Elements
+        const compactExportCheckbox = document.getElementById('compactExport');
         const btnExpCsv = document.getElementById('btnExpCsv');
         const btnExpJson = document.getElementById('btnExpJson');
         const btnExpJs = document.getElementById('btnExpJs');
@@ -283,6 +333,9 @@
             if (e.target.files.length) handleFile(e.target.files[0]);
         });
 
+        // Initialize UI
+        toggleApiKeyInput();
+
         // --- Core Functions ---
 
         function handleFile(file) {
@@ -301,6 +354,15 @@
                 }, 300);
             };
             reader.readAsText(file);
+        }
+
+        function toggleApiKeyInput() {
+            const mode = modeSelect.value;
+            if (mode === 'gemini_api') {
+                apiKeyContainer.classList.remove('hidden');
+            } else {
+                apiKeyContainer.classList.add('hidden');
+            }
         }
 
         function parseCSV(text) {
@@ -411,6 +473,9 @@
                 colSelect.appendChild(opt);
             });
 
+            // Populate Column Manager Tags
+            renderColumnTags();
+
             // Render Body
             tableBody.innerHTML = '';
             
@@ -427,11 +492,11 @@
             for(let i=0; i<displayLimit; i++) {
                 const row = filteredData[i];
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-blue-50 group";
+                tr.className = "hover:bg-indigo-50 group";
                 
                 // Index Cell
                 const tdIdx = document.createElement('td');
-                tdIdx.className = "px-4 py-2 text-xs text-slate-400 border-r border-slate-100 text-center bg-slate-50 group-hover:bg-blue-100";
+                tdIdx.className = "px-4 py-2 text-xs text-slate-400 border-r border-slate-100 text-center bg-slate-50 group-hover:bg-indigo-100";
                 tdIdx.innerText = i + 1;
                 tr.appendChild(tdIdx);
 
@@ -441,7 +506,7 @@
                     const isBangla = /[\u0980-\u09FF]/.test(val);
                     
                     td.className = `px-4 py-2 whitespace-nowrap border-b border-slate-100 text-slate-700 ${isBangla ? 'bn-font' : ''}`;
-                    td.innerText = val;
+                    td.innerText = val !== undefined ? val : "";
                     tr.appendChild(td);
                 });
                 tableBody.appendChild(tr);
@@ -452,6 +517,74 @@
                 tr.innerHTML = `<td colspan="${headers.length + 1}" class="text-center py-4 text-xs text-slate-400 italic">Showing first 200 of ${filteredData.length} rows...</td>`;
                 tableBody.appendChild(tr);
             }
+
+            // Update stats whenever we render, to catch add/remove col changes
+            updateStats(filteredData.length, headers.length, countEmptyCells());
+        }
+
+        function countEmptyCells() {
+            let count = 0;
+            filteredData.forEach(row => {
+                headers.forEach(h => {
+                    if (!row[h]) count++;
+                });
+            });
+            return count;
+        }
+
+        // --- Column Manager Logic ---
+
+        function toggleColumnManager() {
+            columnManager.classList.toggle('hidden');
+        }
+
+        function renderColumnTags() {
+            columnTagContainer.innerHTML = '';
+            headers.forEach(h => {
+                const tag = document.createElement('div');
+                tag.className = 'col-tag inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200';
+                tag.innerHTML = `
+                    <span class="mr-2">${h}</span>
+                    <button onclick="removeColumn('${h}')" class="text-indigo-400 hover:text-red-500 focus:outline-none">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                `;
+                columnTagContainer.appendChild(tag);
+            });
+        }
+
+        function removeColumn(colName) {
+            if (headers.length <= 1) {
+                alert("Cannot remove the last column.");
+                return;
+            }
+            if(!confirm(`Delete column "${colName}"? This cannot be undone.`)) return;
+
+            // Remove from headers
+            headers = headers.filter(h => h !== colName);
+
+            // Remove from data objects
+            csvData.forEach(row => delete row[colName]);
+            filteredData.forEach(row => delete row[colName]);
+
+            renderTable();
+        }
+
+        function addNewColumn() {
+            const name = newColInput.value.trim();
+            if (!name) return;
+            if (headers.includes(name)) {
+                alert("Column name already exists.");
+                return;
+            }
+
+            headers.push(name);
+            // Add empty field to all rows
+            csvData.forEach(row => row[name] = "");
+            filteredData.forEach(row => row[name] = "");
+            
+            newColInput.value = '';
+            renderTable();
         }
 
         // --- Search Logic ---
@@ -492,10 +625,44 @@
             }
 
             let changeCount = 0;
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
 
-            if (mode === 'general_api') {
-                // API MODE (Async)
-                showLoader(true, "Translating with AI...", "Connecting to translation service...");
+            if (mode === 'gemini_api') {
+                if (!apiKey) {
+                    alert("Please enter your Gemini API Key in the box provided.");
+                    return;
+                }
+
+                // GEMINI AI MODE (Async)
+                showLoader(true, "Gemini is thinking...", "Starting AI Translation...");
+                
+                for (let i = 0; i < csvData.length; i++) {
+                    const row = csvData[i];
+                    let val = row[targetCol];
+                    
+                    // Skip if already Bangla or empty
+                    if (!val || /[\u0980-\u09FF]/.test(val)) continue;
+
+                    // Update loader frequently
+                    showLoader(true, "Translating with Gemini...", `Row ${i + 1} of ${csvData.length}`);
+                    
+                    // Rate Limit Safety (Simple Delay)
+                    await new Promise(r => setTimeout(r, 200)); 
+
+                    try {
+                        let translated = await translateWithGemini(val, apiKey);
+                        if (translated && translated !== val) {
+                            row[targetCol] = translated;
+                            changeCount++;
+                        }
+                    } catch (e) {
+                        console.log("Gemini Error", e);
+                    }
+                }
+
+            } else if (mode === 'general_api') {
+                // LEGACY API MODE (Async)
+                showLoader(true, "Auto-Translating...", "Connecting to MyMemory Service...");
                 
                 for (let i = 0; i < csvData.length; i++) {
                     const row = csvData[i];
@@ -505,22 +672,22 @@
 
                     if (i % 5 === 0) {
                         showLoader(true, "Translating...", `Row ${i + 1} of ${csvData.length}`);
-                        await new Promise(r => setTimeout(r, 5));
+                        await new Promise(r => setTimeout(r, 10));
                     }
 
                     try {
-                        let translated = await translateViaAPI(val);
+                        let translated = await translateViaLegacyAPI(val);
                         if (translated && translated !== val) {
                             row[targetCol] = translated;
                             changeCount++;
                         }
                     } catch (e) {
-                        console.log("Translation error", e);
+                        console.log("Legacy API Error", e);
                     }
                 }
 
             } else {
-                // LOCAL MODE (Sync/Fast)
+                // RULE-BASED MODE (Sync/Fast)
                 showLoader(true, "Translating...", "Applying dictionary rules");
                 await new Promise(r => setTimeout(r, 100));
 
@@ -555,7 +722,34 @@
             statusText.innerText = `Translation complete! ${changeCount} cells updated.`;
         }
 
-        async function translateViaAPI(text) {
+        async function translateWithGemini(text, apiKey) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `Translate the following text from English to Bangla. Return ONLY the translated text, no explanations, no markdown. Text: "${text}"` 
+                    }]
+                }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) throw new Error('API Request Failed');
+                
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || text;
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return text; 
+            }
+        }
+
+        async function translateViaLegacyAPI(text) {
             try {
                 const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|bn`;
                 const response = await fetch(url);
@@ -609,7 +803,7 @@
                     if (val && (val.includes('"') || val.includes(',') || val.includes('\n'))) {
                         val = `"${val.replace(/"/g, '""')}"`;
                     }
-                    return val;
+                    return val !== undefined ? val : "";
                 }).join(',');
             }).join('\n');
             const csvContent = "\ufeff" + headerRow + bodyRows; 
@@ -618,23 +812,34 @@
 
         function downloadJSON() {
             if (filteredData.length === 0) return;
-            const jsonContent = JSON.stringify(filteredData, null, 2);
+            // Check compact mode
+            const isCompact = compactExportCheckbox.checked;
+            const jsonContent = isCompact 
+                ? JSON.stringify(filteredData) 
+                : JSON.stringify(filteredData, null, 2);
             triggerDownload(jsonContent, `${fileName}.json`, 'application/json');
         }
 
         function downloadJS() {
             if (filteredData.length === 0) return;
-            const jsContent = `// Exported Data from Mega CSV Tool\nexport const ${fileName.replace(/[^a-zA-Z0-9]/g, '_')} = ${JSON.stringify(filteredData, null, 2)};`;
+            const isCompact = compactExportCheckbox.checked;
+            const dataStr = isCompact 
+                ? JSON.stringify(filteredData) 
+                : JSON.stringify(filteredData, null, 2);
+                
+            const jsContent = `// Exported Data from Mega CSV Tool\nexport const ${fileName.replace(/[^a-zA-Z0-9]/g, '_')} = ${dataStr};`;
             triggerDownload(jsContent, `${fileName}.js`, 'text/javascript');
         }
 
         function downloadPython() {
             if (filteredData.length === 0) return;
+            const isCompact = compactExportCheckbox.checked;
+            
             // Convert JSON-like string to Python Syntax
-            // 1. null -> None
-            // 2. true -> True
-            // 3. false -> False
-            let pyStr = JSON.stringify(filteredData, null, 2);
+            let pyStr = isCompact 
+                ? JSON.stringify(filteredData) 
+                : JSON.stringify(filteredData, null, 2);
+                
             pyStr = pyStr.replace(/null/g, 'None')
                          .replace(/true/g, 'True')
                          .replace(/false/g, 'False');
