@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega CSV Tool - Translate, Edit, Export</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Bangla Font */
+        .bn-font {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        
+        /* Code Font for exports */
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .drag-active {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
+        }
+
+        /* Smooth table animations */
+        tr {
+            transition: background-color 0.15s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 text-slate-800">
+
+    <div class="max-w-[95%] w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[92vh]">
+        
+        <!-- Header -->
+        <div class="bg-slate-900 text-white p-5 flex justify-between items-center shrink-0 shadow-md z-20">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-3">
+                    <div class="bg-blue-600 p-2 rounded-lg">
+                        <i class="fa-solid fa-database text-white"></i>
+                    </div>
+                    <span>Mega CSV Tool</span>
+                </h1>
+                <p class="text-slate-400 text-xs mt-1 ml-1">Translate • Search • Export to JSON/Python/JS</p>
+            </div>
+            
+            <div class="flex gap-3">
+                 <button onclick="resetApp()" class="px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-sm font-medium">
+                    <i class="fa-solid fa-folder-open mr-2"></i> Open New File
+                </button>
+                
+                <!-- Export Dropdown Logic (Simplified as group) -->
+                <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                    <button onclick="downloadCSV()" id="btnExpCsv" disabled class="px-3 py-1.5 text-xs font-semibold rounded hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-green-400">
+                        CSV
+                    </button>
+                    <div class="w-[1px] bg-slate-700 my-1"></div>
+                    <button onclick="downloadJSON()" id="btnExpJson" disabled class="px-3 py-1.5 text-xs font-semibold rounded hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-yellow-400">
+                        JSON
+                    </button>
+                    <div class="w-[1px] bg-slate-700 my-1"></div>
+                    <button onclick="downloadJS()" id="btnExpJs" disabled class="px-3 py-1.5 text-xs font-semibold rounded hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-blue-400">
+                        JS
+                    </button>
+                    <div class="w-[1px] bg-slate-700 my-1"></div>
+                    <button onclick="downloadPython()" id="btnExpPy" disabled class="px-3 py-1.5 text-xs font-semibold rounded hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-purple-400">
+                        Python
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar (Only visible after upload) -->
+        <div id="toolbar" class="bg-white border-b border-slate-200 p-4 flex flex-wrap gap-4 items-center hidden shrink-0 shadow-sm z-10">
+            
+            <!-- Search Bar -->
+            <div class="relative flex-1 min-w-[200px] max-w-md">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="Search any text in any column..." 
+                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 outline-none text-sm transition-all"
+                    onkeyup="handleSearch(this.value)">
+            </div>
+
+            <div class="h-8 w-[1px] bg-slate-200 mx-2 hidden md:block"></div>
+
+            <!-- Translation Tools -->
+            <div class="flex flex-wrap gap-2 items-end flex-grow">
+                <div class="w-48">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Translate Column</label>
+                    <select id="colSelect" class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-green-500 outline-none">
+                        <option value="" disabled selected>Select column...</option>
+                    </select>
+                </div>
+
+                <div class="w-56">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Mode</label>
+                    <select id="modeSelect" class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-green-500 outline-none">
+                        <option value="date_full">Full Date (12 Jan 2024 → ১২ জানু ২০২৪)</option>
+                        <option value="number">Numbers Only (123.45 → ১২৩.৪৫)</option>
+                        <option value="text">Month/Day Names Only (July → জুলাই)</option>
+                        <option value="general_api" class="font-bold text-green-700">★ AI Auto-Translate (General Text)</option>
+                    </select>
+                </div>
+
+                <button onclick="applyTranslation()" class="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-sm transition-colors text-sm h-[34px] mt-auto">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Translate
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-grow overflow-hidden relative bg-slate-50">
+            
+            <!-- Upload Overlay -->
+            <div id="uploadOverlay" class="absolute inset-0 flex items-center justify-center z-20 bg-slate-50">
+                <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-2xl bg-white p-12 text-center transition-all duration-200 flex flex-col items-center justify-center w-3/4 max-w-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 hover:shadow-lg">
+                    <input type="file" id="fileInput" accept=".csv" class="hidden">
+                    <div class="bg-blue-100 text-blue-600 rounded-full p-6 mb-6">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-slate-700 mb-2">Upload CSV File</h3>
+                    <p class="text-slate-500 mb-6">Drag & drop or click to browse</p>
+                    <div class="text-xs text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Supports .csv files</div>
+                </div>
+            </div>
+
+            <!-- Loader -->
+            <div id="loader" class="hidden absolute inset-0 z-30 bg-white/95 flex flex-col items-center justify-center backdrop-blur-sm">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-600 mb-4"></div>
+                <p id="loaderText" class="text-slate-800 font-bold text-lg animate-pulse">Processing...</p>
+                <p id="loaderSubText" class="text-slate-500 text-sm mt-2 font-mono bg-slate-100 px-2 py-1 rounded"></p>
+            </div>
+
+            <!-- Data Table -->
+            <div id="tableContainer" class="w-full h-full overflow-auto hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-100 sticky top-0 z-10 shadow-sm">
+                        <tr id="tableHeader">
+                            <!-- Headers injected here -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-200 bg-white text-sm">
+                        <!-- Rows injected here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- No Results State -->
+            <div id="noResults" class="hidden absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100 text-center">
+                    <i class="fa-solid fa-filter-circle-xmark text-4xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-500 font-medium">No records match your search</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer / Stats -->
+        <div class="bg-white border-t border-slate-200 p-3 flex justify-between items-center text-xs text-slate-500 shrink-0">
+            <div class="flex gap-6">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-list-ol text-slate-400"></i>
+                    <span id="rowCount">0 rows</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-table-columns text-slate-400"></i>
+                    <span id="colCount">0 columns</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-regular fa-square text-slate-400"></i>
+                    <span id="emptyCount">0 empty cells</span>
+                </div>
+            </div>
+            <span id="statusText" class="italic">Ready</span>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Dictionaries (Bangla)
+        const bnDigits = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+        const bnMonths = {
+            'january':'জানুয়ারি', 'jan':'জানু',
+            'february':'ফেব্রুয়ারি', 'feb':'ফেব্রু',
+            'march':'মার্চ', 'mar':'মার্চ',
+            'april':'এপ্রিল', 'apr':'এপ্রিল',
+            'may':'মে',
+            'june':'জুন', 'jun':'জুন',
+            'july':'জুলাই', 'jul':'জুলাই',
+            'august':'আগস্ট', 'aug':'আগস্ট',
+            'september':'সেপ্টেম্বর', 'sep':'সেপ্টে',
+            'october':'অক্টোবর', 'oct':'অক্টো',
+            'november':'নভেম্বর', 'nov':'নভে',
+            'december':'ডিসেম্বর', 'dec':'ডিসে'
+        };
+        const bnDays = {
+            'saturday':'শনিবার', 'sat':'শনি',
+            'sunday':'রবিবার', 'sun':'রবি',
+            'monday':'সোমবার', 'mon':'সোম',
+            'tuesday':'মঙ্গলবার', 'tue':'মঙ্গল',
+            'wednesday':'বুধবার', 'wed':'বুধ',
+            'thursday':'বৃহস্পতিবার', 'thu':'বৃহস্পতি',
+            'friday':'শুক্রবার', 'fri':'শুক্র'
+        };
+
+        // App State
+        let csvData = []; // Full Data
+        let filteredData = []; // Search Result Data
+        let headers = []; 
+        let fileName = "data";
+
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadOverlay = document.getElementById('uploadOverlay');
+        const toolbar = document.getElementById('toolbar');
+        const tableContainer = document.getElementById('tableContainer');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+        const colSelect = document.getElementById('colSelect');
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loaderText');
+        const loaderSubText = document.getElementById('loaderSubText');
+        const noResults = document.getElementById('noResults');
+        
+        // Export Buttons
+        const btnExpCsv = document.getElementById('btnExpCsv');
+        const btnExpJson = document.getElementById('btnExpJson');
+        const btnExpJs = document.getElementById('btnExpJs');
+        const btnExpPy = document.getElementById('btnExpPy');
+
+        // Stats
+        const statusText = document.getElementById('statusText');
+        const rowCountSpan = document.getElementById('rowCount');
+        const colCountSpan = document.getElementById('colCount');
+        const emptyCountSpan = document.getElementById('emptyCount');
+
+        // --- Event Listeners ---
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-active');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-active');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-active');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        // --- Core Functions ---
+
+        function handleFile(file) {
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                alert("Please upload a valid CSV file.");
+                return;
+            }
+
+            fileName = file.name.replace('.csv', '');
+            showLoader(true, "Reading CSV...", "Parsing file structure");
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setTimeout(() => {
+                    parseCSV(e.target.result);
+                }, 300);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text) {
+            const lines = text.trim().split(/\r\n|\n/);
+            if (lines.length === 0) {
+                showLoader(false);
+                return;
+            }
+
+            // Detect delimiter
+            const firstLine = lines[0];
+            const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
+
+            headers = splitCSVLine(lines[0], delimiter);
+            
+            csvData = [];
+            let emptyCells = 0;
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const row = splitCSVLine(lines[i], delimiter);
+                
+                let rowObj = {};
+                headers.forEach((h, index) => {
+                    const val = row[index] || "";
+                    if (val === "") emptyCells++;
+                    rowObj[h] = val;
+                });
+                csvData.push(rowObj);
+            }
+
+            filteredData = [...csvData]; // Init filtered data
+
+            renderTable();
+            updateStats(csvData.length, headers.length, emptyCells);
+            updateUIState();
+            showLoader(false);
+        }
+
+        function splitCSVLine(line, delimiter) {
+            // Robust Regex for CSV splitting
+            const pattern = new RegExp(
+                "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
+                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+                "([^\"\\" + delimiter + "\\r\\n]*))",
+                "gi"
+            );
+            let matches = null;
+            const row = [];
+            while (matches = pattern.exec(line)) {
+                let matchedValue;
+                if (matches[2]) {
+                    matchedValue = matches[2].replace(new RegExp("\"\"", "g"), "\"");
+                } else {
+                    matchedValue = matches[3];
+                }
+                if (matches[1] !== undefined || row.length === 0) {
+                    row.push(matchedValue);
+                }
+            }
+            if (!line.includes('"')) return line.split(delimiter);
+            if (row.length > 0 && row[0] === undefined) row.shift(); 
+            
+            // Fallback for tricky lines if regex returns oddity
+            let result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === delimiter && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        function renderTable() {
+            // Render Headers
+            tableHeader.innerHTML = '';
+            
+            // Index Header
+            const thIdx = document.createElement('th');
+            thIdx.className = "px-4 py-3 font-semibold text-slate-500 bg-slate-100 border-b w-12 text-center";
+            thIdx.innerText = "#";
+            tableHeader.appendChild(thIdx);
+
+            headers.forEach(h => {
+                const th = document.createElement('th');
+                th.className = "px-4 py-3 font-semibold text-slate-600 bg-slate-100 border-b whitespace-nowrap";
+                th.innerText = h;
+                tableHeader.appendChild(th);
+            });
+
+            // Populate Column Select for Translation
+            const currentSelection = colSelect.value;
+            colSelect.innerHTML = '<option value="" disabled selected>Select column...</option>';
+            headers.forEach(h => {
+                const opt = document.createElement('option');
+                opt.value = h;
+                opt.innerText = h;
+                if (h === currentSelection) opt.selected = true;
+                colSelect.appendChild(opt);
+            });
+
+            // Render Body
+            tableBody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            // Lazy render limit for performance
+            const displayLimit = Math.min(filteredData.length, 200); 
+            
+            for(let i=0; i<displayLimit; i++) {
+                const row = filteredData[i];
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-blue-50 group";
+                
+                // Index Cell
+                const tdIdx = document.createElement('td');
+                tdIdx.className = "px-4 py-2 text-xs text-slate-400 border-r border-slate-100 text-center bg-slate-50 group-hover:bg-blue-100";
+                tdIdx.innerText = i + 1;
+                tr.appendChild(tdIdx);
+
+                headers.forEach(h => {
+                    const td = document.createElement('td');
+                    const val = row[h];
+                    const isBangla = /[\u0980-\u09FF]/.test(val);
+                    
+                    td.className = `px-4 py-2 whitespace-nowrap border-b border-slate-100 text-slate-700 ${isBangla ? 'bn-font' : ''}`;
+                    td.innerText = val;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            }
+            
+            if (filteredData.length > 200) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="${headers.length + 1}" class="text-center py-4 text-xs text-slate-400 italic">Showing first 200 of ${filteredData.length} rows...</td>`;
+                tableBody.appendChild(tr);
+            }
+        }
+
+        // --- Search Logic ---
+        
+        let searchTimeout;
+        function handleSearch(query) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(query.toLowerCase());
+            }, 300); // Debounce
+        }
+
+        function performSearch(query) {
+            if (!query) {
+                filteredData = [...csvData];
+            } else {
+                filteredData = csvData.filter(row => {
+                    return Object.values(row).some(val => 
+                        String(val).toLowerCase().includes(query)
+                    );
+                });
+            }
+            renderTable();
+            // Update row count in stats for filtered view
+            rowCountSpan.innerText = `${filteredData.length} / ${csvData.length} rows`;
+        }
+
+
+        // --- Translation Logic ---
+
+        async function applyTranslation() {
+            const targetCol = colSelect.value;
+            const mode = document.getElementById('modeSelect').value;
+
+            if (!targetCol) {
+                alert("Please select a column to translate first.");
+                return;
+            }
+
+            let changeCount = 0;
+
+            if (mode === 'general_api') {
+                // API MODE (Async)
+                showLoader(true, "Translating with AI...", "Connecting to translation service...");
+                
+                for (let i = 0; i < csvData.length; i++) {
+                    const row = csvData[i];
+                    let val = row[targetCol];
+                    
+                    if (!val || /[\u0980-\u09FF]/.test(val)) continue;
+
+                    if (i % 5 === 0) {
+                        showLoader(true, "Translating...", `Row ${i + 1} of ${csvData.length}`);
+                        await new Promise(r => setTimeout(r, 5));
+                    }
+
+                    try {
+                        let translated = await translateViaAPI(val);
+                        if (translated && translated !== val) {
+                            row[targetCol] = translated;
+                            changeCount++;
+                        }
+                    } catch (e) {
+                        console.log("Translation error", e);
+                    }
+                }
+
+            } else {
+                // LOCAL MODE (Sync/Fast)
+                showLoader(true, "Translating...", "Applying dictionary rules");
+                await new Promise(r => setTimeout(r, 100));
+
+                csvData.forEach(row => {
+                    let val = row[targetCol];
+                    if (!val) return;
+                    
+                    let original = val.toString();
+                    let translated = original;
+
+                    if (mode === 'number') {
+                        translated = translateNumbers(original);
+                    } else if (mode === 'text') {
+                        translated = translateText(original); 
+                    } else if (mode === 'date_full') {
+                        translated = translateText(original);
+                        translated = translateNumbers(translated);
+                    }
+
+                    if (translated !== original) {
+                        row[targetCol] = translated;
+                        changeCount++;
+                    }
+                });
+            }
+
+            // Re-apply search filter if active
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            performSearch(query);
+            
+            showLoader(false);
+            statusText.innerText = `Translation complete! ${changeCount} cells updated.`;
+        }
+
+        async function translateViaAPI(text) {
+            try {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|bn`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+                return text;
+            } catch (error) {
+                return text;
+            }
+        }
+
+        function translateNumbers(str) {
+            return str.replace(/[0-9]/g, (match) => bnDigits[match]);
+        }
+
+        function translateText(str) {
+            let result = str;
+            // Months
+            for (let [eng, bn] of Object.entries(bnMonths)) {
+                const regex = new RegExp(`\\b${eng}\\b`, 'gi');
+                if (regex.test(result)) result = result.replace(regex, bn);
+            }
+            // Days
+            for (let [eng, bn] of Object.entries(bnDays)) {
+                const regex = new RegExp(`\\b${eng}\\b`, 'gi');
+                if (regex.test(result)) result = result.replace(regex, bn);
+            }
+            return result;
+        }
+
+        // --- Export Logic ---
+
+        function triggerDownload(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadCSV() {
+            if (filteredData.length === 0) return;
+            const headerRow = headers.join(',') + '\n';
+            const bodyRows = filteredData.map(rowObj => {
+                return headers.map(h => {
+                    let val = rowObj[h];
+                    if (val && (val.includes('"') || val.includes(',') || val.includes('\n'))) {
+                        val = `"${val.replace(/"/g, '""')}"`;
+                    }
+                    return val;
+                }).join(',');
+            }).join('\n');
+            const csvContent = "\ufeff" + headerRow + bodyRows; 
+            triggerDownload(csvContent, `${fileName}_edited.csv`, 'text/csv;charset=utf-8;');
+        }
+
+        function downloadJSON() {
+            if (filteredData.length === 0) return;
+            const jsonContent = JSON.stringify(filteredData, null, 2);
+            triggerDownload(jsonContent, `${fileName}.json`, 'application/json');
+        }
+
+        function downloadJS() {
+            if (filteredData.length === 0) return;
+            const jsContent = `// Exported Data from Mega CSV Tool\nexport const ${fileName.replace(/[^a-zA-Z0-9]/g, '_')} = ${JSON.stringify(filteredData, null, 2)};`;
+            triggerDownload(jsContent, `${fileName}.js`, 'text/javascript');
+        }
+
+        function downloadPython() {
+            if (filteredData.length === 0) return;
+            // Convert JSON-like string to Python Syntax
+            // 1. null -> None
+            // 2. true -> True
+            // 3. false -> False
+            let pyStr = JSON.stringify(filteredData, null, 2);
+            pyStr = pyStr.replace(/null/g, 'None')
+                         .replace(/true/g, 'True')
+                         .replace(/false/g, 'False');
+            
+            const pyContent = `# Exported Data from Mega CSV Tool\n\ndata = ${pyStr}\n`;
+            triggerDownload(pyContent, `${fileName}.py`, 'text/x-python');
+        }
+
+        // --- UI Helpers ---
+
+        function updateUIState() {
+            uploadOverlay.classList.add('hidden');
+            tableContainer.classList.remove('hidden');
+            toolbar.classList.remove('hidden');
+            toolbar.classList.add('flex');
+            
+            // Enable exports
+            [btnExpCsv, btnExpJson, btnExpJs, btnExpPy].forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('opacity-30');
+            });
+        }
+
+        function updateStats(rows, cols, empty) {
+            rowCountSpan.innerText = `${rows} rows`;
+            colCountSpan.innerText = `${cols} columns`;
+            emptyCountSpan.innerText = `${empty} empty cells`;
+        }
+
+        function resetApp() {
+            location.reload();
+        }
+
+        function showLoader(show, text="Processing...", subtext="") {
+            if (show) {
+                loader.classList.remove('hidden');
+                loaderText.innerText = text;
+                loaderSubText.innerText = subtext;
+            } else {
+                loader.classList.add('hidden');
+            }
+        }
+
+    </script>
+</body>
+</html>
