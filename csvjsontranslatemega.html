@@ -51,6 +51,14 @@
         tr {
             transition: background-color 0.15s ease;
         }
+
+        /* Column Tag Animation */
+        .col-tag {
+            transition: all 0.2s;
+        }
+        .col-tag:hover {
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-6 px-4 text-slate-800">
@@ -66,14 +74,23 @@
                     </div>
                     <span>Mega CSV Tool <span class="text-xs bg-indigo-500 px-2 py-0.5 rounded-full ml-2">AI Powered</span></span>
                 </h1>
-                <p class="text-slate-400 text-xs mt-1 ml-1">Translate with Gemini • Search • Export to Code</p>
+                <p class="text-slate-400 text-xs mt-1 ml-1">Translate • Normalize • Export Code</p>
             </div>
             
-            <div class="flex gap-3">
-                 <button onclick="resetApp()" class="px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-sm font-medium">
-                    <i class="fa-solid fa-folder-open mr-2"></i> Open New File
+            <div class="flex gap-3 items-center">
+                 <button onclick="resetApp()" class="px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors text-sm font-medium mr-2">
+                    <i class="fa-solid fa-folder-open mr-2"></i> New
                 </button>
                 
+                <!-- Format Selector -->
+                <div class="mr-3">
+                    <select id="exportFormat" class="text-xs bg-slate-800 text-slate-300 border border-slate-600 rounded px-2 py-1 outline-none focus:border-indigo-500 cursor-pointer hover:text-white transition-colors" title="Select export formatting style">
+                        <option value="pretty">Pretty Print (Standard)</option>
+                        <option value="lines">One Record Per Line</option>
+                        <option value="single">Single Line (Minified)</option>
+                    </select>
+                </div>
+
                 <!-- Export Dropdown Logic -->
                 <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
                     <button onclick="downloadCSV()" id="btnExpCsv" disabled class="px-3 py-1.5 text-xs font-semibold rounded hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-green-400">
@@ -105,6 +122,16 @@
                     class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 outline-none text-sm transition-all"
                     onkeyup="handleSearch(this.value)">
             </div>
+
+            <!-- Smart ID Button -->
+            <button onclick="toggleIdGenerator()" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-md shadow-sm transition-colors text-sm border border-indigo-200" title="Generate Unique ID from Columns">
+                <i class="fa-solid fa-fingerprint mr-1"></i> Generate ID
+            </button>
+
+            <!-- Column Manager Button -->
+            <button onclick="toggleColumnManager()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-md shadow-sm transition-colors text-sm border border-slate-200">
+                <i class="fa-solid fa-table-columns mr-1"></i> Columns
+            </button>
 
             <div class="h-8 w-[1px] bg-slate-200 mx-2 hidden md:block"></div>
 
@@ -139,6 +166,52 @@
 
                 <button onclick="applyTranslation()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm transition-colors text-sm h-[34px] mt-auto">
                     Translate
+                </button>
+            </div>
+        </div>
+
+        <!-- ID Generator Panel (Hidden) -->
+        <div id="idGenerator" class="bg-indigo-50 border-b border-indigo-200 p-4 hidden shrink-0 shadow-inner z-10 transition-all">
+            <div class="flex justify-between items-start">
+                <h3 class="text-xs font-bold text-indigo-800 uppercase tracking-wider mb-2">Generate Unique ID (Normalize Data)</h3>
+                <button onclick="toggleIdGenerator()" class="text-indigo-400 hover:text-indigo-700"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <p class="text-xs text-indigo-600 mb-3">Select columns to combine (e.g. Division + Zila) to create a unique ID for repeated locations.</p>
+            
+            <div id="idGenCheckboxes" class="flex flex-wrap gap-4 mb-4 max-h-32 overflow-y-auto p-2 bg-white rounded border border-indigo-100">
+                <!-- Checkboxes injected here -->
+            </div>
+            
+            <div class="flex gap-2">
+                <input type="text" id="idColName" value="Location_ID" class="px-3 py-1.5 border border-indigo-300 rounded text-sm w-40" placeholder="ID Column Name">
+                <button onclick="generateSmartID()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-bold shadow-sm">
+                    Generate IDs
+                </button>
+            </div>
+        </div>
+
+        <!-- Column Manager Panel (Hidden) -->
+        <div id="columnManager" class="bg-slate-50 border-b border-slate-200 p-4 hidden shrink-0 shadow-inner z-10 transition-all">
+            <div class="flex justify-between items-start mb-3">
+                 <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Columns</h3>
+                 <button onclick="toggleColumnManager()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-times"></i></button>
+            </div>
+           
+            <div class="flex flex-wrap gap-2 mb-4" id="activeColumnTagContainer">
+                <!-- Active Tags injected here -->
+            </div>
+            
+            <div id="hiddenColumnsArea" class="hidden mb-4 border-t border-slate-200 pt-3">
+                <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Hidden / Removed Columns (Click to Restore)</h3>
+                <div class="flex flex-wrap gap-2" id="hiddenColumnTagContainer">
+                    <!-- Hidden Tags injected here -->
+                </div>
+            </div>
+
+            <div class="flex gap-2 max-w-sm mt-4 border-t border-slate-200 pt-3">
+                <input type="text" id="newColInput" placeholder="New Column Name" class="flex-1 px-3 py-1.5 border border-slate-300 rounded-md text-sm bg-white focus:ring-1 focus:ring-indigo-500 outline-none">
+                <button onclick="addNewColumn()" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs font-semibold transition-colors">
+                    <i class="fa-solid fa-plus mr-1"></i> Add
                 </button>
             </div>
         </div>
@@ -241,7 +314,8 @@
         // App State
         let csvData = []; // Full Data
         let filteredData = []; // Search Result Data
-        let headers = []; 
+        let headers = []; // Active Headers
+        let hiddenHeaders = []; // Removed Headers (for restore)
         let fileName = "data";
 
         // DOM Elements
@@ -260,7 +334,20 @@
         const loaderSubText = document.getElementById('loaderSubText');
         const noResults = document.getElementById('noResults');
         
-        // Export Buttons
+        // Column Manager Elements
+        const columnManager = document.getElementById('columnManager');
+        const activeColumnTagContainer = document.getElementById('activeColumnTagContainer');
+        const hiddenColumnTagContainer = document.getElementById('hiddenColumnTagContainer');
+        const hiddenColumnsArea = document.getElementById('hiddenColumnsArea');
+        const newColInput = document.getElementById('newColInput');
+        
+        // ID Generator Elements
+        const idGenerator = document.getElementById('idGenerator');
+        const idGenCheckboxes = document.getElementById('idGenCheckboxes');
+        const idColNameInput = document.getElementById('idColName');
+
+        // Export Elements
+        const exportFormatSelect = document.getElementById('exportFormat');
         const btnExpCsv = document.getElementById('btnExpCsv');
         const btnExpJson = document.getElementById('btnExpJson');
         const btnExpJs = document.getElementById('btnExpJs');
@@ -339,6 +426,7 @@
             const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
 
             headers = splitCSVLine(lines[0], delimiter);
+            hiddenHeaders = []; // Reset hidden headers
             
             csvData = [];
             let emptyCells = 0;
@@ -435,6 +523,11 @@
                 colSelect.appendChild(opt);
             });
 
+            // Populate Column Manager Tags
+            renderColumnTags();
+            // Populate ID Generator Checkboxes
+            renderIdGeneratorCheckboxes();
+
             // Render Body
             tableBody.innerHTML = '';
             
@@ -465,7 +558,7 @@
                     const isBangla = /[\u0980-\u09FF]/.test(val);
                     
                     td.className = `px-4 py-2 whitespace-nowrap border-b border-slate-100 text-slate-700 ${isBangla ? 'bn-font' : ''}`;
-                    td.innerText = val;
+                    td.innerText = val !== undefined ? val : "";
                     tr.appendChild(td);
                 });
                 tableBody.appendChild(tr);
@@ -476,6 +569,176 @@
                 tr.innerHTML = `<td colspan="${headers.length + 1}" class="text-center py-4 text-xs text-slate-400 italic">Showing first 200 of ${filteredData.length} rows...</td>`;
                 tableBody.appendChild(tr);
             }
+
+            // Update stats
+            updateStats(filteredData.length, headers.length, countEmptyCells());
+        }
+
+        function countEmptyCells() {
+            let count = 0;
+            filteredData.forEach(row => {
+                headers.forEach(h => {
+                    if (!row[h]) count++;
+                });
+            });
+            return count;
+        }
+
+        // --- Column Manager Logic ---
+
+        function toggleColumnManager() {
+            columnManager.classList.toggle('hidden');
+            idGenerator.classList.add('hidden'); // close other panels
+        }
+
+        function renderColumnTags() {
+            // Active Tags
+            activeColumnTagContainer.innerHTML = '';
+            headers.forEach(h => {
+                const tag = document.createElement('div');
+                tag.className = 'col-tag inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200';
+                tag.innerHTML = `
+                    <span class="mr-2">${h}</span>
+                    <button onclick="renameColumn('${h}')" class="text-indigo-400 hover:text-blue-600 mr-2 focus:outline-none" title="Rename">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button onclick="removeColumn('${h}')" class="text-indigo-400 hover:text-red-500 focus:outline-none" title="Hide/Remove">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                `;
+                activeColumnTagContainer.appendChild(tag);
+            });
+
+            // Hidden Tags
+            hiddenColumnTagContainer.innerHTML = '';
+            if (hiddenHeaders.length > 0) {
+                hiddenColumnsArea.classList.remove('hidden');
+                hiddenHeaders.forEach(h => {
+                    const tag = document.createElement('div');
+                    tag.className = 'col-tag inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200 cursor-pointer hover:bg-red-200';
+                    tag.title = "Click to Restore";
+                    tag.onclick = () => restoreColumn(h);
+                    tag.innerHTML = `<i class="fa-solid fa-rotate-left mr-2"></i> ${h}`;
+                    hiddenColumnTagContainer.appendChild(tag);
+                });
+            } else {
+                hiddenColumnsArea.classList.add('hidden');
+            }
+        }
+
+        function removeColumn(colName) {
+            if (headers.length <= 1) {
+                alert("Cannot hide the last column.");
+                return;
+            }
+            // Move from headers to hiddenHeaders
+            headers = headers.filter(h => h !== colName);
+            hiddenHeaders.push(colName);
+            renderTable();
+        }
+
+        function restoreColumn(colName) {
+            hiddenHeaders = hiddenHeaders.filter(h => h !== colName);
+            headers.push(colName);
+            renderTable();
+        }
+
+        function renameColumn(oldName) {
+            const newName = prompt("Enter new column name:", oldName);
+            if (newName && newName.trim() !== "" && newName !== oldName) {
+                if (headers.includes(newName)) {
+                    alert("A column with this name already exists.");
+                    return;
+                }
+                
+                // Update headers array
+                const idx = headers.indexOf(oldName);
+                headers[idx] = newName;
+
+                // Update ALL data objects
+                csvData.forEach(row => {
+                    row[newName] = row[oldName];
+                    delete row[oldName];
+                });
+
+                // Update hidden headers list if needed? No, renaming only happens on active.
+                renderTable();
+            }
+        }
+
+        function addNewColumn() {
+            const name = newColInput.value.trim();
+            if (!name) return;
+            if (headers.includes(name)) {
+                alert("Column name already exists.");
+                return;
+            }
+
+            headers.push(name);
+            // Add empty field to all rows
+            csvData.forEach(row => row[name] = "");
+            
+            newColInput.value = '';
+            renderTable();
+        }
+
+        // --- ID Generator Logic ---
+
+        function toggleIdGenerator() {
+            idGenerator.classList.toggle('hidden');
+            columnManager.classList.add('hidden'); // close other panels
+        }
+
+        function renderIdGeneratorCheckboxes() {
+            idGenCheckboxes.innerHTML = '';
+            headers.forEach(h => {
+                const label = document.createElement('label');
+                label.className = "flex items-center text-xs text-slate-700 cursor-pointer bg-slate-50 px-2 py-1 rounded border border-slate-200 hover:bg-slate-100";
+                label.innerHTML = `
+                    <input type="checkbox" value="${h}" class="id-gen-check mr-2 accent-indigo-600">
+                    ${h}
+                `;
+                idGenCheckboxes.appendChild(label);
+            });
+        }
+
+        function generateSmartID() {
+            const checkboxes = document.querySelectorAll('.id-gen-check:checked');
+            if (checkboxes.length === 0) {
+                alert("Please select at least one column to combine.");
+                return;
+            }
+
+            const selectedCols = Array.from(checkboxes).map(cb => cb.value);
+            const idColName = idColNameInput.value.trim() || "Location_ID";
+
+            if (headers.includes(idColName)) {
+                if(!confirm(`Column "${idColName}" already exists. Overwrite?`)) return;
+            } else {
+                headers.unshift(idColName); // Add ID to start
+            }
+
+            // Generation Logic
+            const uniqueMap = new Map();
+            let counter = 1;
+
+            csvData.forEach(row => {
+                // Create key from selected columns
+                const key = selectedCols.map(c => String(row[c] || "").trim().toLowerCase()).join('|');
+                
+                if (!uniqueMap.has(key)) {
+                    // Generate new ID (e.g. LOC_001)
+                    const idStr = "LOC_" + String(counter).padStart(3, '0');
+                    uniqueMap.set(key, idStr);
+                    counter++;
+                }
+
+                row[idColName] = uniqueMap.get(key);
+            });
+
+            renderTable();
+            toggleIdGenerator(); // Close panel
+            statusText.innerText = `Generated ${counter - 1} unique IDs based on ${selectedCols.join('+')}`;
         }
 
         // --- Search Logic ---
@@ -685,6 +948,27 @@
             document.body.removeChild(link);
         }
 
+        function getFormattedString(data, format) {
+            // Filter fields based on active headers
+            const exportData = data.map(row => {
+                const newRow = {};
+                headers.forEach(h => {
+                    newRow[h] = row[h] !== undefined ? row[h] : "";
+                });
+                return newRow;
+            });
+
+            if (format === 'pretty') {
+                return JSON.stringify(exportData, null, 2);
+            } else if (format === 'single') {
+                return JSON.stringify(exportData);
+            } else if (format === 'lines') {
+                const items = exportData.map(item => JSON.stringify(item));
+                return "[\n  " + items.join(",\n  ") + "\n]";
+            }
+            return JSON.stringify(exportData);
+        }
+
         function downloadCSV() {
             if (filteredData.length === 0) return;
             const headerRow = headers.join(',') + '\n';
@@ -694,7 +978,7 @@
                     if (val && (val.includes('"') || val.includes(',') || val.includes('\n'))) {
                         val = `"${val.replace(/"/g, '""')}"`;
                     }
-                    return val;
+                    return val !== undefined ? val : "";
                 }).join(',');
             }).join('\n');
             const csvContent = "\ufeff" + headerRow + bodyRows; 
@@ -703,20 +987,24 @@
 
         function downloadJSON() {
             if (filteredData.length === 0) return;
-            const jsonContent = JSON.stringify(filteredData, null, 2);
+            const format = exportFormatSelect.value;
+            const jsonContent = getFormattedString(filteredData, format);
             triggerDownload(jsonContent, `${fileName}.json`, 'application/json');
         }
 
         function downloadJS() {
             if (filteredData.length === 0) return;
-            const jsContent = `// Exported Data from Mega CSV Tool\nexport const ${fileName.replace(/[^a-zA-Z0-9]/g, '_')} = ${JSON.stringify(filteredData, null, 2)};`;
+            const format = exportFormatSelect.value;
+            const dataStr = getFormattedString(filteredData, format);
+            const jsContent = `// Exported Data from Mega CSV Tool\nexport const ${fileName.replace(/[^a-zA-Z0-9]/g, '_')} = ${dataStr};`;
             triggerDownload(jsContent, `${fileName}.js`, 'text/javascript');
         }
 
         function downloadPython() {
             if (filteredData.length === 0) return;
-            // Convert JSON-like string to Python Syntax
-            let pyStr = JSON.stringify(filteredData, null, 2);
+            const format = exportFormatSelect.value;
+            let pyStr = getFormattedString(filteredData, format);
+            
             pyStr = pyStr.replace(/null/g, 'None')
                          .replace(/true/g, 'True')
                          .replace(/false/g, 'False');
