@@ -1232,7 +1232,7 @@
 
                 if (isDuplicate) {
                     loadingOverlay.classList.add('hidden');
-                    errorMessageEl.textContent = `এই প্রতিষ্ঠানের ("${instituteName}") কর্মবিরতি সংক্রান্ত তথ্য ("${statusVal}")কর্মবিরতি ইতিমধ্যেই ডাটাবেসে জমা দেওয়া হয়েছে। অনুগ্রহ করে নিশ্চিত করুন যে আপনার প্রতিষ্ঠান থেকে একবারই তথ্য জমা দেওয়া হচ্ছে।`;
+                    errorMessageEl.textContent = `প্রিয় সহযোদ্ধা! ("${instituteName}") এর ("${statusVal}") কর্মবিরতি সংক্রান্ত তথ্য ইতিমধ্যেই ডাটাবেসে জমা দেওয়া হয়েছে। অনুগ্রহ করে নিশ্চিত করুন যে আপনার প্রতিষ্ঠান থেকে একবারই তথ্য জমা দেওয়া হচ্ছে।`;
                     errorModal.classList.remove('hidden');
                     return; // Stop submission
                 }
