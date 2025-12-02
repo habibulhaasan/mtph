@@ -185,10 +185,32 @@
     </div>
 
     <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center"><div class="loader mx-auto mb-4"></div><p class="text-lg font-bold text-slate-700">তথ্য জমা হচ্ছে...</p><p class="text-xs text-slate-400 mt-2">অপেক্ষা করুন</p></div></div>
+    
+    <!-- Custom Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50"><div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 animate-fade-in"><div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check-circle" class="w-10 h-10"></i></div><h3 class="text-2xl font-bold text-slate-800 mb-2">সফল!</h3><p class="text-slate-600 mb-6">আপনার তথ্য সফলভাবে জমা হয়েছে।</p><button onclick="window.location.reload()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 w-full">নতুন তথ্য দিন</button></div></div>
+    
+    <!-- Custom Error Modal -->
+    <div id="errorModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 animate-fade-in">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="x-octagon" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">জমা দেওয়া সম্ভব না!</h3>
+            <p id="errorMessage" class="text-slate-600 mb-6 font-medium"></p>
+            <button onclick="document.getElementById('errorModal').classList.add('hidden')" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 w-full">ঠিক আছে</button>
+        </div>
+    </div>
 
     <script>
         lucide.createIcons();
+
+        // --- GOOGLE SHEETS API CONSTANTS (for validation) ---
+        const API_KEY = 'AIzaSyDTvwDm19m-xtkMuALsspEJB-NNYV0kdUg'; 
+        const SHEET_ID = '1lAgWuhQpBJE-NyrdnNiRxkbS5NdaB6zwOwb2agJAwRc';
+        const SHEET_NAME = 'File-Received';
+        
+        // YOUR APPS SCRIPT URL (for form submission)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTWqoUY8n0Hs6wCYAgRj08Mrp2RtUY6f7Z52cKepwI_BITdMZ-IHGl0hf2W5OW0yAI/exec';
 
         // --- FULL HOSPITAL DATASETS ---
         // Format: "Division|District|Upazila|HospitalName"
@@ -440,7 +462,7 @@
             "ঢাকা|কিশোরগঞ্জ|পাকুন্ডা|পাকুন্দিয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "ঢাকা|কিশোরগঞ্জ|তাড়াইল|তাড়াইল উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "ঢাকা|মাদারীপুর|কালকিনি|কালকিনি উপজেলা স্বাস্থ্য কমপ্লেক্স",
-            "ঢাকা|মাদারীপুর|রাজইর|রাজৈর উপেজলা স্বাস্থ্য কমপ্লেক্স",
+            "ঢাকা|মাদারীপুর|রাজৈর|রাজৈর উপেজলা স্বাস্থ্য কমপ্লেক্স",
             "ঢাকা|মাদারীপুর|শিবচর|শিবচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "ঢাকা|মানিকগঞ্জ|দৌলতপুর|দৌলতপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "ঢাকা|মানিকগঞ্জ|ঘিওর|ঘিওর উপজেলা স্বাস্থ্য কমপ্লেক্স",
@@ -522,7 +544,7 @@
             "চট্টগ্রাম|চাঁদপুর|ফরিদগঞ্জ|ফরিদগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "চট্টগ্রাম|চাঁদপুর|হাইমচর|হাইমচর উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "চট্টগ্রাম|চাঁদপুর|হাজীগঞ্জ|হাজীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স",
-            "চট্টগ্রাম|চাঁদপুর|কচুয়া|কচুয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "চট্টগ্রাম|চাঁদপুর|কচুয়া|কচুয়া উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "চট্টগ্রাম|চাঁদপুর|মতলব দক্ষিণ|মতলব (দঃ) উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "চট্টগ্রাম|চাঁদপুর|মতলব উত্তর|মতলব (উত্তর) উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "চট্টগ্রাম|চাঁদপুর|শাহরাস্তি|শাহ্‌রাস্তি উপজেলা স্বাস্থ্য কমপ্লেক্স",
@@ -635,7 +657,7 @@
             "রংপুর|কুড়িগ্রাম|রউমারি|রৌমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "রংপুর|কুড়িগ্রাম|উলিপুর|উলিপুর উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "রংপুর|লালমনিরহাট|আদিতমারি|আদিতমারী উপজেলা স্বাস্থ্য কমপ্লেক্স",
-            "রংপুর|লালমনিরহাট|হাতিবান্ধা|হাতীবান্ধা উপজেলা স্বাস্থ্য কমপ্লেক্স",
+            "রংপুর| লালমনিরহাট|হাতিবান্ধা|হাতীবান্ধা উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "রংপুর|লালমনিরহাট|পাটগ্রাম|পাটগ্রাম উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "রাজশাহী|নওগাঁ|আত্রাই|আত্রাই উপজেলা স্বাস্থ্য কমপ্লেক্স",
             "রাজশাহী|নওগাঁ|বদলগাছি|বদলগাছী উপজেলা স্বাস্থ্য কমপ্লেক্স",
@@ -1059,11 +1081,12 @@
         // 4. Handle "Other" Selection
         instSelect.addEventListener('change', function() {
             if (this.value === "Other") {
-                // FIX: Just hide the SELECT element, not the parent
+                // Hides the SELECT element
                 this.classList.add('hidden-input'); 
                 this.removeAttribute('name');       
                 this.removeAttribute('required');
 
+                // Shows the manual INPUT field
                 instInputDiv.classList.remove('hidden-input'); 
                 instInput.setAttribute('name', 'institute');   
                 instInput.setAttribute('required', 'true');    
@@ -1090,15 +1113,72 @@
             instSelect.value = ""; 
         }
 
-        // --- FILE UPLOAD & SUBMISSION ---
+        // --- VALIDATION AND SUBMISSION LOGIC ---
         const form = document.getElementById('dataForm');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const successModal = document.getElementById('successModal');
+        const errorModal = document.getElementById('errorModal');
+        const errorMessageEl = document.getElementById('errorMessage');
         const fileContainer = document.getElementById('fileContainer');
         const addFileBtn = document.getElementById('addFileBtn');
-        
-        // YOUR APPS SCRIPT URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTWqoUY8n0Hs6wCYAgRj08Mrp2RtUY6f7Z52cKepwI_BITdMZ-IHGl0hf2W5OW0yAI/exec';
+
+        // Helper function for normalization
+        const normalize = (str) => String(str || '').toLowerCase().trim();
+
+        /**
+         * Checks the Google Sheet for duplicate submission based on Institute (J) and Status (K).
+         * @param {string} instituteName 
+         * @param {string} statusValue 
+         * @returns {Promise<boolean>} True if duplicate is found, False otherwise.
+         */
+        async function checkDuplicateSubmission(instituteName, statusValue) {
+            const range = `${SHEET_NAME}!J:K`;
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+            
+            // Simple Exponential Backoff Retry (Max 3 attempts)
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                         // Throw to retry or show error
+                        throw new Error(`Sheet API response error: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    const values = data.values;
+
+                    if (values && values.length > 1) { // Skip header row (index 0)
+                        const normalizedInstitute = normalize(instituteName);
+                        const normalizedStatus = normalize(statusValue);
+                        
+                        // Start checking from the second row (index 1)
+                        for (let i = 1; i < values.length; i++) {
+                            const row = values[i];
+                            // Column J (Institute) is row[0], Column K (Status) is row[1]
+                            const sheetInstitute = row[0] ? normalize(row[0]) : '';
+                            const sheetStatus = row[1] ? normalize(row[1]) : '';
+
+                            if (sheetInstitute === normalizedInstitute && sheetStatus === normalizedStatus) {
+                                return true; // Duplicate found
+                            }
+                        }
+                    }
+                    return false; // No duplicate found
+                } catch (error) {
+                    console.error(`Attempt ${attempt + 1} failed during sheet check:`, error);
+                    if (attempt < 2) {
+                        // Wait before retrying (exponential backoff)
+                        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                    } else {
+                        // Fail after max retries and show error message
+                        errorMessageEl.textContent = "ডাটাবেস চেক করার সময় ব্যর্থ হয়েছে। দয়া করে আপনার ইন্টারনেট সংযোগ বা সার্ভারের অবস্থা যাচাই করে আবার চেষ্টা করুন।";
+                        errorModal.classList.remove('hidden');
+                        // Throwing ensures the form submission process is halted
+                        throw new Error("Failed to connect to Google Sheets API for validation.");
+                    }
+                }
+            }
+            return false; // Fallback return
+        }
+
 
         const fileToBase64 = (file) => {
             return new Promise((resolve, reject) => {
@@ -1146,6 +1226,26 @@
                 instituteName = instInput.value;
             }
 
+            // --- STEP 1: DUPLICATE VALIDATION CHECK ---
+            try {
+                const isDuplicate = await checkDuplicateSubmission(instituteName, statusVal);
+
+                if (isDuplicate) {
+                    loadingOverlay.classList.add('hidden');
+                    errorMessageEl.textContent = `এই প্রতিষ্ঠানের ("${instituteName}") কর্মবিরতি সংক্রান্ত তথ্য ("${statusVal}")কর্মবিরতি ইতিমধ্যেই ডাটাবেসে জমা দেওয়া হয়েছে। অনুগ্রহ করে নিশ্চিত করুন যে আপনার প্রতিষ্ঠান থেকে একবারই তথ্য জমা দেওয়া হচ্ছে।`;
+                    errorModal.classList.remove('hidden');
+                    return; // Stop submission
+                }
+            } catch (error) {
+                // Error handling inside checkDuplicateSubmission already shows a modal
+                loadingOverlay.classList.add('hidden');
+                console.error("Validation failed and submission stopped:", error);
+                return;
+            }
+            // --- END VALIDATION CHECK ---
+
+
+            // --- STEP 2: PROCEED WITH SUBMISSION ---
             const payload = {
                 name: formData.get('name'),
                 mobile: formData.get('mobile'),
@@ -1172,7 +1272,7 @@
                             type: file.type,
                             data: base64
                         });
-                    } catch (error) { console.error(error); }
+                    } catch (error) { console.error("Error processing file:", error); }
                 }
             }
 
@@ -1186,24 +1286,25 @@
                 if(result.result === 'success') {
                     successModal.classList.remove('hidden');
                     form.reset();
-                    fileContainer.innerHTML = `<div class="flex items-center gap-2"><input type="file" class="file-input w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" accept="image/*,application/pdf"></div>`;
+                    fileContainer.innerHTML = `<div class="flex items-center gap-2"><input type="file" required class="file-input w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" accept="image/*,application/pdf"></div>`;
                     checkFileCount();
                     resetManualInput();
                     distSelect.disabled = true;
                     upaSelect.disabled = true;
                     instSelect.disabled = true;
                 } else {
-                    alert("Error: " + (result.error || "Unknown error"));
+                    errorMessageEl.textContent = `তথ্য জমা দিতে ব্যর্থ হয়েছে: ${result.error || "অজানা ত্রুটি"}। আবার চেষ্টা করুন।`;
+                    errorModal.classList.remove('hidden');
                 }
             })
             .catch(error => {
-                console.log(error);
+                console.error("Submission fetch failed:", error);
                 loadingOverlay.classList.add('hidden');
-                alert("Submission failed. Please check your internet.");
+                errorMessageEl.textContent = "তথ্য জমা দেওয়া সম্ভব হয়নি। দয়া করে আপনার ইন্টারনেট সংযোগ বা সার্ভারের অবস্থা যাচাই করুন।";
+                errorModal.classList.remove('hidden');
             });
         });
     </script>
 </body>
 </html>
-
 
