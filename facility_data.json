@@ -1,5 +1,5 @@
 // Exported Data from Mega CSV Tool
-export const Hospital_Location_All = [
+export const FACILITY_DATA = [
   {"Facility_ID":"37","Name_Bn":"ঝিগাতলা আরবান ডিসপেনসারি","Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"1","District_Bn":"ঢাকা","Upazila_ID":"0","Upazila_Bn":"ধানমন্ডি"},
   {"Facility_ID":"1925","Name_Bn":"খোকোয়া ১০ শয্যা বিশিষ্ট হাসপাতাল","Division_ID":"6","Division_Bn":"বরিশাল","District_ID":"55","District_Bn":"বরগুনা","Upazila_ID":"1","Upazila_Bn":"আমতলি"},
   {"Facility_ID":"1924","Name_Bn":"আমতলী উপজেলা স্বাস্থ্য কমপ্লেক্স","Division_ID":"6","Division_Bn":"বরিশাল","District_ID":"55","District_Bn":"বরগুনা","Upazila_ID":"1","Upazila_Bn":"আমতলি"},
