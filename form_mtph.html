@@ -61,8 +61,14 @@
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ব্লাড গ্রুপ</label>
                             <select name="bloodGroup" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
                                 <option value="" disabled selected>সিলেক্ট করুন...</option>
-                                <option value="A+">A+</option><option value="O+">O+</option>
-                                <option value="B+">B+</option><option value="AB+">AB+</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
                             </select>
                         </div>
                     </div>
@@ -119,9 +125,9 @@
                     </div>
                 </div>
 
-                <!-- 3. Office Location Info (Hidden only if Employment Type is Student) -->
+                <!-- 3. Office Location Info (HIDDEN IF STUDENT) -->
                 <div id="office-info-section" class="space-y-4">
-                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2" id="officeSectionHeader">
                         <i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i> কর্মস্থল (বর্তমান ঠিকানা)
                     </h3>
                     <div class="grid md:grid-cols-3 gap-4" id="officeLocationDropdowns">
@@ -154,8 +160,8 @@
                                 <option value="" disabled selected>আগে উপজেলা নির্বাচন করুন</option>
                             </select>
                             
-                            <!-- NEW: Input for Student use case -->
-                            <input type="text" id="studentOfficeNameInput" placeholder="শিক্ষা প্রতিষ্ঠানের নাম বা ঠিকানা লিখুন *" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 hidden-input">
+                            <!-- NEW: Input for Student use case (Address field in disguise) -->
+                            <input type="text" id="studentOfficeNameInput" placeholder="বিস্তারিত ঠিকানা লিখুন (যেমন: কলেজ/আইএইচটি নাম, ঠিকানা)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 hidden-input">
 
                             <!-- 3b: Manual Input Div (Toggle for Govt/Non-Govt) -->
                             <div id="manualOfficeDiv" class="hidden-input mt-3 animate-fade-in bg-blue-50 p-4 rounded-xl border border-blue-100">
@@ -252,7 +258,6 @@
         lucide.createIcons();
 
         // ** IMPORTANT: DATA FILE URL UPDATED TO GITHUB RAW CONTENT LINK **
-        // Assuming 'Source' is the branch name. The cleaning logic below should handle the non-JSON prefix.
         const DATA_FILE_URL = 'https://raw.githubusercontent.com/habibulhaasan/mtph/Source/facility_data.json'; 
         
         // --- DATA PLACEHOLDERS ---
@@ -275,7 +280,8 @@
         
         const employmentType = document.getElementById('employmentType');
         const officeInfoSection = document.getElementById('office-info-section');
-        const officeLocationDropdowns = document.getElementById('officeLocationDropdowns'); // New ID for Div/Dist/Upa container
+        const officeLocationDropdowns = document.getElementById('officeLocationDropdowns'); // Div/Dist/Upa container
+        const officeSectionHeader = document.getElementById('officeSectionHeader'); // Header for office section
 
         const ihtNameSelect = document.getElementById('ihtNameSelect');
         const manualIhtDiv = document.getElementById('manualIhtDiv');
@@ -300,7 +306,7 @@
         const loadingOverlay = document.getElementById('loadingOverlay');
         const successModal = document.getElementById('successModal');
         
-        // Hidden input field to store the calculated Office Address (from JS logic)
+        // Hidden input field to store the constructed Office Address (from JS logic)
         const hiddenOfficeAddress = document.getElementById('office_address');
 
 
@@ -398,35 +404,67 @@
         function setupCascadingDropdowns(divSelect, distSelect, upaSelect, isOffice) {
             divSelect.addEventListener('change', function() {
                 const selectedDiv = this.value;
-                resetSelects([distSelect, upaSelect]);
-                if(isOffice) resetOfficeManualInput();
+                
+                // Job Holder Mode: Reset Cascading Selects/Inputs
+                if (employmentType.value !== 'Student') {
+                    resetSelects([distSelect, upaSelect]);
+                    if(isOffice) resetOfficeManualInput();
+                }
                 
                 if (selectedDiv) {
                     const uniqueDistricts = isOffice ? getUniqueOptions(FACILITY_DATA.filter(item => item.Division_Bn === selectedDiv), 'District_Bn') : Object.keys(LOCATION_HIERARCHY[selectedDiv]).sort();
                     populateSelect(distSelect, uniqueDistricts, 'জেলা নির্বাচন করুন');
+                }
+
+                // If Student Mode: Ensure dropdowns remain enabled
+                if (employmentType.value === 'Student' && isOffice) {
+                    officeDivSelect.disabled = false;
+                    officeDistSelect.disabled = false;
+                    officeUpaSelect.disabled = false;
                 }
             });
 
             distSelect.addEventListener('change', function() {
                 const selectedDiv = divSelect.value;
                 const selectedDist = this.value;
-                resetSelects([upaSelect]);
-                if(isOffice) resetOfficeManualInput();
+                
+                // Job Holder Mode: Reset Cascading Selects/Inputs
+                if (employmentType.value !== 'Student') {
+                    resetSelects([upaSelect]);
+                    if(isOffice) resetOfficeManualInput();
+                }
 
                 if (selectedDist) {
                     const uniqueUpazilas = isOffice ? getUniqueOptions(FACILITY_DATA.filter(item => item.Division_Bn === selectedDiv && item.District_Bn === selectedDist), 'Upazila_Bn') : Object.keys(LOCATION_HIERARCHY[selectedDiv][selectedDist]).sort();
                     populateSelect(upaSelect, uniqueUpazilas, 'উপজেলা নির্বাচন করুন');
                 }
+                
+                // If Student Mode: Ensure dropdowns remain enabled
+                if (employmentType.value === 'Student' && isOffice) {
+                    officeDivSelect.disabled = false;
+                    officeDistSelect.disabled = false;
+                    officeUpaSelect.disabled = false;
+                }
+
+                if(isOffice && employmentType.value !== 'Student') {
+                    populateOfficeNameSelect();
+                }
             });
 
             upaSelect.addEventListener('change', function() {
-                if(isOffice) {
+                if(isOffice && employmentType.value !== 'Student') {
                     populateOfficeNameSelect();
                 }
             });
         }
         
         function populateOfficeNameSelect() {
+            // This function should ONLY execute when in Job Holder mode.
+            if (employmentType.value === 'Student') {
+                officeNameSelect.classList.add('hidden-input'); // Ensure it stays hidden
+                return;
+            } 
+            
             const div = officeDivSelect.value;
             const dist = officeDistSelect.value;
             const upa = officeUpaSelect.value;
@@ -454,6 +492,9 @@
                 officeNameSelect.add(manualOpt);
                 officeNameSelect.disabled = false;
             }
+            
+            // Ensure select dropdown is visible for job holders
+            officeNameSelect.classList.remove('hidden-input');
         }
         
         officeNameSelect.addEventListener('change', function() {
@@ -494,38 +535,72 @@
         employmentType.addEventListener('change', function() {
             const isStudent = this.value === 'Student';
             
-            // Toggle visibility of office section
+            // 1. Update Header Text
+            officeSectionHeader.innerHTML = isStudent 
+                ? '<i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i> বর্তমান ঠিকানা'
+                : '<i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i> কর্মস্থল (বর্তমান ঠিকানা)';
+
+            // 2. Hide Office Info Section entirely if student
             officeInfoSection.classList.toggle('hidden-input', isStudent);
             
-            // Toggle visibility of location dropdowns for job seekers
-            officeLocationDropdowns.classList.toggle('hidden-input', isStudent);
+            // 3. Toggle visibility of Office Name Select (Job Holder) vs Student Input
             
-            // Toggle visibility/required status of Office Name Select/Student Input
-            officeNameSelect.classList.toggle('hidden-input', isStudent);
-            studentOfficeNameInput.classList.toggle('hidden-input', !isStudent);
-
+            // **USER REQUEST: Hide officeNameSelect and manualOfficeDiv COMPLETELY in all cases where Student is true**
+            officeNameSelect.classList.toggle('hidden-input', isStudent); 
+            manualOfficeDiv.classList.add('hidden-input'); // Always hide the manual input section
+            officeNameInput.removeAttribute('name');
+            
+            // Toggle student input based on NOT isStudent
+            studentOfficeNameInput.classList.toggle('hidden-input', !isStudent); 
+            
+            // 4. Update Label Text and Required Status
             if (isStudent) {
-                // STUDENT MODE: Disable and reset location selects, enable student input
-                officeDivSelect.required = false; 
-                officeDistSelect.required = false; 
-                officeUpaSelect.required = false; 
-                officeNameSelect.required = false;
-                studentOfficeNameInput.required = true;
+                // STUDENT MODE: 
+                officeNameLabel.textContent = "বিস্তারিত ঠিকানা/শিক্ষাপ্রতিষ্ঠানের নাম *"; // Label change applied
                 
-                // Reset select states to avoid incorrect data submission
-                resetSelects([officeDistSelect, officeUpaSelect, officeNameSelect]);
-                officeDivSelect.value = '';
-                resetOfficeManualInput();
+                // Location dropdowns must be required and enabled (as requested by user)
+                officeDivSelect.required = true; 
+                officeDistSelect.required = true; 
+                officeUpaSelect.required = true;
+                
+                officeDivSelect.disabled = false;
+                officeDistSelect.disabled = false; 
+                officeUpaSelect.disabled = false;
+                
+                officeNameSelect.required = false; // Turn off select validation
+                
+                // Student input takes the name property for submission
+                studentOfficeNameInput.required = true;
+                studentOfficeNameInput.setAttribute('name', 'officeName'); 
+                
+                resetOfficeManualInput(); 
+                officeNameSelect.value = '';
 
             } else {
-                // JOB HOLDER MODE: Enable location selects/dropdowns, disable student input
+                // JOB HOLDER/GOVT MODE: 
+                officeNameLabel.textContent = "প্রতিষ্ঠানের নাম *";
+                
                 officeDivSelect.required = true; 
                 officeDistSelect.required = true; 
                 officeUpaSelect.required = true; 
-                officeNameSelect.required = true;
+                officeNameSelect.required = true; // Turn on select validation
+                
+                // Job holder uses officeNameSelect for submission
                 studentOfficeNameInput.required = false;
-                studentOfficeNameInput.value = ''; // Clear student input
+                studentOfficeNameInput.removeAttribute('name'); 
+                studentOfficeNameInput.value = '';
+                
+                // Re-enable/re-check cascading status for job holder mode
+                officeDivSelect.disabled = false;
+                officeDistSelect.disabled = officeDistSelect.value === '';
+                officeUpaSelect.disabled = officeUpaSelect.value === '';
+                
+                // If office locations are selected, repopulate the NameSelect
+                if (officeUpaSelect.value) {
+                    populateOfficeNameSelect();
+                }
             }
+            lucide.createIcons(); // Re-render icon in header
         });
         
         // --- ASYNCHRONOUS DATA LOADING AND INITIALIZATION ---
@@ -547,10 +622,7 @@
                 let objectListString = rawText;
 
                 if (firstCurly !== -1) {
-                    // Remove everything before the first JSON object
                     objectListString = rawText.substring(firstCurly);
-                    
-                    // Remove trailing comma and non-JSON content after the last object
                     objectListString = objectListString.trim().replace(/,\s*$/, '');
                     
                     const lastCurly = objectListString.lastIndexOf('}');
@@ -558,13 +630,11 @@
                         objectListString = objectListString.substring(0, lastCurly + 1);
                     }
                     
-                    // Wrap the comma-separated objects in brackets
                     if (!objectListString.startsWith('[')) {
                         objectListString = '[' + objectListString + ']';
                     }
                 }
                 
-                // Final Check and Parsing
                 if (objectListString.trim().startsWith('[') && objectListString.trim().endsWith(']')) {
                     FACILITY_DATA = JSON.parse(objectListString);
                 } else {
@@ -636,8 +706,7 @@
                 populateSelect(officeDivSelect, uniqueDivisions, 'বিভাগ নির্বাচন করুন');
                 setupCascadingDropdowns(pDivSelect, pDistSelect, pUpaSelect, false);
                 setupCascadingDropdowns(officeDivSelect, officeDistSelect, officeUpaSelect, true);
-                toggleManualInput(ihtNameSelect, manualIhtDiv, ihtInput, backToIhtSelectBtn, 'iht');
-                toggleManualInput(officeNameSelect, manualOfficeDiv, officeNameInput, backToOfficeSelectBtn, 'office');
+                toggleManualInput(ihtNameSelect, manualOfficeDiv, officeNameInput, backToOfficeSelectBtn, 'office');
                 populateIhtNameSelect();
                 employmentType.dispatchEvent(new Event('change'));
                 formElement.classList.remove('hidden-input');
@@ -665,16 +734,16 @@
             }
             
             if (isStudent) {
-                // STUDENT MODE: Office Name is the student input field
+                // STUDENT MODE: Office Name is the student input field (which is the full address)
                 data.officeName = document.getElementById('studentOfficeNameInput').value;
                 
                 // Construct office address as the same value for simplicity in submission
                 data.office_address = data.officeName;
                 
-                // Clear unnecessary location fields for student submission
-                data.office_division = 'N/A';
-                data.office_district = 'N/A';
-                data.office_upazila = 'N/A';
+                // Keep the selected location data for consistency in submission, even though it's the present address now
+                data.office_division = document.getElementById('office_division').value;
+                data.office_district = document.getElementById('office_district').value;
+                data.office_upazila = document.getElementById('office_upazila').value;
 
             } else {
                 // JOB HOLDER MODE
@@ -714,3 +783,4 @@
     </script>
 </body>
 </html>
+
