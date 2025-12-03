@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মেডিকেল পেশাজীবীদের তথ্য সংগ্রহ (চূড়ান্ত)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Bengali Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for Professional Look */
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .bg-pattern { background-color: #0f172a; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 20px 20px; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Professional Loader */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #0056b3; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden-input { display: none !important; }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen text-slate-800 py-6 px-3 md:px-0">
+
+    <div class="max-w-4xl mx-auto animate-fade-in">
+        <div class="text-center mb-8 pt-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full shadow-lg mb-4 ring-4 ring-blue-900/50">
+                <i data-lucide="stethoscope" class="text-white w-8 h-8"></i>
+            </div>
+            <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">মেডিকেল প্রফেশনাল তথ্য ফর্ম</h1>
+            <p class="text-slate-400 text-sm">মেডিকেল টেকনোলজিস্ট ও ফার্মাসিস্টদের জন্য নিবন্ধন</p>
+        </div>
+
+        <div class="glass rounded-2xl shadow-2xl overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500"></div>
+            
+            <!-- Data Loading Overlay -->
+            <div id="dataLoadingOverlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-40 p-10">
+                <div class="loader mx-auto mb-4 border-blue-600 border-t-blue-600"></div>
+                <p class="text-lg font-bold text-blue-700">ডেটা লোড হচ্ছে, অপেক্ষা করুন...</p>
+                <p class="text-xs text-slate-500 mt-1">আপনার অফিসের তালিকা লোড করা হচ্ছে।</p>
+            </div>
+            
+            <form id="professionalDataForm" class="p-6 md:p-10 space-y-8 hidden-input">
+                <!-- 1. Personal Info & Employment Type -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                        <i data-lucide="user-circle" class="w-5 h-5 text-blue-600"></i> ব্যক্তিগত বিবরণ ও পেশা
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">আপনার নাম *</label><input type="text" name="name" placeholder="আপনার পুরো নাম বাংলায় লিখুন" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ইমেইল *</label><input type="email" name="email" placeholder="example@domain.com" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">মোবাইল নাম্বার *</label><input type="tel" name="mobile" placeholder="01xxxxxxxxx" required pattern="[0-9]{11}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">জন্ম তারিখ *</label><input type="date" name="dob" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ব্লাড গ্রুপ</label>
+                            <select name="bloodGroup" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                                <option value="" disabled selected>সিলেক্ট করুন...</option>
+                                <option value="A+">A+</option><option value="O+">O+</option>
+                                <option value="B+">B+</option><option value="AB+">AB+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">অবস্থা *</label>
+                            <select id="employmentType" name="employmentType" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                                <option value="" disabled selected>নির্বাচন করুন...</option>
+                                <option value="Govt.">সরকারি</option>
+                                <option value="Non-Govt.">বেসরকারি</option>
+                                <option value="Student">শিক্ষার্থী</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">পদবী/ডিপার্টমেন্ট *</label>
+                            <select name="designation" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                                <option value="" disabled selected>নির্বাচন করুন...</option>
+                                <option value="MT-Laboratory">MT-Laboratory</option>
+                                <option value="MT-Radiography">MT-Radiography</option>
+                                <option value="MT-Physiotherapy">MT-Physiotherapy</option>
+                                <option value="MT-Radiotherapy">MT-Radiotherapy</option>
+                                <option value="MT-Dental">MT-Dental</option>
+                                <option value="Pharmacist">Pharmacist</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2. IHT/Educational Info (Always Shown) -->
+                <div id="iht-info-section" class="space-y-4 border border-blue-200 p-4 rounded-lg animate-fade-in">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                        <i data-lucide="graduation-cap" class="w-5 h-5 text-blue-600"></i> শিক্ষা ও প্রশিক্ষণ
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">IHT/প্রতিষ্ঠানের নাম *</label>
+                            <select id="ihtNameSelect" name="ihtName" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                                <option value="" disabled selected>IHT নির্বাচন করুন...</option>
+                                <!-- Populated by JS -->
+                            </select>
+
+                            <!-- Manual IHT Input Wrapper (Hidden by default) -->
+                            <div id="manualIhtDiv" class="hidden-input mt-3 animate-fade-in bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <label class="block text-xs font-bold text-blue-800 mb-2">প্রতিষ্ঠানের নাম লিখুন (বেসরকারি/অন্যান্য):</label>
+                                <input type="text" id="ihtInput" placeholder="এখানে প্রতিষ্ঠানের নাম লিখুন..." class="w-full px-4 py-3 bg-white border border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
+                                <button type="button" id="backToIhtSelectBtn" class="text-xs font-bold text-red-500 mt-2 flex items-center gap-1 hover:text-red-700">
+                                    <i data-lucide="x-circle" class="w-3 h-3"></i> বাতিল করুন
+                                </button>
+                            </div>
+                        </div>
+
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">সেশন *</label><input type="text" name="session" placeholder="যেমন: ২০১৫-১৬" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">পাশের বছর *</label><input type="number" name="passingYear" placeholder="যেমন: ২০২০" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></div>
+                    </div>
+                </div>
+
+                <!-- 3. Office Location Info (Hidden only if Employment Type is Student) -->
+                <div id="office-info-section" class="space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                        <i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i> কর্মস্থল (বর্তমান ঠিকানা)
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4" id="officeLocationDropdowns">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">বিভাগ *</label>
+                            <select id="office_division" name="office_division" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                                <option value="" disabled selected>বিভাগ নির্বাচন করুন</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">জেলা *</label>
+                            <select id="office_district" name="office_district" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে বিভাগ দিন</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">উপজেলা *</label>
+                            <select id="office_upazila" name="office_upazila" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে জেলা দিন</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2"> <!-- Changed to span 2 for better layout when address is removed -->
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5" id="officeNameLabel">প্রতিষ্ঠানের নাম *</label>
+                            
+                            <!-- 3a: Normal Select (For Job Holders) -->
+                            <select id="officeNameSelect" name="officeName" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে উপজেলা নির্বাচন করুন</option>
+                            </select>
+                            
+                            <!-- NEW: Input for Student use case -->
+                            <input type="text" id="studentOfficeNameInput" placeholder="শিক্ষা প্রতিষ্ঠানের নাম বা ঠিকানা লিখুন *" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 hidden-input">
+
+                            <!-- 3b: Manual Input Div (Toggle for Govt/Non-Govt) -->
+                            <div id="manualOfficeDiv" class="hidden-input mt-3 animate-fade-in bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <label class="block text-xs font-bold text-blue-800 mb-2">প্রতিষ্ঠানের নাম লিখুন:</label>
+                                <input type="text" id="officeNameInput" placeholder="এখানে প্রতিষ্ঠানের নাম লিখুন..." class="w-full px-4 py-3 bg-white border border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
+                                <button type="button" id="backToOfficeSelectBtn" class="text-xs font-bold text-red-500 mt-2 flex items-center gap-1 hover:text-red-700">
+                                    <i data-lucide="x-circle" class="w-3 h-3"></i> বাতিল করুন
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden Address Textarea (Used for storing constructed address for submission) -->
+                        <textarea id="office_address" name="office_address" rows="3" class="hidden-input" style="display:none;"></textarea>
+                    </div>
+                </div>
+
+                <!-- 4. Permanent Address -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                        <i data-lucide="home" class="w-5 h-5 text-blue-600"></i> স্থায়ী ঠিকানা
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">বিভাগ *</label>
+                            <select id="p_division" name="p_division" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                                <option value="" disabled selected>বিভাগ নির্বাচন করুন</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">জেলা *</label>
+                            <select id="p_district" name="p_district" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে বিভাগ দিন</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">উপজেলা *</label>
+                            <select id="p_upazila" name="p_upazila" required disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:focus:border-blue-500 disabled:bg-slate-100">
+                                <option value="" disabled selected>আগে জেলা দিন</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">বিস্তারিত স্থায়ী ঠিকানা *</label>
+                        <textarea id="p_address" name="p_address" rows="2" placeholder="স্থায়ী ঠিকানা লিখুন (গ্রাম, ডাকঘর সহ)" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+                </div>
+                
+                <!-- 5. Attachments and Comments -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                        <i data-lucide="paperclip" class="w-5 h-5 text-blue-600"></i> সংযুক্তি ও মন্তব্য
+                    </h3>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">ফাইল সংযুক্তি (CV, সার্টিফিকেট ইত্যাদি)</label>
+                        <input type="file" name="attachments" multiple class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">মন্তব্য</label>
+                        <textarea name="comments" rows="2" placeholder="আপনার কোনো মন্তব্য থাকলে লিখুন" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2">
+                        <span>তথ্য জমা দিন</span> <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4">
+            <div class="loader mx-auto mb-4"></div>
+            <p class="text-lg font-bold text-slate-700">তথ্য প্রক্রিয়া করা হচ্ছে...</p>
+            <p class="text-xs text-slate-400 mt-2">অপেক্ষা করুন</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 animate-fade-in">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="check-circle" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">সফল!</h3>
+            <p class="text-slate-600 mb-6">আপনার তথ্য সফলভাবে জমা হয়েছে।</p>
+            <button onclick="window.location.reload()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 w-full">নতুন ফর্ম পূরণ করুন</button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // ** IMPORTANT: DATA FILE URL UPDATED TO GITHUB RAW CONTENT LINK **
+        // Assuming 'Source' is the branch name. The cleaning logic below should handle the non-JSON prefix.
+        const DATA_FILE_URL = 'https://raw.githubusercontent.com/habibulhaasan/mtph/Source/facility_data.json'; 
+        
+        // --- DATA PLACEHOLDERS ---
+        let FACILITY_DATA = [];
+        let LOCATION_HIERARCHY = {};
+
+        // IHT List
+        const IHT_LIST = [
+            "IHT- ঢাকা", "IHT- মুন্সিগঞ্জ", "IHT- মানিকগঞ্জ", "IHT- রাজশাহী", "IHT- নওগাঁ", 
+            "IHT- বগুড়া", "IHT- জয়পুরহাট", "IHT- রংপুর", "IHT- কুড়িগ্রাম", "IHT- চট্টগ্রাম", 
+            "IHT- নোয়াখালী", "IHT- বরিশাল", "IHT- সিলেট", "IHT- ঝিনাইদহ", "IHT- সাতক্ষীরা", 
+            "IHT- গোপালগঞ্জ", "IHT- মাদারীপুর", "IHT- জামালপুর", "IHT- গাজীপুর", "IHT- ময়মনসিংহ", 
+            "IHT- সিরাজগঞ্জ"
+        ];
+        
+        // --- DOM Elements ---
+        const form = document.getElementById('professionalDataForm');
+        const dataLoadingOverlay = document.getElementById('dataLoadingOverlay');
+        const formElement = document.getElementById('professionalDataForm'); 
+        
+        const employmentType = document.getElementById('employmentType');
+        const officeInfoSection = document.getElementById('office-info-section');
+        const officeLocationDropdowns = document.getElementById('officeLocationDropdowns'); // New ID for Div/Dist/Upa container
+
+        const ihtNameSelect = document.getElementById('ihtNameSelect');
+        const manualIhtDiv = document.getElementById('manualIhtDiv');
+        const ihtInput = document.getElementById('ihtInput');
+        const backToIhtSelectBtn = document.getElementById('backToIhtSelectBtn');
+
+        const officeDivSelect = document.getElementById('office_division');
+        const officeDistSelect = document.getElementById('office_district');
+        const officeUpaSelect = document.getElementById('office_upazila');
+        const officeNameSelect = document.getElementById('officeNameSelect');
+        const manualOfficeDiv = document.getElementById('manualOfficeDiv');
+        const officeNameInput = document.getElementById('officeNameInput');
+        const backToOfficeSelectBtn = document.getElementById('backToOfficeSelectBtn');
+        const officeNameLabel = document.getElementById('officeNameLabel'); // Label for Office Name/Student Input
+
+        const studentOfficeNameInput = document.getElementById('studentOfficeNameInput'); // New student input
+
+        const pDivSelect = document.getElementById('p_division');
+        const pDistSelect = document.getElementById('p_district');
+        const pUpaSelect = document.getElementById('p_upazila');
+        
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successModal = document.getElementById('successModal');
+        
+        // Hidden input field to store the calculated Office Address (from JS logic)
+        const hiddenOfficeAddress = document.getElementById('office_address');
+
+
+        // --- UTILITY FUNCTIONS ---
+        function getUniqueOptions(data, key) {
+            const unique = {};
+            data.forEach(item => unique[item[key]] = item[key]);
+            return Object.keys(unique).sort();
+        }
+
+        function buildLocationHierarchy() {
+            LOCATION_HIERARCHY = {};
+            FACILITY_DATA.forEach(item => {
+                if (!LOCATION_HIERARCHY[item.Division_Bn]) LOCATION_HIERARCHY[item.Division_Bn] = {};
+                if (!LOCATION_HIERARCHY[item.Division_Bn][item.District_Bn]) LOCATION_HIERARCHY[item.Division_Bn][item.District_Bn] = {};
+                if (!LOCATION_HIERARCHY[item.Division_Bn][item.District_Bn][item.Upazila_Bn]) {
+                    LOCATION_HIERARCHY[item.Division_Bn][item.District_Bn][item.Upazila_Bn] = true;
+                }
+            });
+        }
+        
+        function populateSelect(selectElement, optionsArray, defaultText = 'নির্বাচন করুন') {
+            selectElement.innerHTML = `<option value="" disabled selected>${defaultText}</option>`;
+            optionsArray.forEach(option => {
+                selectElement.add(new Option(option, option));
+            });
+            selectElement.disabled = optionsArray.length === 0;
+            if (!selectElement.disabled) selectElement.classList.remove('disabled:bg-slate-100');
+            else selectElement.classList.add('disabled:bg-slate-100');
+        }
+
+        function resetSelects(selects) {
+            selects.forEach(sel => {
+                sel.value = '';
+                sel.disabled = true;
+                sel.classList.add('disabled:bg-slate-100');
+                if(sel.id.includes('district')) sel.innerHTML = '<option value="" disabled selected>আগে বিভাগ দিন</option>';
+                if(sel.id.includes('upazila')) sel.innerHTML = '<option value="" disabled selected>আগে জেলা দিন</option>';
+                if(sel.id.includes('NameSelect')) sel.innerHTML = '<option value="" disabled selected>আগে উপজেলা নির্বাচন করুন</option>';
+            });
+        }
+        
+        function toggleManualInput(selectEl, manualDiv, manualInput, backBtn, type) {
+            const resetFn = type === 'office' ? resetOfficeManualInput : resetIhtManualInput;
+            
+            selectEl.addEventListener('change', function() {
+                if (this.value === "Manual_Input") {
+                    this.classList.add('hidden-input'); 
+                    this.removeAttribute('name');       
+                    this.removeAttribute('required');
+
+                    manualDiv.classList.remove('hidden-input'); 
+                    manualInput.setAttribute('name', type === 'office' ? 'officeName' : 'ihtName');   
+                    manualInput.setAttribute('required', 'true');    
+                    manualInput.focus();
+                    
+                    if(type === 'office') {
+                        // When switching to manual office input, make sure the hidden address field is editable
+                        hiddenOfficeAddress.value = '';
+                        hiddenOfficeAddress.setAttribute('data-manual-edit', 'true'); // Flag manual edit
+                    }
+                }
+            });
+            backBtn.addEventListener('click', resetFn);
+        }
+
+        function resetOfficeManualInput() {
+            manualOfficeDiv.classList.add('hidden-input');
+            officeNameInput.removeAttribute('name');
+            officeNameInput.removeAttribute('required');
+            officeNameInput.value = "";
+            officeNameSelect.classList.remove('hidden-input');
+            officeNameSelect.setAttribute('name', 'officeName');
+            officeNameSelect.setAttribute('required', 'true');
+            officeNameSelect.value = ''; 
+            
+            // Reset hidden address field
+            hiddenOfficeAddress.value = '';
+            hiddenOfficeAddress.removeAttribute('data-manual-edit'); 
+        }
+        
+        function resetIhtManualInput() {
+            manualIhtDiv.classList.add('hidden-input');
+            ihtInput.removeAttribute('name');
+            ihtInput.removeAttribute('required');
+            ihtInput.value = "";
+            ihtNameSelect.classList.remove('hidden-input');
+            ihtNameSelect.setAttribute('name', 'ihtName');
+            ihtNameSelect.setAttribute('required', 'true');
+            ihtNameSelect.value = ""; 
+        }
+
+        // --- DYNAMIC LOGIC FUNCTIONS ---
+        
+        function setupCascadingDropdowns(divSelect, distSelect, upaSelect, isOffice) {
+            divSelect.addEventListener('change', function() {
+                const selectedDiv = this.value;
+                resetSelects([distSelect, upaSelect]);
+                if(isOffice) resetOfficeManualInput();
+                
+                if (selectedDiv) {
+                    const uniqueDistricts = isOffice ? getUniqueOptions(FACILITY_DATA.filter(item => item.Division_Bn === selectedDiv), 'District_Bn') : Object.keys(LOCATION_HIERARCHY[selectedDiv]).sort();
+                    populateSelect(distSelect, uniqueDistricts, 'জেলা নির্বাচন করুন');
+                }
+            });
+
+            distSelect.addEventListener('change', function() {
+                const selectedDiv = divSelect.value;
+                const selectedDist = this.value;
+                resetSelects([upaSelect]);
+                if(isOffice) resetOfficeManualInput();
+
+                if (selectedDist) {
+                    const uniqueUpazilas = isOffice ? getUniqueOptions(FACILITY_DATA.filter(item => item.Division_Bn === selectedDiv && item.District_Bn === selectedDist), 'Upazila_Bn') : Object.keys(LOCATION_HIERARCHY[selectedDiv][selectedDist]).sort();
+                    populateSelect(upaSelect, uniqueUpazilas, 'উপজেলা নির্বাচন করুন');
+                }
+            });
+
+            upaSelect.addEventListener('change', function() {
+                if(isOffice) {
+                    populateOfficeNameSelect();
+                }
+            });
+        }
+        
+        function populateOfficeNameSelect() {
+            const div = officeDivSelect.value;
+            const dist = officeDistSelect.value;
+            const upa = officeUpaSelect.value;
+            
+            officeNameSelect.innerHTML = '<option value="" disabled selected>প্রতিষ্ঠানের নাম নির্বাচন করুন...</option>';
+            officeNameSelect.disabled = true;
+            hiddenOfficeAddress.value = ''; // Reset hidden address field
+
+            if (div && dist && upa) {
+                let filteredOffices = FACILITY_DATA.filter(item => 
+                    item.Division_Bn === div && 
+                    item.District_Bn === dist && 
+                    item.Upazila_Bn === upa
+                );
+                
+                const sortedOfficeNames = filteredOffices.map(f => ({id: f.Facility_ID, name: f.Name_Bn})).sort((a, b) => a.name.localeCompare(b.name, 'bn'));
+
+                sortedOfficeNames.forEach(office => {
+                    officeNameSelect.add(new Option(office.name, office.id));
+                });
+                
+                const manualOpt = new Option("⚠️ তালিকায় নেই (নিজে লিখুন)", "Manual_Input");
+                manualOpt.style.fontWeight = "bold";
+                manualOpt.style.color = "#d97706";
+                officeNameSelect.add(manualOpt);
+                officeNameSelect.disabled = false;
+            }
+        }
+        
+        officeNameSelect.addEventListener('change', function() {
+            const selectedID = this.value;
+            
+            if (selectedID !== "Manual_Input") {
+                const facility = FACILITY_DATA.find(f => f.Facility_ID === selectedID);
+                
+                // Construct the address from available location data
+                const constructedAddress = `${facility.Name_Bn || 'N/A'}, উপজেলা: ${facility.Upazila_Bn}, জেলা: ${facility.District_Bn}, বিভাগ: ${facility.Division_Bn}`;
+
+                // Use the constructed address or the provided Office_Address
+                // If Office_Address exists, use it. If not, use the constructed one.
+                const finalAddress = facility.Office_Address || constructedAddress;
+
+                hiddenOfficeAddress.value = finalAddress;
+                hiddenOfficeAddress.removeAttribute('data-manual-edit'); // Clear manual flag
+                
+            } else {
+                 // Set flag for manual input, value will be captured on submission
+                 hiddenOfficeAddress.setAttribute('data-manual-edit', 'true');
+            }
+        });
+
+
+        function populateIhtNameSelect() {
+            ihtNameSelect.innerHTML = '<option value="" disabled selected>IHT নির্বাচন করুন...</option>';
+            IHT_LIST.forEach(iht => {
+                ihtNameSelect.add(new Option(iht, iht));
+            });
+            const manualOpt = new Option("⚠️ তালিকায় নেই/বেসরকারি (নিজে লিখুন)", "Manual_Input");
+            manualOpt.style.fontWeight = "bold";
+            manualOpt.style.color = "#d97706";
+            ihtNameSelect.add(manualOpt);
+        }
+
+        // --- Employment Type Handler ---
+        employmentType.addEventListener('change', function() {
+            const isStudent = this.value === 'Student';
+            
+            // Toggle visibility of office section
+            officeInfoSection.classList.toggle('hidden-input', isStudent);
+            
+            // Toggle visibility of location dropdowns for job seekers
+            officeLocationDropdowns.classList.toggle('hidden-input', isStudent);
+            
+            // Toggle visibility/required status of Office Name Select/Student Input
+            officeNameSelect.classList.toggle('hidden-input', isStudent);
+            studentOfficeNameInput.classList.toggle('hidden-input', !isStudent);
+
+            if (isStudent) {
+                // STUDENT MODE: Disable and reset location selects, enable student input
+                officeDivSelect.required = false; 
+                officeDistSelect.required = false; 
+                officeUpaSelect.required = false; 
+                officeNameSelect.required = false;
+                studentOfficeNameInput.required = true;
+                
+                // Reset select states to avoid incorrect data submission
+                resetSelects([officeDistSelect, officeUpaSelect, officeNameSelect]);
+                officeDivSelect.value = '';
+                resetOfficeManualInput();
+
+            } else {
+                // JOB HOLDER MODE: Enable location selects/dropdowns, disable student input
+                officeDivSelect.required = true; 
+                officeDistSelect.required = true; 
+                officeUpaSelect.required = true; 
+                officeNameSelect.required = true;
+                studentOfficeNameInput.required = false;
+                studentOfficeNameInput.value = ''; // Clear student input
+            }
+        });
+        
+        // --- ASYNCHRONOUS DATA LOADING AND INITIALIZATION ---
+        async function loadDataAndInitialize() {
+            dataLoadingOverlay.classList.remove('hidden-input');
+            
+            try {
+                const response = await fetch(DATA_FILE_URL); 
+                
+                if (!response.ok) {
+                    throw new Error(`Data load failed. Status: ${response.status}. Please check the GitHub raw URL.`);
+                }
+                
+                // Read response as plain text first
+                const rawText = await response.text();
+                
+                // ** SOLUTION IMPLEMENTATION: Clean up non-JSON content and make it a valid array **
+                const firstCurly = rawText.indexOf('{');
+                let objectListString = rawText;
+
+                if (firstCurly !== -1) {
+                    // Remove everything before the first JSON object
+                    objectListString = rawText.substring(firstCurly);
+                    
+                    // Remove trailing comma and non-JSON content after the last object
+                    objectListString = objectListString.trim().replace(/,\s*$/, '');
+                    
+                    const lastCurly = objectListString.lastIndexOf('}');
+                    if (lastCurly !== -1) {
+                        objectListString = objectListString.substring(0, lastCurly + 1);
+                    }
+                    
+                    // Wrap the comma-separated objects in brackets
+                    if (!objectListString.startsWith('[')) {
+                        objectListString = '[' + objectListString + ']';
+                    }
+                }
+                
+                // Final Check and Parsing
+                if (objectListString.trim().startsWith('[') && objectListString.trim().endsWith(']')) {
+                    FACILITY_DATA = JSON.parse(objectListString);
+                } else {
+                    throw new Error("Data could not be parsed into a valid JSON array.");
+                }
+                
+                if (!Array.isArray(FACILITY_DATA) || FACILITY_DATA.length === 0) {
+                     console.warn("Fetched data is empty or invalid. Using embedded mock data structure.");
+                     FACILITY_DATA = [
+                        {"Facility_ID":"37","Name_Bn":"ঝিগাতলা আরবান ডিসপেনসারি", "Office_Address": "ঝিগাতলা, ঢাকা-১২০৫", "Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"1","District_Bn":"ঢাকা","Upazila_ID":"0","Upazila_Bn":"ধানমন্ডি"},
+                        {"Facility_ID":"1925","Name_Bn":"খোকোয়া ১০ শয্যা বিশিষ্ট হাসপাতাল", "Office_Address": "খোকোয়া মেইন রোড, আমতলি", "Division_ID":"6","Division_Bn":"বরিশাল","District_ID":"55","District_Bn":"বরগুনা","Upazila_ID":"1","Upazila_Bn":"আমতলি"},
+                        {"Facility_ID":"1924","Name_Bn":"আমতলী উপজেলা স্বাস্থ্য কমপ্লেক্স", "Office_Address": "উপজেলা রোড, আমতলি, বরগুনা", "Division_ID":"6","Division_Bn":"বরিশাল","District_ID":"55","District_Bn":"বরগুনা","Upazila_ID":"1","Upazila_Bn":"আমতলি"},
+                        {"Facility_ID":"100","Name_Bn":"তেজগাঁও স্বাস্থ্য কমপ্লেক্স", "Office_Address": "তেজগাঁও লিংক রোড, ঢাকা", "Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"1","District_Bn":"ঢাকা","Upazila_ID":"2","Upazila_Bn":"তেজগাঁও"},
+                        {"Facility_ID":"200","Name_Bn":"ফরিদপুর মেডিকেল কলেজ হাসপাতাল", "Office_Address": "ফরিদপুর মেডিক্যাল কলেজ রোড", "Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"2","District_Bn":"ফরিদপুর","Upazila_ID":"3","Upazila_Bn":"ফরিদপুর সদর"},
+                    ];
+                }
+                
+                // Add Office_Address if missing (since it was missing in your last sample)
+                FACILITY_DATA = FACILITY_DATA.map(item => {
+                    if (!item.Office_Address) {
+                        item.Office_Address = `${item.Name_Bn}, উপজেলা: ${item.Upazila_Bn}, জেলা: ${item.District_Bn}, বিভাগ: ${item.Division_Bn}`;
+                    }
+                    return item;
+                });
+
+                buildLocationHierarchy();
+                
+                // Initialize all elements
+                const uniqueDivisions = getUniqueOptions(FACILITY_DATA, 'Division_Bn');
+                populateSelect(pDivSelect, uniqueDivisions, 'বিভাগ নির্বাচন করুন');
+                populateSelect(officeDivSelect, uniqueDivisions, 'বিভাগ নির্বাচন করুন');
+                
+                setupCascadingDropdowns(pDivSelect, pDistSelect, pUpaSelect, false);
+                setupCascadingDropdowns(officeDivSelect, officeDistSelect, officeUpaSelect, true);
+                
+                toggleManualInput(ihtNameSelect, manualIhtDiv, ihtInput, backToIhtSelectBtn, 'iht');
+                toggleManualInput(officeNameSelect, manualOfficeDiv, officeNameInput, backToOfficeSelectBtn, 'office');
+                populateIhtNameSelect();
+
+                // Set default state and show form
+                employmentType.dispatchEvent(new Event('change'));
+                formElement.classList.remove('hidden-input');
+                
+            } catch (error) {
+                console.error("Error loading facility data:", error);
+                
+                // Display error to the user if data load fails severely
+                alert(`ডেটা লোড ব্যর্থ হয়েছে। অনুগ্রহ করে GitHub Raw লিঙ্কটি চেক করুন বা নিশ্চিত করুন যে ফাইলটি শুধুমাত্র একটি JSON অ্যারে ধারণ করছে। ত্রুটি: ${error.message}`);
+                
+                // Fallback to internal mock data structure for a user-friendly experience
+                FACILITY_DATA = [
+                        {"Facility_ID":"37","Name_Bn":"ঝিগাতলা আরবান ডিসপেনসারি", "Office_Address": "ঝিগাতলা, ঢাকা-১২০৫", "Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"1","District_Bn":"ঢাকা","Upazila_ID":"0","Upazila_Bn":"ধানমন্ডি"},
+                        {"Facility_ID":"1925","Name_Bn":"খোকোয়া ১০ শয্যা বিশিষ্ট হাসপাতাল", "Office_Address": "খোকোয়া মেইন রোড, আমতলি", "Division_ID":"6","Division_Bn":"বরিশাল","District_ID":"55","District_Bn":"বরগুনা","Upazila_ID":"1","Upazila_Bn":"আমতলি"},
+                        {"Facility_ID":"1924","Name_Bn":"আমতলী উপজেলা স্বাস্থ্য কমপ্লেক্স", "Office_Address": "উপজেলা রোড, আমতলি, বরগুনা", "Division_ID":"6","Division_Bn":"বরিশাল","District_ID":"55","District_Bn":"বরগুনা","Upazila_ID":"1","Upazila_Bn":"আমতলি"},
+                        {"Facility_ID":"100","Name_Bn":"তেজগাঁও স্বাস্থ্য কমপ্লেক্স", "Office_Address": "তেজগাঁও লিংক রোড, ঢাকা", "Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"1","District_Bn":"ঢাকা","Upazila_ID":"2","Upazila_Bn":"তেজগাঁও"},
+                        {"Facility_ID":"200","Name_Bn":"ফরিদপুর মেডিকেল কলেজ হাসপাতাল", "Office_Address": "ফরিদপুর মেডিক্যাল কলেজ রোড", "Division_ID":"1","Division_Bn":"ঢাকা","District_ID":"2","District_Bn":"ফরিদপুর","Upazila_ID":"3","Upazila_Bn":"ফরিদপুর সদর"},
+                    ];
+                
+                FACILITY_DATA = FACILITY_DATA.map(item => {
+                    if (!item.Office_Address) {
+                        item.Office_Address = `${item.Name_Bn}, উপজেলা: ${item.Upazila_Bn}, জেলা: ${item.District_Bn}, বিভাগ: ${item.Division_Bn}`;
+                    }
+                    return item;
+                });
+                
+                buildLocationHierarchy();
+                const uniqueDivisions = getUniqueOptions(FACILITY_DATA, 'Division_Bn');
+                populateSelect(pDivSelect, uniqueDivisions, 'বিভাগ নির্বাচন করুন');
+                populateSelect(officeDivSelect, uniqueDivisions, 'বিভাগ নির্বাচন করুন');
+                setupCascadingDropdowns(pDivSelect, pDistSelect, pUpaSelect, false);
+                setupCascadingDropdowns(officeDivSelect, officeDistSelect, officeUpaSelect, true);
+                toggleManualInput(ihtNameSelect, manualIhtDiv, ihtInput, backToIhtSelectBtn, 'iht');
+                toggleManualInput(officeNameSelect, manualOfficeDiv, officeNameInput, backToOfficeSelectBtn, 'office');
+                populateIhtNameSelect();
+                employmentType.dispatchEvent(new Event('change'));
+                formElement.classList.remove('hidden-input');
+
+            } finally {
+                dataLoadingOverlay.classList.add('hidden-input');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadDataAndInitialize);
+        
+        // --- Form Submission Logic ---
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loadingOverlay.classList.remove('hidden');
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            const isStudent = data.employmentType === 'Student';
+            
+            // Handle IHT name from manual input if used
+            if (data.ihtName === 'Manual_Input') {
+                data.ihtName = document.getElementById('ihtInput').value;
+            }
+            
+            if (isStudent) {
+                // STUDENT MODE: Office Name is the student input field
+                data.officeName = document.getElementById('studentOfficeNameInput').value;
+                
+                // Construct office address as the same value for simplicity in submission
+                data.office_address = data.officeName;
+                
+                // Clear unnecessary location fields for student submission
+                data.office_division = 'N/A';
+                data.office_district = 'N/A';
+                data.office_upazila = 'N/A';
+
+            } else {
+                // JOB HOLDER MODE
+                if (data.officeName === 'Manual_Input') {
+                    // Manual Office Name entry
+                    data.officeName = document.getElementById('officeNameInput').value;
+                    // Construct full address from manual name + selected location
+                    data.office_address = `${data.officeName}, উপজেলা: ${data.office_upazila}, জেলা: ${data.office_district}, বিভাগ: ${data.office_division}`;
+
+                } else {
+                    // Selected from list (address was pre-calculated and stored in hiddenOfficeAddress)
+                    data.office_address = hiddenOfficeAddress.value; 
+                }
+            }
+            
+            // Remove the hidden field itself if necessary (already removed from DOM, but just in case)
+            // Note: Data is submitted via 'data' object, not FormData, so deleting from data is appropriate.
+            delete data.office_address; // This is the address we want to submit
+
+            // Simulate Network Request
+            console.log('Final Submitted Data:', data);
+            
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                successModal.classList.remove('hidden');
+                form.reset();
+                
+                // Reset dynamic fields after success
+                resetSelects([pDistSelect, pUpaSelect, officeDistSelect, officeUpaSelect, officeNameSelect]);
+                pDivSelect.value = ''; officeDivSelect.value = ''; employmentType.value = '';
+                resetOfficeManualInput();
+                resetIhtManualInput();
+                employmentType.dispatchEvent(new Event('change')); // Reset visibility
+                
+            }, 3000); 
+        });
+    </script>
+</body>
+</html>
